@@ -30,6 +30,7 @@
   <img src="https://img.shields.io/badge/Flask-Webhooks_&_Deploy-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask">
 </p>
 
+[🌐 Portal de Slides (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/) •
 [📚 Plano de Ensino Mestre](./plano_de_aula_ia_generativa.md) •
 [🎯 Trilha Google Cloud](#-trilha-oficial-google-cloud-skills-boost) •
 [📅 Cronograma 5 Dias](#-cronograma-e-conteúdo-programático) •
@@ -39,6 +40,11 @@
 ---
 
 </div>
+
+> ### 🌐 Portal de Apresentações Online
+> Acesse todas as apresentações interativas renderizadas no navegador via **GitHub Pages**:  
+> 👉 **[https://irineufrancisco.github.io/IASkillBoostInfoeste/](https://irineufrancisco.github.io/IASkillBoostInfoeste/)**  
+> *(Caso o GitHub exiba o código HTML puro ao clicar em links de arquivos, utilize o endereço do GitHub Pages acima ou ative o Pages nas configurações do repositório).*
 
 ## 📌 Sobre o Curso
 
@@ -122,7 +128,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * 🍷 **Lab 1.1 (Supervisionado):** Classificador de Vinhos com `KNeighborsClassifier (KNN)` usando padronização `StandardScaler` e análise detalhada da Matriz de Confusão.
   * 🌸 **Lab 1.2 (Não Supervisionado):** Agrupamento florístico com `KMeans` sobre o [iris.csv](./Aula_01/iris.csv), cálculo do Método do Cotovelo (*Elbow Method*) e verificação do Índice de Silhueta (*Silhouette Score*).
 * **Materiais da Aula:**
-  * 🖥️ [Slides Interativos da Aula 01](./Aula_01/slide_aula_01.html)
+  * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_01/slide_aula_01.html) • [Ver Código](./Aula_01/slide_aula_01.html)
   * 📖 [Apostila / Material de Estudo](./Aula_01/material_aula_01.md)
   * 📊 [Visualizações e Datasets](./Aula_01/)
 
@@ -144,7 +150,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * 🕹️ **Lab 2.3 (Desafio de IA Generativa):** Recriação de um clássico do Atari 2600 em HTML5 Canvas utilizando prompts iterativos.
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Generative AI* (**1º Badge conquistado**).
 * **Materiais da Aula:**
-  * 🖥️ [Slides Interativos da Aula 02](./Aula_02/slide_aula_02.html)
+  * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_02/slide_aula_02.html) • [Ver Código](./Aula_02/slide_aula_02.html)
   * 📖 [Apostila / Material de Estudo](./Aula_02/material_aula_02.md)
   * 🐍 [Scripts de Apoio (Prompt Engineering & LangChain)](./Aula_02/)
 
@@ -167,7 +173,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * 💬 **Lab 3.2 (BERT & pysentimiento):** Análise de sentimentos profunda em textos em português, testando desafios de contexto (negações, gírias, emojis e ironia).
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Large Language Models* (**2º Badge conquistado**).
 * **Materiais da Aula:**
-  * 🖥️ [Slides Interativos da Aula 03](./Aula_03/slide_aula_03.html)
+  * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_03/slide_aula_03.html) • [Ver Código](./Aula_03/slide_aula_03.html)
   * 📖 [Apostila / Material de Estudo](./Aula_03/material_aula_03.md)
   * 🔬 [Infográficos e Análise de PLN](./Aula_03/)
 
@@ -190,7 +196,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * 😊 **Lab 4.3 (DeepFace):** Detecção de emoção dominante (*dominant_emotion*), estimativa de idade aparente e gênero a partir de imagens faciais.
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Responsible AI* (**3º Badge conquistado**).
 * **Materiais da Aula:**
-  * 🖥️ [Slides Interativos da Aula 04](./Aula_04/slide_aula_04.html)
+  * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_04/slide_aula_04.html) • [Ver Código](./Aula_04/slide_aula_04.html)
   * 📖 [Apostila / Material de Estudo](./Aula_04/material_aula_04.md)
   * 📓 [Notebooks Colab de YOLOv8 e Leitura de Placas](./Aula_04/)
 
@@ -213,7 +219,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * 🛍️ **Projeto Integrador SIMI:** Apresentação da solução integrada *TechVision Smart Store*.
   * 🏅 **Trilha Google Cloud:** Finalização da 4ª atividade oficial (**100% da Trilha e 4 Badges alcançados**).
 * **Materiais da Aula:**
-  * 🖥️ [Slides Interativos da Aula 05](./Aula_05/slide_aula_05.html)
+  * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_05/slide_aula_05.html) • [Ver Código](./Aula_05/slide_aula_05.html)
   * 📖 [Apostila / Material de Estudo](./Aula_05/material_aula_05.md)
   * 🌐 [Código do Servidor Webhook Flask](./Aula_05/flask_app.py)
 
@@ -320,10 +326,31 @@ pip install pysentimiento transformers google-generativeai flask
 
 ---
 
-### 3. Visualizando os Slides Interativos
-Os slides de cada aula foram desenvolvidos em HTML5 moderno com estilização incorporada:
-* Para visualizar, basta abrir qualquer arquivo `slide_aula_XX.html` diretamente em seu navegador (Google Chrome, Microsoft Edge, Firefox, etc.).
-* É possível navegar entre os slides usando as setas do teclado ou os controles visuais interativos.
+### 3. Visualizando os Slides Interativos (GitHub Pages)
+
+Por padrão de segurança, o GitHub exibe arquivos `.html` como código-fonte em vez de executá-los. Para abrir as apresentações diretamente no navegador:
+
+#### 🌐 Opção A — Acessar via GitHub Pages (Recomendado)
+Acesse o portal do repositório ou os links diretos das aulas:
+* 🚀 **[Portal Completo de Slides](https://irineufrancisco.github.io/IASkillBoostInfoeste/)**
+* 📊 [Slides da Aula 01](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_01/slide_aula_01.html)
+* 📊 [Slides da Aula 02](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_02/slide_aula_02.html)
+* 📊 [Slides da Aula 03](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_03/slide_aula_03.html)
+* 📊 [Slides da Aula 04](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_04/slide_aula_04.html)
+* 📊 [Slides da Aula 05](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_05/slide_aula_05.html)
+
+> ⚙️ **Como ativar o GitHub Pages no seu repositório (em 3 passos):**
+> 1. No topo do repositório no GitHub, clique em **Settings** (Configurações).
+> 2. No menu lateral esquerdo, clique em **Pages**.
+> 3. Em **Build and deployment** > **Branch**, selecione `main` e a pasta `/ (root)`. Clique em **Save**.  
+> Em 1 minuto o site estará publicado automaticamente!
+
+#### 💻 Opção B — Visualização Local
+* Basta clonar o repositório ou baixar o arquivo `.html` e dar um duplo clique nele para abrir em qualquer navegador (Google Chrome, Edge, Firefox).
+
+#### 🔗 Opção C — Prévia Imediata sem GitHub Pages (HTMLPreview)
+* Caso o GitHub Pages ainda não esteja habilitado, é possível usar o serviço gratuito:  
+  `https://htmlpreview.github.io/?https://github.com/IrineuFrancisco/IASkillBoostInfoeste/blob/main/Aula_01/slide_aula_01.html`
 
 ---
 
