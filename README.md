@@ -1,5 +1,9 @@
 <div align="center">
 
+<img src="./banner_topo.png" alt="INFOESTE 2026 • SENAI-SP" width="100%" style="max-width: 900px; border-radius: 8px; margin-bottom: 16px;">
+
+<br>
+
 # 🚀 Programação em Inteligência Artificial Generativa
 ### 🎓 SENAI-SP • Infoeste • Trilha Google Cloud Skills Boost
 
