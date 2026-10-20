@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dia 01 - Introdução à IA, IA Generativa, Prompts, ML Supervisionado & Não Supervisionado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+/* CORE SETUP & BRANDING SENAI */
+:root {
+  --senai-red: #E30613; --senai-black: #000000; --senai-dark-gray: #2B2B2B;
+  --senai-medium-gray: #878787; --senai-light-gray: #F2F2F2; --senai-white: #FFFFFF; --border-color: #E5E5E5;
+  --accent-green: #1E8E3E; --accent-blue: #1A73E8; --accent-orange: #E37400;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background-color: var(--senai-light-gray); font-family: 'Montserrat', sans-serif; position: relative; }
+#presentation-area { width: 1280px; height: 720px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); transform-origin: center center; transition: transform 0.1s ease-out; }
+.slide-container { width: 100%; height: 100%; background-color: var(--senai-white); position: absolute; top: 0; left: 0; overflow: hidden; border-radius: 6px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); display: none; flex-direction: column; padding: 40px 60px; box-sizing: border-box; background-image: linear-gradient(to right, rgba(229, 229, 229, 0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(229, 229, 229, 0.4) 1px, transparent 1px); background-size: 40px 40px; }
+.slide-container.active { display: flex; animation: slideFadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+@keyframes slideFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.slide-container::before { content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 100%; background-color: var(--senai-red); z-index: 10; }
+.slide-container::after { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 400px; background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.05) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+.slide-container > * { position: relative; z-index: 1; }
+h1, h2, h3, p, li, .subtitle { margin: 0; line-height: 1.4; }
+.slide-container h1 { font-weight: 900; color: var(--senai-red); font-size: 46px; line-height: 1.1; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 16px; }
+.slide-container .slide-title { font-weight: 900; color: var(--senai-black); font-size: 28px; margin-bottom: 14px; text-transform: uppercase; width: 100%; text-align: left; border-left: 6px solid var(--senai-red); padding-left: 16px; }
+.slide-container h3 { font-weight: 700; color: var(--senai-black); font-size: 18px; margin-bottom: 8px; }
+.slide-container p, .slide-container li, .slide-container .subtitle { color: var(--senai-dark-gray); font-size: 15.5px; font-weight: 400; }
+.content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
+.title-layout { display: flex; flex-direction: column; justify-content: center; height: 100%; padding-left: 20px; }
+.title-layout .tag-course { background-color: var(--senai-light-gray); color: var(--senai-black); padding: 8px 18px; display: inline-block; font-weight: 800; font-size: 15px; text-transform: uppercase; margin-bottom: 18px; border: 1px solid var(--border-color); border-left: 4px solid var(--senai-red); align-self: flex-start; }
+.title-layout .subtitle { font-size: 20.5px; color: var(--senai-medium-gray); margin-top: 12px; max-width: 940px; }
+.section-title-layout { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; width: 100%; }
+.section-title-layout h2 { font-size: 50px; color: var(--senai-black); font-weight: 900; text-transform: uppercase; margin-bottom: 18px; }
+.section-title-layout hr { width: 140px; height: 7px; background-color: var(--senai-red); border: none; margin: 18px auto; }
+.section-title-layout p { max-width: 850px; color: var(--senai-medium-gray); font-size: 22px; margin: 0 auto; }
+.two-column { display: flex; width: 100%; gap: 22px; align-items: stretch; }
+.two-column > div { flex: 1; }
+.two-column.tiled > div { background-color: var(--senai-white); border: 1px solid var(--border-color); border-top: 5px solid var(--senai-red); padding: 18px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+.bullet-list-simple { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.bullet-list-simple li { position: relative; padding-left: 22px; line-height: 1.4; }
+.bullet-list-simple li::before { content: '■'; color: var(--senai-red); position: absolute; left: 0; top: 2px; font-size: 12px; }
+.tiled-content { display: flex; gap: 16px; width: 100%; justify-content: space-between; align-items: stretch; }
+.tile { background-color: var(--senai-white); border: 1px solid var(--border-color); border-bottom: 5px solid var(--senai-red); padding: 18px 16px; border-radius: 6px; flex: 1; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+.tile .icon { font-size: 28px; color: var(--senai-red); margin-bottom: 10px; }
+.code-block { background-color: #1E1E1E; color: #D4D4D4; padding: 11px 14px; border-radius: 6px; font-family: 'Consolas', monospace; font-size: 12px; text-align: left; white-space: pre-wrap; width: 100%; border-left: 5px solid var(--senai-red); margin-bottom: 8px; line-height: 1.35; }
+.code-block span.keyword { color: #569CD6; } .code-block span.string { color: #CE9178; } .code-block span.comment { color: #6A9955; } .code-block span.function { color: #DCDCAA; }
+
+/* CAIXA DE SAÍDA DE CONSOLE / TEXTO */
+.output-console { background-color: #F4F6F8; border: 1px solid #D0D7DE; border-left: 5px solid var(--accent-green); border-radius: 6px; padding: 10px 14px; font-family: 'Consolas', monospace; font-size: 12px; color: #1F2328; white-space: pre-wrap; width: 100%; margin-bottom: 8px; line-height: 1.35; }
+.output-badge { display: inline-block; background: var(--accent-green); color: #FFF; font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; margin-bottom: 4px; }
+.img-output-box { background: #FFF; border: 1px solid #DDD; border-radius: 6px; padding: 8px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ELEMENTOS VISUAIS DO MÓDULO 1 */
+.concentric-wrapper { display: flex; align-items: center; justify-content: center; position: relative; width: 420px; height: 420px; margin: 0 auto; }
+.circle-layer { border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); text-align: center; font-weight: 800; text-transform: uppercase; }
+.circle-ia { width: 410px; height: 410px; background: #2B2B2B; color: #000000; border: 3px solid #000; position: relative; }
+.circle-ml { width: 315px; height: 315px; background: #4A4A4A; color: #000000; border: 2px solid #878787; position: absolute; bottom: 14px; }
+.circle-dl { width: 220px; height: 220px; background: #B0040E; color: #000000; border: 2px solid #FF6B6B; position: absolute; bottom: 14px; }
+.circle-genai { width: 130px; height: 130px; background: #E30613; color: #000000; border: 3px solid #FFF; position: absolute; bottom: 16px; justify-content: center; padding-top: 0; box-shadow: 0 0 20px rgba(227,6,19,0.5); }
+
+.flow-row { display: flex; align-items: center; justify-content: space-between; background: #FFF; border: 1px solid var(--border-color); border-left: 6px solid var(--senai-red); padding: 12px 18px; border-radius: 6px; width: 100%; margin-bottom: 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); }
+.flow-box { background: var(--senai-light-gray); padding: 8px 14px; border-radius: 6px; font-weight: 700; font-size: 13.5px; text-align: center; min-width: 190px; border: 1px solid #DDD; }
+.flow-box.highlight { background: #FFF0F0; border-color: var(--senai-red); color: var(--senai-red); }
+.flow-box.dark { background: var(--senai-dark-gray); color: #FFF; border-color: #000; }
+.flow-arrow { color: var(--senai-red); font-size: 20px; font-weight: 900; padding: 0 8px; }
+
+.prompt-tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 11px; text-transform: uppercase; margin-right: 6px; color: #FFF; }
+.tag-persona { background-color: #1A73E8; }
+.tag-context { background-color: #E37400; }
+.tag-task { background-color: #1E8E3E; }
+.tag-format { background-color: #E30613; }
+
+.prompt-card { background: #FAFAFA; border: 1px solid #DDD; border-radius: 6px; padding: 10px 13px; font-size: 13.8px; line-height: 1.42; margin-bottom: 8px; }
+.alert-video { background: #FFF4E5; border: 2px solid #E37400; border-left: 8px solid #E30613; padding: 14px 18px; border-radius: 6px; width: 100%; margin-top: 12px; display: flex; align-items: center; gap: 16px; }
+.colab-step-badge { background: var(--senai-red); color: #FFF; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; margin-bottom: 8px; }
+.kbd-key { background: #2B2B2B; color: #FFF; padding: 2px 7px; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: 700; }
+
+.qa-layout { text-align: center; margin: 0 auto; align-self: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+.qa-layout h2 { font-size: 62px; font-weight: 900; color: var(--senai-red); margin-bottom: 16px; text-transform: uppercase; }
+.qa-layout p { font-size: 21px; color: var(--senai-dark-gray); margin-bottom: 10px; }
+.qa-layout .contact-info { margin-top: 25px; font-size: 16px; color: var(--senai-medium-gray); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.presentation-controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; align-items: center; background-color: rgba(255, 255, 255, 0.95); padding: 10px 24px; border-radius: 50px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); z-index: 1000; backdrop-filter: blur(5px); }
+.presentation-controls button { background-color: var(--senai-red); color: var(--senai-white); border: none; padding: 10px 20px; border-radius: 25px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; }
+.presentation-controls button:hover:not(:disabled) { background-color: #C00510; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(227, 6, 19, 0.3); }
+.presentation-controls button:disabled { background-color: var(--border-color); color: var(--senai-medium-gray); cursor: not-allowed; }
+.slide-counter { font-weight: 900; color: var(--senai-dark-gray); font-size: 16px; min-width: 75px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="presentation-area">
+
+  <!-- Slide 1 -->
+  <div class="slide-container active" id="slide1">
+    <div class="title-layout">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI" style="height: 50px; width: auto; align-self: flex-start; margin-bottom: 18px;">
+      <span class="tag-course">Dia 01 • Nivelamento Geral, Laboratórios Colab & Onboarding</span>
+      <h1>Introdução à IA, Prompts & Aprendizado Supervisionado vs. Não Supervisionado</h1>
+      <p class="subtitle">Panorama Visual da IA, Engenharia de Prompt, Google Colab, Lab 1 (Vinhos KNN), Lab 2 (Iris K-Means com Gráficos Passo a Passo) & Onboarding Google Skills Boost<br>SENAI • Aperfeiçoamento Profissional em IA Generativa</p>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide-container" id="slide2">
+    <h2 class="slide-title">Nossa Metodologia Intercalada (5 Dias / 20h)</h2>
+    <div class="content-area">
+      <div class="tiled-content">
+        <div class="tile">
+          <div class="icon"><i class="fa-solid fa-rocket"></i></div>
+          <h3>Dia 1: Base, Prompts & 2 Labs</h3>
+          <p>Panorama visual da IA, Prompts, Google Colab, <strong>Lab Supervisionado (Vinhos KNN)</strong>, <strong>Lab Não Supervisionado (Iris K-Means)</strong> e Onboarding no Google Skills.</p>
+        </div>
+        <div class="tile">
+          <div class="icon"><i class="fa-solid fa-code"></i></div>
+          <h3>Dias 2 a 5: Labs Práticos</h3>
+          <p>Iniciamos cada encontro com conceitos profundos e laboratórios em Python (Mini Hackathon, Keras, PLN, YOLOv8, Dialogflow & PythonAnywhere).</p>
+        </div>
+        <div class="tile">
+          <div class="icon"><i class="fa-solid fa-video"></i></div>
+          <h3>Dias 2 a 5: Skills Boost</h3>
+          <p>Logo após o laboratório correlato, assistimos aos <strong>vídeos oficiais</strong> e realizamos os Quizzes das 4 atividades da trilha Google Cloud!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide-container" id="slide3">
+    <div class="section-title-layout">
+      <h2>Módulo 1: Panorama Visual da IA</h2>
+      <hr>
+      <p>Entendendo visualmente a relação entre IA, Machine Learning, Deep Learning e IA Generativa.</p>
+    </div>
+  </div>
+
+  <!-- Slide 4: Diagrama de Camadas Concêntricas -->
+  <div class="slide-container" id="slide4">
+    <h2 class="slide-title">Diagrama Visual: As 4 Camadas da IA</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 0.95;">
+          <div class="concentric-wrapper">
+            <div class="circle-layer circle-ia">
+              <span style="font-size: 14px; letter-spacing: 0.5px;">1. Inteligência Artificial (1950+)</span>
+              <span style="font-size: 11px; font-weight: 400; color: #CCC;">Sistemas que imitam o comportamento humano</span>
+              <div class="circle-layer circle-ml">
+                <span style="font-size: 13.5px;">2. Machine Learning (1980+)</span>
+                <span style="font-size: 10.5px; font-weight: 400; color: #DDD;">Algoritmos que aprendem com dados</span>
+                <div class="circle-layer circle-dl">
+                  <span style="font-size: 13px;">3. Deep Learning (2010+)</span>
+                  <span style="font-size: 10px; font-weight: 400; color: #FFE5E5;">Redes Neurais Multicamadas</span>
+                  <div class="circle-layer circle-genai">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 20px; margin-bottom: 4px;"></i>
+                    <span style="font-size: 12.5px; line-height: 1.15;">4. IA<br>Generativa</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1.05;">
+          <div class="prompt-card" style="border-left: 5px solid #2B2B2B;">
+            <strong>1. Inteligência Artificial (IA):</strong> O guarda-chuva maior. Inclui desde regras lógicas simples (jogos de xadrez) até robótica autônoma. A Terceira Revolução Industrial (também conhecida como Revolução Técnico-Científica-Informacional ou Revolução Digital)
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #4A4A4A;">
+            <strong>2. Machine Learning (ML):</strong> O sistema não recebe regras prontas; ele treina em dados históricos para prever ou classificar.
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #B0040E;">
+            <strong>3. Deep Learning (DL):</strong> Usa Redes Neurais Profundas capazes de processar imagens, sons e textos complexos.
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #E30613; background: #FFF5F5;">
+            <strong>4. IA Generativa (GenAI):</strong> Subconjunto do Deep Learning que cria <strong>conteúdos inéditos</strong> (Texto, Código, Imagem, Vídeo).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Fluxograma Visual Comparativo -->
+  <div class="slide-container" id="slide5">
+    <h2 class="slide-title">Fluxo Visual: Programação vs. ML vs. IA Generativa</h2>
+    <div class="content-area">
+      <div class="flow-row" style="border-left-color: #2B2B2B;">
+        <div style="width: 210px;">
+          <h3 style="font-size: 17px; margin-bottom: 2px;"><i class="fa-solid fa-code"></i> 1. Software Clássico</h3>
+          <span style="font-size: 12.5px; color: #666;">Regras escritas por humanos</span>
+        </div>
+        <div class="flow-box">Dados + Regras (<code>if/else</code>)</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box dark"><i class="fa-solid fa-gears"></i> Algoritmo Fixo</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box">Respostas Exatas</div>
+      </div>
+
+      <div class="flow-row" style="border-left-color: #1A73E8;">
+        <div style="width: 210px;">
+          <h3 style="font-size: 17px; margin-bottom: 2px; color: #1A73E8;"><i class="fa-solid fa-chart-line"></i> 2. Machine Learning</h3>
+          <span style="font-size: 12.5px; color: #666;">Aprende padrões dos dados</span>
+        </div>
+        <div class="flow-box">Dados + Respostas Históricas</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right" style="color:#1A73E8;"></i></div>
+        <div class="flow-box" style="background:#E8F0FE; border-color:#1A73E8; color:#1A73E8;"><i class="fa-solid fa-graduation-cap"></i> Treinamento ML</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right" style="color:#1A73E8;"></i></div>
+        <div class="flow-box">Descobre as Regras (Modelo)</div>
+      </div>
+
+      <div class="flow-row" style="border-left-color: var(--senai-red); background: #FFFBFB;">
+        <div style="width: 210px;">
+          <h3 style="font-size: 17px; margin-bottom: 2px; color: var(--senai-red);"><i class="fa-solid fa-wand-magic-sparkles"></i> 3. IA Generativa</h3>
+          <span style="font-size: 12.5px; color: #666;">Criação via Modelos Fundacionais</span>
+        </div>
+        <div class="flow-box highlight">Prompt (Instrução Natural)</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box" style="background:var(--senai-red); color:#FFF; border:none;"><i class="fa-solid fa-brain"></i> Modelo Fundacional (LLM)</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box highlight">Conteúdo Novo (Texto/JSON/Img)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Ecossistema Multimodal + Teachable Machine -->
+  <div class="slide-container" id="slide6">
+    <h2 class="slide-title">Ecossistema Multimodal & Prática no Teachable Machine</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-shapes" style="color: var(--senai-red);"></i> Modalidades da IA Generativa</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+            <div style="background:#F8F9FA; padding:10px; border-radius:6px; border:1px solid #E0E0E0;">
+              <strong style="color:var(--senai-red); font-size:14px;"><i class="fa-solid fa-file-lines"></i> Texto ➔ Texto</strong>
+              <p style="font-size:12.5px; margin-top:4px;">Tradução, resumos, chatbots, e-mails (Gemini, GPT).</p>
+            </div>
+            <div style="background:#F8F9FA; padding:10px; border-radius:6px; border:1px solid #E0E0E0;">
+              <strong style="color:#1A73E8; font-size:14px;"><i class="fa-solid fa-laptop-code"></i> Texto ➔ Código</strong>
+              <p style="font-size:12.5px; margin-top:4px;">Geração de scripts Python, SQL, JSON e testes.</p>
+            </div>
+            <div style="background:#F8F9FA; padding:10px; border-radius:6px; border:1px solid #E0E0E0;">
+              <strong style="color:#1E8E3E; font-size:14px;"><i class="fa-solid fa-image"></i> Texto ➔ Imagem</strong>
+              <p style="font-size:12.5px; margin-top:4px;">Criação de fotos de produtos e artes (Imagen, Midjourney).</p>
+            </div>
+            <div style="background:#F8F9FA; padding:10px; border-radius:6px; border:1px solid #E0E0E0;">
+              <strong style="color:#E37400; font-size:14px;"><i class="fa-solid fa-eye"></i> Imagem ➔ Texto</strong>
+              <p style="font-size:12.5px; margin-top:4px;">Leitura de fotos de estoque e geração de fichas técnicas.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-upload" style="color: var(--senai-red);"></i> Teste Rápido: Teachable Machine (Upload)</h3>
+          <p style="font-size: 14.5px; margin-bottom: 10px;">Treine uma rede neural no navegador <strong>sem precisar de webcam</strong>:</p>
+          <div class="flow-row" style="padding: 8px 12px; margin-bottom: 8px;">
+            <span style="font-size:13px; font-weight:700;">1. Upload Fotos (Classe A e B)</span>
+            <i class="fa-solid fa-arrow-right" style="color:var(--senai-red);"></i>
+            <span style="font-size:13px; font-weight:700;">2. Train Model</span>
+            <i class="fa-solid fa-arrow-right" style="color:var(--senai-red);"></i>
+            <span style="font-size:13px; font-weight:700;">3. Teste por Arquivo!</span>
+          </div>
+          <p style="font-size: 13.5px; background: #F2F2F2; padding: 10px; border-radius: 4px;">
+            🔗 Acesse: <a href="https://teachablemachine.withgoogle.com/" target="_blank" style="color: var(--senai-red); font-weight: 700;">teachablemachine.withgoogle.com</a><br>
+            Selecione <strong>Image Project ➔ Standard Image Model ➔ Upload</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide-container" id="slide7">
+    <div class="section-title-layout">
+      <h2>Módulo 2: Engenharia de Prompt na Prática</h2>
+      <hr>
+      <p>Exemplos reais de Antes vs. Depois, Few-Shot Prompting e Raciocínio Passo a Passo.</p>
+    </div>
+  </div>
+
+  <!-- Slide 8: Exemplo Prático 1 -->
+  <div class="slide-container" id="slide8">
+    <h2 class="slide-title">Exemplo Prático 1: Prompt Amador vs. Prompt de Engenharia</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: #878787; background: #F9F9F9;">
+          <h3 style="color: #666;"><i class="fa-solid fa-circle-xmark" style="color: var(--senai-red);"></i> Prompt Vago (Amador)</h3>
+          <div class="prompt-card" style="background: #EFEFEF; font-style: italic;">
+            "Fale sobre um tênis de corrida para vender na internet."
+          </div>
+          <p style="font-size: 14px; font-weight: 700; color: var(--senai-red); margin-top: 8px;">❌ Resultado Ruim para Sistemas:</p>
+          <p style="font-size: 13.5px; color: #555;">
+            Gera um texto longo, genérico, cheio de clichês e impossível de salvar automaticamente nas colunas do banco de dados do sistema.
+          </p>
+        </div>
+        <div style="border-top-color: var(--accent-green);">
+          <h3 style="color: var(--accent-green);"><i class="fa-solid fa-circle-check"></i> Prompt Estruturado (4 Pilares)</h3>
+          <div class="prompt-card" style="font-size: 13.5px;">
+            <span class="prompt-tag tag-persona">Persona</span> Atue como Especialista de SEO do InovaMarketplace.<br>
+            <span class="prompt-tag tag-context">Contexto</span> Produto: Tênis AirRun 300g, solado EVA, R$ 299.<br>
+            <span class="prompt-tag tag-task">Tarefa</span> Crie um título de até 50 caracteres e 3 benefícios técnicos.<br>
+            <span class="prompt-tag tag-format">Formato</span> Responda exclusivamente em JSON com as chaves <code>titulo</code> e <code>beneficios</code>.
+          </div>
+          <p style="font-size: 13.5px; color: var(--accent-green); font-weight: 700;">
+            ✅ Resultado: JSON limpo e pronto para o backend Python!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Exemplo Prático 2 -->
+  <div class="slide-container" id="slide9">
+    <h2 class="slide-title">Exemplo Prático 2: Zero-Shot vs. Few-Shot & Chain-of-Thought</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-list-ol" style="color: var(--senai-red);"></i> Few-Shot (Com Exemplos no Prompt)</h3>
+          <div class="code-block" style="font-size: 12px;">
+<span class="comment"># Ensinamos o padrão exato com 3 exemplos curtos:</span>
+Texto: "Cobraram duas vezes no meu cartão!" ➔ <span class="string">[CRITICA]</span>
+Texto: "Qual o prazo de entrega para SP?" ➔ <span class="string">[BAIXA]</span>
+Texto: "Faltou o cabo USB na embalagem." ➔ <span class="string">[ALTA]</span>
+
+Texto: "A caixa veio amassada, mas funciona." ➔ <span class="string">[BAIXA]</span>
+          </div>
+          <p style="font-size: 13.5px; margin-top: 6px;">Garante que o LLM responda apenas a etiqueta esperada pelo software!</p>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-brain" style="color: var(--senai-red);"></i> Chain-of-Thought (Passo a Passo)</h3>
+          <div class="prompt-card" style="font-size: 13px;">
+            <strong>Prompt CoT:</strong> "Cliente comprou 2 fones de R$ 150. Há 10% de desconto acima de R$ 250 e frete de R$ 20. <strong>Calcule passo a passo</strong>."<br><br>
+            <strong>Resposta da IA:</strong><br>
+            1. Subtotal: 2 x 150 = R$ 300,00<br>
+            2. Desconto (10%): -R$ 30,00 (R$ 270,00)<br>
+            3. Com frete (+R$ 20): <strong>Total = R$ 290,00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Seção Google Colab -->
+  <div class="slide-container" id="slide10">
+    <div class="section-title-layout">
+      <h2>Módulo 3: Google Colab na Prática</h2>
+      <hr>
+      <p>Nosso ambiente de programação Python gratuito na nuvem do Google.</p>
+    </div>
+  </div>
+
+  <!-- Slide 11: O que é o Google Colab e Passo a Passo -->
+  <div class="slide-container" id="slide11">
+    <h2 class="slide-title">☁️ O que é o Google Colab & Como Criar seu 1º Notebook</h2>
+    <div class="content-area">
+      <div class="two-column tiled" style="margin-bottom: 14px;">
+        <div>
+          <h3><i class="fa-solid fa-cloud-bolt" style="color: var(--senai-red);"></i> O que é o Google Colaboratory?</h3>
+          <p style="font-size: 14.5px;">Ambiente interativo que roda <strong>100% no navegador</strong>, sem instalar nada! Já vem com <code>pandas</code>, <code>scikit-learn</code>, <code>matplotlib</code> e <code>seaborn</code> prontos e salva tudo no seu <strong>Google Drive</strong>.</p>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-book-open" style="color: var(--senai-red);"></i> Células de Código vs. Células de Texto</h3>
+          <p style="font-size: 14.5px;"><strong><code>+ Código</code>:</strong> Bloco onde você digita Python e clica em <strong>▶ (Play)</strong> para ver o gráfico na hora.<br><strong><code>+ Texto</code>:</strong> Bloco para escrever títulos e explicações do relatório.</p>
+        </div>
+      </div>
+      <div class="tiled-content">
+        <div class="tile" style="padding: 14px;">
+          <div class="colab-step-badge">1</div>
+          <h3 style="font-size:16px;">Abrir & Criar</h3>
+          <p style="font-size: 13px;">Acesse <a href="https://colab.research.google.com" target="_blank" style="color:var(--senai-red); font-weight:700;">colab.research.google.com</a> e clique em <strong>+ Novo notebook</strong>.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <div class="colab-step-badge">2</div>
+          <h3 style="font-size:16px;">Renomear</h3>
+          <p style="font-size: 13px;">Clique em <code>Untitled0.ipynb</code> no topo e mude para <code>Aula01_Lab_Vinhos_KNN.ipynb</code>.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <div class="colab-step-badge">3</div>
+          <h3 style="font-size:16px;">Rodar Código</h3>
+          <p style="font-size: 13px;">Clique no botão <strong>▶ (Play)</strong> da célula ou pressione <span class="kbd-key">Shift</span> + <span class="kbd-key">Enter</span>.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <div class="colab-step-badge">4</div>
+          <h3 style="font-size:16px;">Salvar</h3>
+          <p style="font-size: 13px;">Pressione <span class="kbd-key">Ctrl</span> + <span class="kbd-key">S</span> para salvar no Google Drive ou faça download do <code>.ipynb</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: Conceito de Aprendizado Supervisionado (Antes do Lab 1) -->
+  <div class="slide-container" id="slide12">
+    <h2 class="slide-title">🎯 Conceito: O que é Aprendizado de Máquina Supervisionado?</h2>
+    <div class="content-area">
+      <div class="flow-row" style="background: #F8FAFF; border-left-color: #1A73E8;">
+        <div class="flow-box" style="border-color:#1A73E8;"><strong>Features (X)</strong><br><span style="font-size:12px;">Dados Químicos (Álcool, Cinzas...)</span></div>
+        <div class="flow-arrow" style="color:#1A73E8;">+</div>
+        <div class="flow-box highlight"><strong>Target / Rótulo (y)</strong><br><span style="font-size:12px;">Gabarito Real (Tipo do Vinho)</span></div>
+        <div class="flow-arrow" style="color:#1A73E8;"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box dark">Treinamento (<code>.fit</code>)</div>
+        <div class="flow-arrow" style="color:#1A73E8;"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box" style="background:#E6F4EA; border-color:#1E8E3E; color:#1E8E3E;">Previsão (<code>.predict</code>)</div>
+      </div>
+      <div class="two-column tiled" style="margin-top: 6px;">
+        <div>
+          <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--senai-red);"></i> Por que se chama "Supervisionado"?</h3>
+          <p style="font-size: 14.5px;">Porque o algoritmo aprende sob a "supervisão" de um <strong>gabarito previamente conhecido (Dados Rotulados)</strong>. Durante o treino, mostramos à IA tanto as características do produto (<strong>X</strong>) quanto a resposta certa (<strong>y</strong>).</p>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-tags" style="color: var(--senai-red);"></i> Os 2 Tipos de Problemas Supervisionados</h3>
+          <ul class="bullet-list-simple" style="font-size: 14.5px;">
+            <li><strong>Classificação:</strong> O alvo $y$ é uma <strong>categoria</strong> (ex: Classificar vinho em <code>class_0</code>, <code>class_1</code> ou <code>class_2</code>).</li>
+            <li><strong>Regressão:</strong> O alvo $y$ é um <strong>número contínuo</strong> (ex: Prever o preço de venda em Reais).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: Lab 1 (Vinhos KNN) - Passos 1, 2 e 3 + Saída -->
+  <div class="slide-container" id="slide13">
+    <h2 class="slide-title">🍷 Lab 1 (Vinhos KNN): Passos 1, 2 e 3 + Saída do Console</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código (Blocos 1, 2 e 3 no Colab)</h3>
+          <div class="code-block" style="font-size: 11px;">
+<span class="comment"># 1. Importando as ferramentas</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix, ConfusionMatrixDisplay, classification_report
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_wine
+
+<span class="comment"># 2. Carregando os Dados em um DataFrame</span>
+data = load_wine()
+df = pd.DataFrame(data.data, columns=data.feature_names)
+df[<span class="string">'target'</span>] = data.target
+print(f<span class="string">"Dataset carregado com {df.shape[0]} amostras."</span>)
+print(<span class="string">"Classes de vinho:"</span>, data.target_names)
+
+<span class="comment"># 3. Definindo Features (X = entradas) e Target (y = saída)</span>
+X = df.drop(<span class="string">'target'</span>, axis=<span class="string">1</span>)
+y = df[<span class="string">'target'</span>]
+          </div>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-terminal" style="color: var(--accent-green);"></i> Saída do Bloco & Explicação</h3>
+          <span class="output-badge">Saída no Google Colab</span>
+          <div class="output-console">Dataset carregado com 178 amostras.
+Classes de vinho: ['class_0' 'class_1' 'class_2']</div>
+          <div class="prompt-card" style="border-left: 5px solid #1A73E8;">
+            <strong>O que esse código fez?</strong><br>
+            1. Carregou <strong>178 garrafas de vinho</strong> analisadas em laboratório.<br>
+            2. Separou na matriz <strong><code>X</code></strong> as 13 propriedades químicas (álcool, ácido málico, cinzas, magnésio, prolina, etc.).<br>
+            3. Guardou no vetor <strong><code>y</code></strong> o rótulo verdadeiro do produtor (<code>0</code>, <code>1</code> ou <code>2</code>).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 14: Lab 1 (Vinhos KNN) - Passos 4, 5 e 6 + Saída -->
+  <div class="slide-container" id="slide14">
+    <h2 class="slide-title">🍷 Lab 1 (Vinhos KNN): Passos 4, 5 e 6 (Treino, Teste e Previsão)</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código (Blocos 4, 5 e 6 no Colab)</h3>
+          <div class="code-block" style="font-size: 11px;">
+<span class="comment"># 4. Divisão de Treino (80%) e Teste (20%)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="string">0.20</span>, random_state=<span class="string">42</span>
+)
+print(f<span class="string">"Treino: {len(X_train)} amostras | Teste: {len(X_test)} amostras"</span>)
+
+<span class="comment"># 5. Criando e treinando o KNN (5 vizinhos mais próximos)</span>
+knn = KNeighborsClassifier(n_neighbors=<span class="string">5</span>)
+knn.fit(X_train, y_train)
+
+<span class="comment"># 6. Fazendo Previsões e gerando a Matriz de Confusão</span>
+y_pred = knn.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=data.target_names)
+disp.plot(cmap=<span class="string">'Blues'</span>, values_format=<span class="string">'d'</span>)
+plt.title(<span class="string">'Onde a IA acertou e onde errou?'</span>)
+plt.show()
+print(classification_report(y_test, y_pred, target_names=data.target_names))
+          </div>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-terminal" style="color: var(--accent-green);"></i> Saída Intermediária & Explicação</h3>
+          <span class="output-badge">Saída dos Passos 4 e 5</span>
+          <div class="output-console">Treino: 142 amostras | Teste: 36 amostras
+KNeighborsClassifier(n_neighbors=5)</div>
+          <div class="prompt-card" style="border-left: 5px solid var(--accent-orange);">
+            <strong>Por que esconder 36 vinhos no Teste?</strong><br>
+            • A IA estuda nas <strong>142 amostras de treino</strong> (<code>knn.fit</code>).<br>
+            • Depois, aplicamos uma "prova surpresa" com os <strong>36 vinhos de teste</strong> (<code>knn.predict</code>) que ela nunca viu antes!<br>
+            • Veja no próximo slide a imagem do gráfico e do relatório gerados pelo Passo 6!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 15: Saída Gráfica do Passo 6 do Lab 1 (Imagem Matriz Vinhos) -->
+  <div class="slide-container" id="slide15">
+    <h2 class="slide-title">📊 Saída do Passo 6 (Lab 1): Matriz de Confusão & Relatório</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div class="img-output-box" style="flex: 0.85;">
+          <img src="matriz_confusao_vinhos.png" alt="Matriz de Confusão e Relatório do Colab" style="max-height: 475px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+        <div style="flex: 1.15;">
+          <div class="prompt-card" style="border-left: 5px solid #1A73E8;">
+            <strong>1. Lendo a Diagonal Principal (Acertos = 26 de 36):</strong><br>
+            • <code>class_0</code>: Acertou <strong>12 de 14</strong> (errou apenas 2 como class_2).<br>
+            • <code>class_1</code>: Acertou <strong>11 de 14</strong> (errou 3 como class_2).<br>
+            • <code>class_2</code>: Acertou apenas <strong>3 de 8</strong> (confundiu 2 com class_0 e 3 com class_1).
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #E37400;">
+            <strong>2. Lendo o Relatório de Classificação:</strong><br>
+            • <strong>Accuracy Global:</strong> <code>0.72</code> (<strong>72%</strong> de acerto nas 36 amostras de teste).<br>
+            • <strong>F1-Score por Classe:</strong> Excelente na <code>class_0</code> (<strong>0.86</strong>) e <code>class_1</code> (<strong>0.79</strong>), mas baixo na <code>class_2</code> (<strong>0.38</strong>).
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid var(--senai-red); background: #FFF5F5;">
+            <strong>3. 💡 Por que a <code>class_2</code> teve 0.38? (Insight de Engenharia!):</strong><br>
+            Nos dados brutos do vinho, o atributo <code>proline</code> vai até <strong>1.680</strong> enquanto <code>nonflavanoid_phenols</code> vale <strong>0.13</strong>! Como o KNN mede distância direta sem padronizar a escala, a variável maior dominou o cálculo!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 16: Conceito de Aprendizado Não Supervisionado + Passo 1 do Lab 2 -->
+  <div class="slide-container" id="slide16">
+    <h2 class="slide-title">🌸 Lab 2 (Não Supervisionado): Conceito & Passo 1 (Carga do Iris)</h2>
+    <div class="content-area">
+      <div class="flow-row" style="background: #FFF8F6; border-left-color: var(--senai-red); padding: 9px 16px;">
+        <div class="flow-box highlight"><strong>Apenas Dados Brutos (X)</strong><br><span style="font-size:11.5px;">Sem Rótulos / Sem Gabarito!</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box dark"><i class="fa-solid fa-compass"></i> Algoritmo K-Means</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box" style="background:#E8F0FE; border-color:#1A73E8; color:#1A73E8;">Agrupa em K Clusters por Proximidade!</div>
+      </div>
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Passo 1: Importação e Carga Inicial</h3>
+          <div class="code-block" style="font-size: 11.2px;">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sb
+<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder
+
+<span class="comment"># Carregar o dataset (subir iris.csv no Colab)</span>
+df = pd.read_csv(<span class="string">'/content/iris (1).csv'</span>)
+print(df.head())
+          </div>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-terminal" style="color: var(--accent-green);"></i> Saída do `df.head()` & Explicação</h3>
+          <span class="output-badge">Saída no Google Colab</span>
+          <div class="output-console" style="font-size: 11px;">   sepal_length  sepal_width  petal_length  petal_width species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+3           4.6          3.1           1.5          0.2  setosa
+4           5.0          3.6           1.4          0.2  setosa</div>
+          <p style="font-size: 13.5px;">Temos <strong>4 medidas em cm</strong> (comprimento/largura da sépala e da pétala). Nosso objetivo será esconder a coluna <code>species</code> e fazer o K-Means descobrir as 3 espécies sozinho!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 17: Lab 2 - Passo 2A (Gráfico de Dispersão Original + Imagem 1) -->
+  <div class="slide-container" id="slide17">
+    <h2 class="slide-title">🌸 Lab 2 (Passo 2A): Visualização Exploratória — Dispersão</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 0.95;">
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código do Gráfico de Dispersão</h3>
+          <div class="code-block" style="font-size: 11.2px;">
+<span class="comment"># Gráfico de Dispersão: Comprimento vs Largura da Pétala</span>
+plt.figure(figsize=(<span class="string">10</span>, <span class="string">6</span>))
+sb.scatterplot(
+    x=df[<span class="string">'petal_length'</span>], 
+    y=df[<span class="string">'petal_width'</span>], 
+    hue=df[<span class="string">'species'</span>], 
+    palette=<span class="string">'Set1'</span>
+)
+sb.regplot(
+    x=df[<span class="string">'petal_length'</span>], 
+    y=df[<span class="string">'petal_width'</span>], 
+    scatter=<span class="keyword">False</span>, ci=<span class="keyword">None</span>, color=<span class="string">'blue'</span>
+)
+plt.title(<span class="string">'Gráfico de Dispersão Original (Com Rótulos)'</span>)
+plt.xlabel(<span class="string">'Comprimento da Pétala (cm)'</span>)
+plt.ylabel(<span class="string">'Largura da Pétala (cm)'</span>)
+plt.show()
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #1A73E8; font-size: 13.2px;">
+            <strong>🔍 O que observamos na saída ao lado?</strong><br>
+            • Os pontos vermelhos (<strong>setosa</strong>) formam uma ilha isolada no canto inferior esquerdo (pétalas pequenas).<br>
+            • Os pontos azuis (<strong>versicolor</strong>) e verdes (<strong>virginica</strong>) crescem seguindo uma forte tendência linear (linha azul)!
+          </div>
+        </div>
+        <div class="img-output-box" style="flex: 1.05;">
+          <span class="output-badge">Saída Gráfica Gerada pelo Bloco</span>
+          <img src="iris_dispersao_original.png" alt="Gráfico de Dispersão Original" style="max-height: 410px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 18: Lab 2 - Passo 2B (Pairplot Original + Imagem 2) -->
+  <div class="slide-container" id="slide18">
+    <h2 class="slide-title">🌸 Lab 2 (Passo 2B): Visão Geral Multivariada (`pairplot`)</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 0.88;">
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código do Pairplot Original</h3>
+          <div class="code-block" style="font-size: 12px;">
+<span class="comment"># Pairplot para visão geral de todas as 4 variáveis</span>
+sb.pairplot(df, hue=<span class="string">"species"</span>)
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid var(--accent-green);">
+            <strong>1. O que o <code>sb.pairplot</code> faz?</strong><br>
+            Cruza todas as 4 variáveis numéricas duas a duas em uma matriz $4 \times 4$ (16 gráficos de uma só vez!).
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid #E37400;">
+            <strong>2. O que significam as curvas na diagonal?</strong><br>
+            Mostram a distribuição de densidade de cada medida. Veja nas duas últimas linhas (<code>petal_length</code> e <code>petal_width</code>) como a montanha azul (<em>setosa</em>) é totalmente separada das demais!
+          </div>
+        </div>
+        <div class="img-output-box" style="flex: 1.12;">
+          <span class="output-badge">Saída Gráfica do Pairplot Original</span>
+          <img src="iris_pairplot_original.png" alt="Pairplot Original com Espécies" style="max-height: 435px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 19: Lab 2 - Passo 3 (Implementando o K-Means + Imagem 3) -->
+  <div class="slide-container" id="slide19">
+    <h2 class="slide-title">🌸 Lab 2 (Passo 3): Implementando o K-Means Sem Rótulos</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 0.92;">
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código do Agrupamento K-Means</h3>
+          <div class="code-block" style="font-size: 11px;">
+<span class="comment"># Removemos o rótulo para simular desconhecimento das espécies</span>
+X = np.array(df.drop(<span class="string">"species"</span>, axis=<span class="string">1</span>))
+
+<span class="comment"># Codificamos os rótulos reais apenas para comparação futura</span>
+label_encoder = LabelEncoder()
+y_true = label_encoder.fit_transform(df[<span class="string">'species'</span>])
+
+<span class="comment"># Execução do K-Means com k=3</span>
+k = <span class="string">3</span>
+kmeans = KMeans(n_clusters=k, random_state=<span class="string">0</span>)
+clusters = kmeans.fit_predict(X)
+
+<span class="comment"># Adicionando os resultados ao DataFrame e plotando</span>
+df[<span class="string">'k-classes'</span>] = clusters
+sb.pairplot(df, hue=<span class="string">"k-classes"</span>, palette=<span class="string">'viridis'</span>)
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid var(--senai-red); background: #FFF5F5; font-size: 13px;">
+            <strong>🎯 Compare com o slide anterior!</strong><br>
+            Mesmo sem a coluna <code>species</code>, o K-Means criou os grupos <code>0</code> (roxo), <code>1</code> (verde-água) e <code>2</code> (amarelo) quase idênticos às espécies biológicas reais!
+          </div>
+        </div>
+        <div class="img-output-box" style="flex: 1.08;">
+          <span class="output-badge">Saída Gráfica: Grupos Descobertos pelo K-Means</span>
+          <img src="iris_pairplot_kmeans.png" alt="Pairplot K-Means Clusters" style="max-height: 435px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 20: Lab 2 - Passo 4 (Avaliação de Acurácia) e Passo 5A (Método do Cotovelo + Imagem 4) -->
+  <div class="slide-container" id="slide20">
+    <h2 class="slide-title">🌸 Lab 2 (Passos 4 e 5A): Acurácia & Método do Cotovelo</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 1.05;">
+          <h3><i class="fa-solid fa-check-double" style="color: var(--senai-red);"></i> Passo 4: Acurácia & Passo 5A: Cotovelo</h3>
+          <div class="code-block" style="font-size: 10.6px;">
+<span class="comment"># Passo 4: Alinhando clusters com espécies reais para medir Acurácia</span>
+<span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linear_sum_assignment
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, confusion_matrix
+conf_matrix = confusion_matrix(y_true, clusters)
+row_ind, col_ind = linear_sum_assignment(-conf_matrix)
+clusters_mapeados = np.zeros_like(clusters)
+<span class="keyword">for</span> i, j <span class="keyword">in</span> zip(row_ind, col_ind):
+    clusters_mapeados[clusters == i] = j
+print(f<span class="string">"Acurácia do Agrupamento: {accuracy_score(y_true, clusters_mapeados)*100:.2f}%"</span>)
+
+<span class="comment"># Passo 5A: Método do Cotovelo (Inércia para k de 1 a 10)</span>
+inercias = []
+<span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="string">1</span>, <span class="string">11</span>):
+    kmeans = KMeans(n_clusters=k, random_state=<span class="string">0</span>).fit(X)
+    inercias.append(kmeans.inertia_)
+plt.plot(range(<span class="string">1</span>, <span class="string">11</span>), inercias, marker=<span class="string">'o'</span>)
+plt.title(<span class="string">'Método do Cotovelo'</span>); plt.show()
+          </div>
+          <div class="output-console" style="padding: 6px 12px; font-weight: 700;">Acurácia do Agrupamento: 89.33%</div>
+          <p style="font-size: 13px;"><strong>Lendo o Gráfico ao lado:</strong> A inércia despenca de `680` ($k=1$) para `152` ($k=2$) e `78` ($k=3$). Em <strong>$k=3$</strong> forma-se o "cotovelo" onde a curva estabiliza!</p>
+        </div>
+        <div class="img-output-box" style="flex: 0.95;">
+          <span class="output-badge">Saída Gráfica: Método do Cotovelo</span>
+          <img src="iris_metodo_cotovelo.png" alt="Gráfico Método do Cotovelo" style="max-height: 410px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 21: Lab 2 - Passo 5B (Índice de Silhueta + Imagem 5 e Conclusão) -->
+  <div class="slide-container" id="slide21">
+    <h2 class="slide-title">🌸 Lab 2 (Passo 5B): Índice de Silhueta & Conclusão do Lab</h2>
+    <div class="content-area">
+      <div class="two-column" style="align-items: center;">
+        <div style="flex: 1.0;">
+          <h3><i class="fa-solid fa-code" style="color: var(--senai-red);"></i> Código do Índice de Silhueta</h3>
+          <div class="code-block" style="font-size: 11px;">
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> silhouette_score
+
+silhouette_scores = []
+<span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="string">2</span>, <span class="string">11</span>):
+    kmeans = KMeans(n_clusters=k, random_state=<span class="string">0</span>)
+    labels = kmeans.fit_predict(X)
+    score = silhouette_score(X, labels)
+    silhouette_scores.append(score)
+
+plt.plot(range(<span class="string">2</span>, <span class="string">11</span>), silhouette_scores, marker=<span class="string">'o'</span>, color=<span class="string">'red'</span>)
+plt.xlabel(<span class="string">'Número de Clusters (k)'</span>)
+plt.ylabel(<span class="string">'Índice de Silhueta'</span>)
+plt.title(<span class="string">'Índice de Silhueta'</span>)
+plt.show()
+          </div>
+          <div class="prompt-card" style="border-left: 5px solid var(--accent-green); font-size: 13px;">
+            <strong>🔍 Interpretando a Saída da Silhueta:</strong><br>
+            • O pico ocorre em $k=2$ (`0.68`, pois a <em>Setosa</em> é muito isolada das outras duas) e mantém um score alto em <strong>$k=3$ (`0.55`)</strong> antes de cair drasticamente para $k \ge 4$.<br>
+            • <strong>Conclusão:</strong> Combinando Cotovelo + Silhueta, confirmamos matematicamente os <strong>3 grupos</strong> com <strong>89,33% de precisão</strong> sem nenhum rótulo!
+          </div>
+        </div>
+        <div class="img-output-box" style="flex: 1.0;">
+          <span class="output-badge">Saída Gráfica: Índice de Silhueta</span>
+          <img src="iris_indice_silhueta.png" alt="Gráfico Índice de Silhueta" style="max-height: 410px; width: auto; max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 22: Onboarding Google Skills Boost com exigência dos vídeos -->
+  <div class="slide-container" id="slide22">
+    <h2 class="slide-title">🎓 Onboarding: Trilha Google Cloud Skills Boost</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-brands fa-google" style="color: var(--senai-red);"></i> As 4 Atividades da Trilha Oficial</h3>
+          <p style="font-size: 15px;">Programa: <strong>Iniciante: programa de aprendizado Introdução à IA generativa</strong></p>
+          <ul class="bullet-list-simple" style="margin-top: 10px; font-size: 15px;">
+            <li><strong>Dia 2:</strong> Atividade 1 — <em>Introdução à IA Generativa</em></li>
+            <li><strong>Dia 3:</strong> Atividade 2 — <em>Introdução aos Grandes Modelos de Linguagem (LLMs)</em></li>
+            <li><strong>Dia 4:</strong> Atividade 3 — <em>Introdução à IA Responsável</em></li>
+            <li><strong>Dia 5:</strong> Atividade 4 — <em>Aplicação Prática & Conclusão da Trilha</em></li>
+          </ul>
+        </div>
+        <div>
+          <h3><i class="fa-solid fa-list-check" style="color: var(--senai-red);"></i> Passo a Passo do Onboarding Hoje</h3>
+          <ul class="bullet-list-simple" style="font-size: 15px;">
+            <li>1. Acessar o portal <strong>Google Skills</strong> com sua conta Google pessoal.</li>
+            <li>2. Localizar a trilha <em>Iniciante: Introdução à IA generativa</em> e clicar em <strong>Começar / Inscrever-se</strong>.</li>
+            <li>3. Ativar o <strong>Perfil Público de Credenciais</strong> para emissão dos 4 Badges.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert-video">
+        <i class="fa-solid fa-circle-play" style="font-size: 42px; color: var(--senai-red);"></i>
+        <div>
+          <h3 style="color: var(--senai-red); font-size: 18px; margin-bottom: 4px;">⚠️ REGRA OBRIGATÓRIA DA TRILHA: ASSISTIR AOS VÍDEOS E LEITURAS!</h3>
+          <p style="font-size: 14.5px; color: #2B2B2B;">
+            Para que a plataforma contabilize <strong>100% de conclusão</strong> e libere os Badges Oficiais do Google Cloud, é <strong>indispensável assistir integralmente aos vídeos explicativos</strong> de cada módulo (use legendas em Português) e revisar os documentos antes de responder aos Quizzes!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 23 -->
+  <div class="slide-container" id="slide23">
+    <div class="qa-layout">
+      <h2>Fim do Dia 01! 🚀</h2>
+      <p>Salve seus notebooks no Google Drive e traga seu fone de ouvido amanhã para conquistarmos o 1º Badge do Google Cloud!</p>
+      <div class="contact-info">SENAI • Tecnologia da Informação + Google Cloud Skills Boost</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTROLES DE NAVEGAÇÃO DOS SLIDES -->
+<div class="presentation-controls">
+  <button id="btn-prev" onclick="changeSlide(-1)" disabled><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+  <div class="slide-counter" id="slide-counter">1 / 23</div>
+  <button id="btn-next" onclick="changeSlide(1)">Próximo <i class="fa-solid fa-arrow-right"></i></button>
+</div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 23;
+
+function updateSlideView() {
+  document.querySelectorAll('.slide-container').forEach(el => el.classList.remove('active'));
+  const activeSlide = document.getElementById('slide' + currentSlide);
+  if (activeSlide) activeSlide.classList.add('active');
+
+  document.getElementById('slide-counter').innerText = `${currentSlide} / ${totalSlides}`;
+  document.getElementById('btn-prev').disabled = (currentSlide === 1);
+  document.getElementById('btn-next').disabled = (currentSlide === totalSlides);
+}
+
+function changeSlide(direction) {
+  currentSlide += direction;
+  if (currentSlide < 1) currentSlide = 1;
+  if (currentSlide > totalSlides) currentSlide = totalSlides;
+  updateSlideView();
+}
+
+function scalePresentation() {
+  const area = document.getElementById('presentation-area');
+  const scaleX = window.innerWidth / 1280;
+  const scaleY = window.innerHeight / 720;
+  const scale = Math.min(scaleX, scaleY) * 0.95;
+  area.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
+window.addEventListener('resize', scalePresentation);
+window.addEventListener('load', () => {
+  scalePresentation();
+  updateSlideView();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+    changeSlide(1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    changeSlide(-1);
+  }
+});
+</script>
+</body>
+</html>

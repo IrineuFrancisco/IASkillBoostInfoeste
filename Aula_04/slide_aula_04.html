@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 04 - Visão Computacional (YOLOv8, OCR, DeepFace), Ética e Trilha 3 (SENAI-SP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+:root {
+  --senai-red: #E30613;
+  --senai-black: #000000;
+  --senai-dark-gray: #2B2B2B;
+  --senai-medium-gray: #757575;
+  --senai-light-gray: #F2F2F2;
+  --senai-white: #FFFFFF;
+  --border-color: #E0E0E0;
+  --colab-orange: #F9AB00;
+  --google-blue: #1A73E8;
+  --code-green: #2E7D32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--senai-light-gray);
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#presentation-area {
+  width: 1280px;
+  height: 720px;
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.slide-container {
+  width: 100%;
+  height: 100%;
+  background-color: var(--senai-white);
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  padding: 38px 65px 72px 65px;
+  background-image: 
+    linear-gradient(to right, rgba(229, 229, 229, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(229, 229, 229, 0.35) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.slide-container.active {
+  display: flex;
+  animation: slideFadeIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 100%;
+  background-color: var(--senai-red);
+  z-index: 10;
+}
+
+.slide-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.06) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4, p, li, .subtitle {
+  margin: 0;
+  line-height: 1.38;
+}
+
+.slide-container h1 {
+  font-weight: 900;
+  color: var(--senai-red);
+  font-size: 52px;
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.slide-container .slide-title {
+  font-weight: 900;
+  color: var(--senai-black);
+  font-size: 28px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: left;
+  border-left: 6px solid var(--senai-red);
+  padding-left: 16px;
+}
+
+.slide-container h3 {
+  font-weight: 800;
+  color: var(--senai-black);
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.slide-container p, 
+.slide-container li, 
+.slide-container .subtitle {
+  color: var(--senai-dark-gray);
+  font-size: 15.5px;
+  font-weight: 400;
+}
+
+.content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 25px;
+}
+
+.title-layout .tag-course {
+  background-color: var(--senai-light-gray);
+  color: var(--senai-black);
+  padding: 8px 18px;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--senai-red);
+  align-self: flex-start;
+}
+
+.title-layout .subtitle {
+  font-size: 21px;
+  color: var(--senai-medium-gray);
+  margin-top: 10px;
+  max-width: 960px;
+}
+
+.section-title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.section-title-layout .module-tag {
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.section-title-layout h2 {
+  font-size: 50px;
+  color: var(--senai-black);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.section-title-layout hr {
+  width: 140px;
+  height: 7px;
+  background-color: var(--senai-red);
+  border: none;
+  margin: 20px auto;
+}
+
+.section-title-layout p {
+  max-width: 840px;
+  color: var(--senai-medium-gray);
+  font-size: 21px;
+}
+
+.two-column {
+  display: flex;
+  width: 100%;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.two-column > div { flex: 1; }
+
+.two-column.tiled > div {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-top: 5px solid var(--senai-red);
+  padding: 18px 22px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.tiled-content {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.tile {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-bottom: 5px solid var(--senai-red);
+  padding: 16px 18px;
+  border-radius: 6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.tile .icon {
+  font-size: 28px;
+  color: var(--senai-red);
+  margin-bottom: 10px;
+}
+
+.bullet-list-simple {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bullet-list-simple li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 14.5px;
+}
+
+.bullet-list-simple li::before {
+  content: '■';
+  color: var(--senai-red);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 12px;
+}
+
+.code-block {
+  background-color: #1E1E1E;
+  color: #D4D4D4;
+  padding: 11px 14px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12.2px;
+  line-height: 1.33;
+  text-align: left;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 5px solid var(--senai-red);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.code-block span.keyword { color: #569CD6; font-weight: bold; }
+.code-block span.string { color: #CE9178; }
+.code-block span.comment { color: #6A9955; font-style: italic; }
+.code-block span.func { color: #DCDCAA; }
+
+.console-output {
+  background-color: #0D1117;
+  color: #E6EDF3;
+  padding: 10px 13px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11.8px;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 4px solid #2EA043;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.console-output .out-title {
+  color: #7EE787;
+  font-weight: bold;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #30363D;
+  padding-bottom: 3px;
+}
+
+.callout-box {
+  background-color: #FFF5F5;
+  border-left: 6px solid var(--senai-red);
+  padding: 11px 16px;
+  border-radius: 0 6px 6px 0;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.callout-box.warning {
+  background-color: #FFF8E1;
+  border-left-color: #FFA000;
+}
+
+.callout-box.info {
+  background-color: #E8F0FE;
+  border-left-color: var(--google-blue);
+}
+
+.paradigm-row {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  width: 100%;
+}
+.paradigm-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-left: 6px solid var(--senai-dark-gray);
+  border-radius: 6px;
+  padding: 11px 15px;
+  gap: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+}
+.paradigm-card.highlight {
+  border-left-color: var(--senai-red);
+  background: #FFF9F9;
+}
+.paradigm-label {
+  min-width: 210px;
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--senai-black);
+}
+.flow-box {
+  background: var(--senai-light-gray);
+  border: 1px solid #D0D0D0;
+  padding: 7px 11px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+}
+.flow-box.red { background: var(--senai-red); color: #fff; border-color: var(--senai-red); }
+.flow-box.dark { background: var(--senai-dark-gray); color: #fff; border-color: var(--senai-dark-gray); }
+.flow-box.blue { background: var(--google-blue); color: #fff; border-color: var(--google-blue); }
+.flow-arrow { color: var(--senai-red); font-size: 17px; font-weight: 900; }
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 2px 9px;
+  border-radius: 4px;
+  margin-right: 6px;
+  text-transform: uppercase;
+}
+
+.presentation-controls {
+  position: fixed;
+  bottom: 18px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.96);
+  padding: 10px 24px;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.presentation-controls button {
+  background-color: var(--senai-red);
+  color: var(--senai-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presentation-controls button:hover:not(:disabled) {
+  background-color: #C00510;
+  transform: translateY(-2px);
+}
+
+.presentation-controls button:disabled {
+  background-color: var(--border-color);
+  color: var(--senai-medium-gray);
+  cursor: not-allowed;
+}
+
+.slide-counter {
+  font-weight: 900;
+  color: var(--senai-dark-gray);
+  font-size: 16px;
+  min-width: 75px;
+  text-align: center;
+}
+    </style>
+</head>
+<body>
+
+<div id="presentation-area">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide-container active">
+    <div class="title-layout">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
+      <span class="tag-course">Dia 04 • Aula 04 (4 Horas) • Curso Integrado Google Cloud Skills Boost</span>
+      <h1>Visão Computacional,<br>YOLOv8, OCR &amp; IA Responsável</h1>
+      <p class="subtitle">Detecção de Objetos (<code>YOLOv8</code>), Leitura de Placas Veiculares (<code>EasyOCR</code>), Emoções Faciais (<code>DeepFace</code>), Ética e <strong>Atividade 03 da Trilha Skills Boost</strong></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: DIVISOR MÓDULO 1 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 01 • Fundamentos Visuais</span>
+      <h2>Como as Máquinas Enxergam?<br>Visão Computacional</h2>
+      <hr>
+      <p>De matrizes tridimensionais de pixels (RGB/BGR) à localização espacial em tempo real.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: CLASSIFICAÇÃO VS DETECÇÃO VS RECONHECIMENTO FACIAL -->
+  <div class="slide-container">
+    <h2 class="slide-title">As 3 Tarefas da Visão Computacional</h2>
+    <div class="content-area">
+      <div class="paradigm-row">
+        <div class="paradigm-card">
+          <div class="paradigm-label">1. Classificação<br><span style="font-size: 12px; color: var(--senai-medium-gray);">Responde apenas: "O quê?"</span></div>
+          <div class="flow-box"><i class="fa-solid fa-image"></i> Imagem Inteira<br><span style="font-size: 11.5px; font-weight: 400;">Tensor 3D (Altura × Largura × 3 Canais)</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box dark">CNN Tradicional<br><span style="font-size: 11.5px; font-weight: 400;">Ex: Teachable Machine</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box">Rótulo Único: <code>"Contém Carro (95%)"</code></div>
+        </div>
+
+        <div class="paradigm-card highlight">
+          <div class="paradigm-label" style="color: var(--senai-red);">2. Detecção (YOLOv8)<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Responde: "O quê?" e "Onde?"</span></div>
+          <div class="flow-box"><i class="fa-solid fa-video"></i> Foto ou Vídeo<br><span style="font-size: 11.5px; font-weight: 400;">Varredura em passagem única</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box red">YOLOv8 (80 Classes COCO)<br><span style="font-size: 11.5px; font-weight: 400;">You Only Look Once</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box dark">Bounding Box <code>[x1, y1, x2, y2]</code> + Confiança</div>
+        </div>
+
+        <div class="paradigm-card">
+          <div class="paradigm-label">3. Análise Facial<br><span style="font-size: 12px; color: var(--google-blue);">Identidade e Microexpressões</span></div>
+          <div class="flow-box">1. Face Detection<br><span style="font-size: 11px; font-weight: 400;">Localiza o rosto</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box blue">2. Alignment &amp; Landmarks<br><span style="font-size: 11px; font-weight: 400;">Olhos, boca, sobrancelhas</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box dark">3. DeepFace Embedding<br><span style="font-size: 11px; font-weight: 400;">Emoção, Idade, Biometria</span></div>
+        </div>
+      </div>
+
+      <div class="tiled-content" style="margin-top: 12px;">
+        <div class="tile" style="padding: 12px 16px;">
+          <h3 style="font-size: 15.5px;"><i class="fa-solid fa-bolt" style="color: var(--senai-red);"></i> Ultralytics (YOLOv8)</h3>
+          <p style="font-size: 13.5px;">Motor de rede neural convolucional treinado no dataset <strong>COCO</strong> (80 objetos do cotidiano: pessoa=0, bicicleta=1, carro=2, moto=3, ônibus=5, caminhão=7).</p>
+        </div>
+        <div class="tile" style="padding: 12px 16px;">
+          <h3 style="font-size: 15.5px;"><i class="fa-solid fa-crop-simple" style="color: var(--google-blue);"></i> OpenCV (<code>cv2</code>)</h3>
+          <p style="font-size: 13.5px;">Manipula imagens como matrizes NumPy, desenha retângulos (<code>cv2.rectangle</code>), recorta Regiões de Interesse (ROI) e converte cores (<strong>BGR $\to$ RGB</strong>).</p>
+        </div>
+        <div class="tile" style="padding: 12px 16px;">
+          <h3 style="font-size: 15.5px;"><i class="fa-solid fa-font" style="color: var(--code-green);"></i> EasyOCR &amp; DeepFace</h3>
+          <p style="font-size: 13.5px;">Redes neurais especializadas para transformar pixels de placas em texto digital (<strong>OCR</strong>) e classificar expressões emocionais humanas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: DIVISOR LAB 4.1 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 02 • Laboratório 4.1 (Google Colab)</span>
+      <h2>Detecção e Contagem de<br>Objetos com YOLOv8</h2>
+      <hr>
+      <p>Localizando múltiplos objetos em uma única passagem e extraindo relatórios estruturados.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: LAB 4.1 - PASSOS 1 A 5: DETECÇÃO VISUAL COM IMAGEM REAL -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.1: Passos 1 a 5 — Detecção Visual com YOLOv8</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: center;">
+        <div style="flex: 1.15;">
+          <div class="code-block" style="font-size: 11.5px; line-height: 1.3;">
+<span class="comment"># PASSO 1: Instalação da biblioteca oficial</span>
+!pip install ultralytics --quiet
+
+<span class="keyword">from</span> ultralytics <span class="keyword">import</span> YOLO
+<span class="keyword">from</span> google.colab <span class="keyword">import</span> files
+<span class="keyword">from</span> google.colab.patches <span class="keyword">import</span> cv2_imshow
+
+<span class="comment"># PASSO 2: Upload da Imagem do seu computador</span>
+<span class="func">print</span>(<span class="string">"Selecione uma imagem (jpg, png) para a IA analisar:"</span>)
+uploaded = files.upload()
+nome_do_arquivo = <span class="func">list</span>(uploaded.keys())[0]
+
+<span class="comment"># PASSO 3 e 4: Configuração do modelo YOLOv8 Small e Execução</span>
+modelo = YOLO(<span class="string">'yolov8s.pt'</span>) <span class="comment"># Base COCO (80 tipos de objetos)</span>
+MINIMA_CONFIANCA = 0.5      <span class="comment"># 50% de certeza mínima</span>
+resultados = modelo.predict(source=nome_do_arquivo, conf=MINIMA_CONFIANCA)
+
+<span class="comment"># PASSO 5: Desenhando as Bounding Boxes automaticamente</span>
+resultado_plotado = resultados[0].plot(line_width=2, font_size=12)
+cv2_imshow(resultado_plotado)</div>
+          <div class="console-output" style="margin-top: 8px; font-size: 11.2px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Inferência YOLOv8s)</span>
+Saving dog bike.jpg to dog bike.jpg
+image 1/1 /content/dog bike.jpg: 480x640 1 bicycle, 1 truck, 1 dog, 491.8ms
+Speed: 6.0ms preprocess, 491.8ms inference, 1.4ms postprocess per image</div>
+        </div>
+
+        <div style="flex: 1.05; display: flex; flex-direction: column; align-items: center;">
+          <div style="background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <img src="yolo_obj_out_1.png" alt="Saída YOLOv8 dog bike truck" style="width: 100%; max-height: 270px; object-fit: contain; display: block;">
+          </div>
+          <div class="callout-box" style="margin-top: 8px; padding: 8px 12px;">
+            <p style="font-size: 12.8px;"><strong><i class="fa-solid fa-eye"></i> Análise da Saída Visual:</strong> Em apenas <code>491ms</code>, o YOLOv8 traçou 3 <em>Bounding Boxes</em> simultâneas: <code>dog (0.93)</code>, <code>bicycle (0.88)</code> e <code>truck (0.78)</code> ao fundo!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: LAB 4.1 - PASSO 6 E 7: MINERAÇÃO DE DADOS E RELATÓRIO -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.1: Passo 6 — Extração de Dados e Contagem Automática</h2>
+    <div class="content-area">
+      <p style="align-self: flex-start; margin-bottom: 8px;">Uma aplicação industrial não precisa apenas da imagem desenhada; precisamos extrair os objetos de <code>resultados[0].boxes</code> para gerar métricas e alertas:</p>
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.2;">
+          <div class="code-block" style="font-size: 12px; line-height: 1.34;">
+<span class="comment"># PASSO 6: Minerando o objeto de resultados para contar itens</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> Counter
+
+<span class="func">print</span>(<span class="string">"\n--- RELATÓRIO DETALHADO DE DETECÇÃO ---"</span>)
+objetos_nomes = []
+
+<span class="comment"># Iterar sobre cada 'box' (caixa delimitadora) detectada</span>
+<span class="keyword">for</span> box <span class="keyword">in</span> resultados[0].boxes:
+    id_classe = <span class="func">int</span>(box.cls[0])           <span class="comment"># ID numérico (ex: 16)</span>
+    nome = resultados[0].names[id_classe] <span class="comment"># Nome textual (ex: 'dog')</span>
+    conf = <span class="func">float</span>(box.conf[0])             <span class="comment"># Nível de certeza (0 a 1)</span>
+    
+    objetos_nomes.append(nome)
+    <span class="func">print</span>(f<span class="string">"✅ Encontrado: {nome.upper()} | Confiança: {conf:.2%}"</span>)
+
+<span class="comment"># Resumo estatístico com Counter</span>
+contagem = Counter(objetos_nomes)
+<span class="func">print</span>(<span class="string">"\n--- RESUMO DA CONTAGEM ---"</span>)
+<span class="keyword">for</span> obj, qtd <span class="keyword">in</span> contagem.items():
+    <span class="func">print</span>(f<span class="string">"• {obj.capitalize()}: {qtd}"</span>)</div>
+        </div>
+
+        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
+          <div class="console-output" style="font-size: 12px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Relatório Estruturado)</span>
+--- RELATÓRIO DETALHADO DE DETECÇÃO ---
+✅ Encontrado: DOG | Confiança: 92.72%
+✅ Encontrado: BICYCLE | Confiança: 88.27%
+✅ Encontrado: TRUCK | Confiança: 77.63%
+
+--- RESUMO DA CONTAGEM ---
+• Dog: 1
+• Bicycle: 1
+• Truck: 1</div>
+          <div class="callout-box warning" style="margin-top: 0; padding: 10px 14px;">
+            <p style="font-size: 13px;"><strong><i class="fa-solid fa-sliders"></i> Desafio de Fixação no Colab:</strong><br>
+            1. Troque <code>'yolov8s.pt'</code> por <code>'yolov8n.pt'</code> (Nano) ou <code>'yolov8x.pt'</code> (Extra Large).<br>
+            2. Reduza <code>MINIMA_CONFIANCA = 0.10</code>: veja como a IA detecta até a moto escondida atrás da árvore à esquerda!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: DIVISOR LAB 4.2 (ALPR PLACAS) -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 03 • Laboratório 4.2 (Google Colab)</span>
+      <h2>Monitoramento Inteligente:<br>Leitura de Placas (ALPR)</h2>
+      <hr>
+      <p>Combinando YOLOv8 (Detecção de Veículos) + OpenCV (Recorte ROI) + EasyOCR (Leitura Alfanumérica).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: ARQUITETURA DO PIPELINE ALPR E PASSOS 1 A 3 -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.2: A Esteira de Processamento (Pipeline ALPR)</h2>
+    <div class="content-area">
+      <div class="paradigm-card highlight" style="width: 100%; margin-bottom: 14px;">
+        <div class="paradigm-label" style="color: var(--senai-red);">Pipeline ALPR<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Pedágio / Estacionamento</span></div>
+        <div class="flow-box">1. YOLOv8 (<code>yolov8s.pt</code>)<br><span style="font-size: 11.5px; font-weight: 400;">Localiza Veículos (Classes 2, 3, 5, 7)</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-scissors"></i></div>
+        <div class="flow-box blue">2. Recorte ROI (OpenCV)<br><span style="font-size: 11.5px; font-weight: 400;"><code>img[y1:y2, x1:x2]</code> isola o carro</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-font"></i></div>
+        <div class="flow-box dark">3. EasyOCR (<code>Reader(['en'])</code>)<br><span style="font-size: 11.5px; font-weight: 400;">Extrai o texto da placa</span></div>
+      </div>
+
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.2;">
+          <div class="code-block" style="font-size: 12px; line-height: 1.34;">
+<span class="comment"># PASSO 1 e 2: Instalação e Inicialização dos Motores</span>
+!pip install -q easyocr ultralytics opencv-python
+
+<span class="keyword">import</span> easyocr
+<span class="keyword">from</span> ultralytics <span class="keyword">import</span> YOLO
+<span class="keyword">import</span> cv2
+<span class="keyword">from</span> google.colab <span class="keyword">import</span> files
+<span class="keyword">from</span> google.colab.patches <span class="keyword">import</span> cv2_imshow
+
+<span class="comment"># Inicializa o leitor OCR para caracteres latinos e o YOLOv8 Small</span>
+reader = easyocr.Reader([<span class="string">'en'</span>], gpu=<span class="keyword">True</span>)
+modelo = YOLO(<span class="string">'yolov8s.pt'</span>)</div>
+        </div>
+
+        <div style="flex: 0.95;">
+          <div class="callout-box info" style="margin-top: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+            <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-circle-question"></i> Por que recortar o veículo antes do OCR?</h3>
+            <p style="font-size: 13.8px;">Se passarmos a foto inteira de uma rua para o <strong>EasyOCR</strong>, ele tentará ler placas de lojas, outdoors e faixas de trânsito (ruído). Ao recortar apenas a <em>Bounding Box</em> do veículo (<strong>ROI — Region of Interest</strong>), aumentamos a precisão e a velocidade!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: LAB 4.2 - PASSO 3 E 4: UPLOAD E VISÃO DO YOLO (IMAGENS 1 E 2) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.2: Passo 3 — Upload e Detecção dos Veículos</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: center;">
+        <div style="flex: 1.05;">
+          <div class="code-block" style="font-size: 12px; line-height: 1.34;">
+<span class="comment"># PASSO 3: Upload da imagem e Detecção com YOLOv8</span>
+uploaded = files.upload()
+foto = <span class="func">list</span>(uploaded.keys())[0]
+
+imagem = cv2.imread(foto)
+<span class="func">print</span>(<span class="string">"ENTRADA: Imagem Original"</span>)
+cv2_imshow(imagem)
+
+<span class="comment"># Realiza a detecção com confiança mínima de 40%</span>
+resultados = modelo.predict(foto, conf=0.4)
+
+<span class="comment"># Exibe as âncoras (Bounding Boxes) que a IA enxergou</span>
+img_ia = resultados[0].plot()
+<span class="func">print</span>(<span class="string">"SAÍDA: O que a IA enxerga"</span>)
+cv2_imshow(img_ia)</div>
+          <div class="console-output" style="margin-top: 8px; font-size: 11.5px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Passo 3)</span>
+image 1/1 gettyimages-1399888792.jpg: 448x640 2 cars, 643.3ms
+Speed: 14.7ms preprocess, 643.3ms inference, 34.6ms postprocess</div>
+        </div>
+
+        <div style="flex: 1.15; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); text-align: center;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--senai-medium-gray);">ENTRADA: IMAGEM ORIGINAL</span>
+              <img src="yolo_placa_out_1.png" alt="Carro Original" style="width: 100%; height: 155px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
+            </div>
+            <div style="flex: 1; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--senai-red); text-align: center;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--senai-red);">SAÍDA: O QUE A IA ENXERGA</span>
+              <img src="yolo_placa_out_2.png" alt="Carros Detectados YOLO" style="width: 100%; height: 155px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
+            </div>
+          </div>
+          <div class="callout-box" style="margin-top: 0; padding: 10px 14px;">
+            <p style="font-size: 13px;"><strong><i class="fa-solid fa-magnifying-glass"></i> Observe a Saída da Direita:</strong> O YOLOv8 identificou <strong>2 veículos (<code>2 cars</code>)</strong> na cena: o Renault Sandero central (<code>car 0.88</code>) e a lateral de um segundo carro branco à direita (<code>car 0.62</code>).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: LAB 4.2 - PASSO 4: RECORTE ROI E LEITURA OCR (IMAGENS 3 E 4) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.2: Passo 4 — Fatiamento de Matriz (ROI) e Leitura OCR</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: center;">
+        <div style="flex: 1.1;">
+          <div class="code-block" style="font-size: 11.5px; line-height: 1.32;">
+<span class="comment"># PASSO 4: Isolando cada veículo (ROI) e aplicando EasyOCR</span>
+<span class="func">print</span>(<span class="string">"--- RESULTADO DA LEITURA OCR ---"</span>)
+
+<span class="keyword">for</span> res <span class="keyword">in</span> resultados[0].boxes:
+    <span class="comment"># Filtro COCO: Classe 2 (Carro), 3 (Moto), 5 (Ônibus), 7 (Caminhão)</span>
+    <span class="keyword">if</span> <span class="func">int</span>(res.cls[0]) <span class="keyword">in</span> [2, 3, 5, 7]:
+        <span class="comment"># Extrai coordenadas (x1, y1, x2, y2) da caixa</span>
+        x1, y1, x2, y2 = <span class="func">map</span>(<span class="func">int</span>, res.xyxy[0])
+        
+        <span class="comment"># Recorte por fatiamento de matriz NumPy (Linhas Y, Colunas X)</span>
+        carro_recortado = imagem[y1:y2, x1:x2]
+        cv2_imshow(carro_recortado)
+
+        <span class="comment"># EasyOCR lê os textos dentro do recorte do veículo</span>
+        leitura = reader.readtext(carro_recortado)
+        <span class="keyword">if</span> leitura:
+            <span class="keyword">for</span> (bbox, texto, conf) <span class="keyword">in</span> leitura:
+                texto_limpo = texto.replace(<span class="string">" "</span>, <span class="string">""</span>).upper()
+                <span class="keyword">if</span> <span class="func">len</span>(texto_limpo) &gt;= 4:
+                    <span class="func">print</span>(f<span class="string">"📌 Placa Detectada: {texto_limpo} (Conf: {conf:.2%})"</span>)
+        <span class="keyword">else</span>:
+            <span class="func">print</span>(<span class="string">"❌ Nenhuma placa encontrada neste recorte"</span>)</div>
+        </div>
+
+        <div style="flex: 1.1; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; gap: 10px; align-items: stretch;">
+            <div style="flex: 1.3; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--code-green); text-align: center;">
+              <span style="font-size: 10.5px; font-weight: 800; color: var(--code-green);">RECORTE 1 (SANDERO - 0.88)</span>
+              <img src="yolo_placa_out_3.png" alt="Recorte Carro 1" style="width: 100%; height: 115px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
+            </div>
+            <div style="flex: 0.7; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--senai-medium-gray); text-align: center;">
+              <span style="font-size: 10.5px; font-weight: 800; color: var(--senai-medium-gray);">RECORTE 2 (LATERAL - 0.62)</span>
+              <img src="yolo_placa_out_4.png" alt="Recorte Carro 2" style="width: 100%; height: 115px; object-fit: contain; border-radius: 4px; margin-top: 4px;">
+            </div>
+          </div>
+
+          <div class="console-output" style="font-size: 11.2px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída Real do Console para os 2 Recortes</span>
+[Recorte 1]:
+📌 Placa Detectada: 442IR8 (Conf: 9.24%)   &lt;-- Emblema "SANDERO"
+📌 Placa Detectada: 0ZU5550 (Conf: 31.40%) &lt;-- Placa Mercosul OZU5J50!
+
+[Recorte 2]:
+❌ Nenhuma placa encontrada neste recorte</div>
+
+          <div class="callout-box warning" style="margin-top: 0; padding: 8px 12px;">
+            <p style="font-size: 12.2px;"><strong><i class="fa-solid fa-code"></i> Análise de Engenharia:</strong> Veja como o OCR confundiu a letra <code>J</code> com <code>5</code> (<code>0ZU5550</code>) e leu o emblema cromado do porta-malas! Por isso sistemas de pedágio aplicam <strong>Expressões Regulares (Regex Mercosul <code>[A-Z]{3}[0-9][A-Z0-9][0-9]{2}</code>)</strong> para validar a leitura!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: DIVISOR LAB 4.3 (DEEPFACE) -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 04 • Laboratório 4.3 (Google Colab)</span>
+      <h2>Reconhecimento Facial e<br>Emoções com DeepFace</h2>
+      <hr>
+      <p>Extraindo microexpressões faciais, idade estimada e emoção dominante com redes neurais profundas.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: LAB 4.3 - PRÁTICA DEEPFACE NO COLAB -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 4.3: Analisando Emoções na Foto com DeepFace</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.25;">
+          <div class="code-block" style="font-size: 11.4px; line-height: 1.3;">
+<span class="comment"># PASSO 1: Instalação do DeepFace e motor Keras</span>
+!pip install deepface tf-keras --quiet
+
+<span class="comment"># PASSO 2: Importação e Algoritmo de Análise</span>
+<span class="keyword">import</span> cv2
+<span class="keyword">from</span> deepface <span class="keyword">import</span> DeepFace
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">from</span> google.colab <span class="keyword">import</span> files
+
+<span class="keyword">def</span> <span class="func">analisar_emocao_na_foto</span>():
+    uploaded = files.upload()
+    img_path = <span class="func">list</span>(uploaded.keys())[0]
+
+    <span class="comment"># Analisa microexpressões (pode incluir 'age', 'gender')</span>
+    resultados = DeepFace.analyze(img_path, actions=[<span class="string">'emotion'</span>])
+
+    <span class="comment"># OpenCV lê em BGR; convertemos para RGB para exibir no Matplotlib</span>
+    img = cv2.imread(img_path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    <span class="keyword">for</span> face <span class="keyword">in</span> resultados:
+        x, y, w, h = face[<span class="string">'region'</span>][<span class="string">'x'</span>], face[<span class="string">'region'</span>][<span class="string">'y'</span>], face[<span class="string">'region'</span>][<span class="string">'w'</span>], face[<span class="string">'region'</span>][<span class="string">'h'</span>]
+        emocao = face[<span class="string">'dominant_emotion'</span>]
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 8)
+        cv2.putText(img, emocao, (x, y - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 4)
+
+    plt.imshow(img); plt.axis(<span class="string">'off'</span>); plt.show()
+
+analisar_emocao_na_foto()</div>
+        </div>
+
+        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
+          <div class="console-output" style="font-size: 11.5px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Dicionário Retornado por DeepFace.analyze()</span>
+[{'emotion': {
+    'angry': 0.04, 'disgust': 0.00, 'fear': 0.12,
+    'happy': 98.42, 'sad': 0.08, 'surprise': 0.31,
+    'neutral': 1.03
+  },
+  'dominant_emotion': 'happy',
+  'region': {'x': 142, 'y': 88, 'w': 215, 'h': 215}
+}]</div>
+          <div style="background:#FFF; border:1px solid var(--border-color); border-left:5px solid var(--senai-red); padding:12px 14px; border-radius:6px;">
+            <h3 style="font-size:15.5px; color:var(--senai-red);"><i class="fa-solid fa-pen-to-square"></i> 4 Exercícios Práticos no Colab</h3>
+            <ul class="bullet-list-simple" style="gap:5px;">
+              <li style="font-size:13px;"><strong>1. Cor RGB:</strong> Mude <code>(0, 255, 0)</code> (Verde) para <strong>Vermelho</strong> <code>(255, 0, 0)</code>.</li>
+              <li style="font-size:13px;"><strong>2. Demografia:</strong> Altere para <code>actions=['emotion', 'age', 'gender']</code> e imprima <code>face['age']</code>.</li>
+              <li style="font-size:13px;"><strong>3. Teste de Limite:</strong> Envie a foto de uma estátua ou anime!</li>
+              <li style="font-size:13px;"><strong>4. Segunda Emoção:</strong> Inspecione <code>face['emotion']</code> no console.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: DIVISOR MÓDULO 5 (ÉTICA E TRILHA 3) -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 05 • Ética em IA &amp; Trilha Skills Boost</span>
+      <h2>IA Responsável &amp;<br>Atividade 03 da Trilha</h2>
+      <hr>
+      <p>Viés algorítmico em Visão Computacional, LGPD e os 7 Princípios de IA do Google Cloud.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: ÉTICA EM VISÃO COMPUTACIONAL E OS 7 PRINCÍPIOS DO GOOGLE -->
+  <div class="slide-container">
+    <h2 class="slide-title">Ética na Prática: Desafios da Visão Computacional</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div>
+          <h3><i class="fa-solid fa-scale-unbalanced" style="color: var(--senai-red);"></i> Riscos Críticos em Sistemas Visuais</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>Viés Algorítmico (Bias):</strong> Se um modelo facial for treinado majoritariamente com um único grupo demográfico, terá taxas de erro muito maiores em outras etnias, idades ou iluminação.</li>
+            <li><strong>Falsos Positivos em Segurança:</strong> Confundir uma placa (`0ZU5550` vs `OZU5J50`) ou um rosto em uma lista de procurados exige <strong>revisão humana obrigatória (Human-in-the-Loop)</strong>.</li>
+            <li><strong>Privacidade e LGPD:</strong> Biometria facial é <strong>dado pessoal sensível</strong>; exige consentimento e proteção criptográfica.</li>
+          </ul>
+        </div>
+
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-solid fa-shield-halved" style="color: var(--google-blue);"></i> Os 7 Princípios de IA do Google</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>1. Ser socialmente benéfica</strong> e resolver problemas reais.</li>
+            <li><strong>2. Evitar criar ou reforçar vieses injustos</strong> nos datasets.</li>
+            <li><strong>3. Ser construída e testada para segurança</strong> rigorosa.</li>
+            <li><strong>4. Ser responsável perante as pessoas</strong> (auditável).</li>
+            <li><strong>5. Incorporar princípios de design de privacidade</strong>.</li>
+            <li><strong>6. Manter altos padrões de excelência científica</strong>.</li>
+            <li><strong>7. Estar disponível para usos alinhados a esses princípios</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: ROTEIRO ATIVIDADE 3 SKILLS BOOST -->
+  <div class="slide-container">
+    <h2 class="slide-title">Hora da Trilha! Atividade 03 no Google Cloud Skills Boost</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-brands fa-google" style="color: var(--google-blue);"></i> Curso 3: Introduction to Responsible AI</h3>
+          <p style="font-size: 15px; margin-bottom: 12px;">Acesse o <strong>Google Cloud Skills Boost</strong> e inicie a <strong>3ª atividade</strong> da trilha:</p>
+          <ul class="bullet-list-simple">
+            <li><strong>O que você verá no vídeo:</strong> Por que o Google estabeleceu os 7 Princípios de IA Responsável, o que a IA do Google <strong>não</strong> desenvolve (ex: vigilância em violação a direitos humanos) e governança técnica.</li>
+            <li><strong>Conexão com nossos Labs:</strong> Relacione o vídeo diretamente aos desafios de viés e falsos positivos que observamos no OCR e no DeepFace!</li>
+            <li><strong>Avaliação:</strong> Questionário oficial (Quiz) ao final da atividade.</li>
+          </ul>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="callout-box warning" style="margin-top: 0; border-left-width: 8px; padding: 18px;">
+            <h3 style="color: #B26A00; font-size: 18px; margin-bottom: 8px;"><i class="fa-solid fa-circle-exclamation"></i> LEMBRETE OBRIGATÓRIO DE VÍDEO</h3>
+            <p style="font-size: 15px; color: #2B2B2B;"><strong>Assista ao vídeo da Atividade 03 até o último segundo!</strong><br><br>
+            Não pule para o Quiz antes do vídeo concluir para garantir os 100% de progresso e o desbloqueio do seu 3º Badge oficial.</p>
+          </div>
+
+          <div style="background: #E8F5E9; border: 1px solid #A5D6A7; border-left: 6px solid var(--code-green); padding: 14px 18px; border-radius: 6px;">
+            <h4 style="color: var(--code-green); font-size: 16px; margin-bottom: 4px;"><i class="fa-solid fa-medal"></i> Meta de Hoje: 75% da Trilha Concluída</h4>
+            <p style="font-size: 14px;">3 de 4 cursos concluídos! Amanhã faremos a grande integração final na nuvem.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: ENCERRAMENTO -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Encerramento • Dia 04</span>
+      <h2>Rumo ao Grande Final!</h2>
+      <hr>
+      <p>Salvem seus 3 notebooks de Visão Computacional no Google Drive (<code>Ctrl+S</code>) — eles compõem a <strong>Etapa 1 do Projeto Final SIMI</strong>! Na <strong>Aula 05 (Última Aula)</strong>, criaremos nosso <strong>Chatbot no Google Dialogflow ES integrado ao servidor Flask no PythonAnywhere + Conclusão 100% da Trilha Skills Boost</strong>!</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="presentation-controls">
+  <button id="prev-btn" onclick="prevSlide()" disabled>
+    <i class="fa-solid fa-arrow-left"></i> Anterior
+  </button>
+  <span class="slide-counter" id="slide-counter">01 / 16</span>
+  <button id="next-btn" onclick="nextSlide()">
+    Próximo <i class="fa-solid fa-arrow-right"></i>
+  </button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide-container');
+  const counter = document.getElementById('slide-counter');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
+    });
+    counter.innerText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      nextSlide();
+    }
+    if (e.key === 'ArrowLeft') {
+      prevSlide();
+    }
+  });
+
+  function resizePresentation() {
+    const presentation = document.getElementById('presentation-area');
+    const scale = Math.min(window.innerWidth / 1320, (window.innerHeight - 100) / 750);
+    presentation.style.transform = `scale(${scale})`;
+  }
+
+  window.addEventListener('resize', resizePresentation);
+  resizePresentation();
+  updateSlides();
+</script>
+
+</body>
+</html>

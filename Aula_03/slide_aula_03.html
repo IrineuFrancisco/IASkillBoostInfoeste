@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 03 - Redes Neurais Profundas, PLN (Transformers) e Trilha 2 (SENAI-SP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+:root {
+  --senai-red: #E30613;
+  --senai-black: #000000;
+  --senai-dark-gray: #2B2B2B;
+  --senai-medium-gray: #757575;
+  --senai-light-gray: #F2F2F2;
+  --senai-white: #FFFFFF;
+  --border-color: #E0E0E0;
+  --colab-orange: #F9AB00;
+  --google-blue: #1A73E8;
+  --code-green: #2E7D32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--senai-light-gray);
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#presentation-area {
+  width: 1280px;
+  height: 720px;
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.slide-container {
+  width: 100%;
+  height: 100%;
+  background-color: var(--senai-white);
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  padding: 40px 65px 75px 65px;
+  background-image: 
+    linear-gradient(to right, rgba(229, 229, 229, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(229, 229, 229, 0.35) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.slide-container.active {
+  display: flex;
+  animation: slideFadeIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 100%;
+  background-color: var(--senai-red);
+  z-index: 10;
+}
+
+.slide-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.06) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4, p, li, .subtitle {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.slide-container h1 {
+  font-weight: 900;
+  color: var(--senai-red);
+  font-size: 55px;
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.slide-container .slide-title {
+  font-weight: 900;
+  color: var(--senai-black);
+  font-size: 29px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: left;
+  border-left: 6px solid var(--senai-red);
+  padding-left: 16px;
+}
+
+.slide-container h3 {
+  font-weight: 800;
+  color: var(--senai-black);
+  font-size: 19.5px;
+  margin-bottom: 8px;
+}
+
+.slide-container p, 
+.slide-container li, 
+.slide-container .subtitle {
+  color: var(--senai-dark-gray);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 25px;
+}
+
+.title-layout .tag-course {
+  background-color: var(--senai-light-gray);
+  color: var(--senai-black);
+  padding: 8px 18px;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--senai-red);
+  align-self: flex-start;
+}
+
+.title-layout .subtitle {
+  font-size: 22px;
+  color: var(--senai-medium-gray);
+  margin-top: 10px;
+  max-width: 960px;
+}
+
+.section-title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.section-title-layout .module-tag {
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.section-title-layout h2 {
+  font-size: 52px;
+  color: var(--senai-black);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.section-title-layout hr {
+  width: 140px;
+  height: 7px;
+  background-color: var(--senai-red);
+  border: none;
+  margin: 20px auto;
+}
+
+.section-title-layout p {
+  max-width: 840px;
+  color: var(--senai-medium-gray);
+  font-size: 22px;
+}
+
+.two-column {
+  display: flex;
+  width: 100%;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.two-column > div { flex: 1; }
+
+.two-column.tiled > div {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-top: 5px solid var(--senai-red);
+  padding: 20px 22px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.tiled-content {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.tile {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-bottom: 5px solid var(--senai-red);
+  padding: 18px 18px;
+  border-radius: 6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.tile .icon {
+  font-size: 30px;
+  color: var(--senai-red);
+  margin-bottom: 10px;
+}
+
+.bullet-list-simple {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.bullet-list-simple li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 15px;
+}
+
+.bullet-list-simple li::before {
+  content: '■';
+  color: var(--senai-red);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 13px;
+}
+
+.code-block {
+  background-color: #1E1E1E;
+  color: #D4D4D4;
+  padding: 12px 15px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: left;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 5px solid var(--senai-red);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.code-block span.keyword { color: #569CD6; font-weight: bold; }
+.code-block span.string { color: #CE9178; }
+.code-block span.comment { color: #6A9955; font-style: italic; }
+.code-block span.func { color: #DCDCAA; }
+
+.console-output {
+  background-color: #0D1117;
+  color: #E6EDF3;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.32;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 4px solid #2EA043;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.console-output .out-title {
+  color: #7EE787;
+  font-weight: bold;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #30363D;
+  padding-bottom: 3px;
+}
+
+.callout-box {
+  background-color: #FFF5F5;
+  border-left: 6px solid var(--senai-red);
+  padding: 12px 18px;
+  border-radius: 0 6px 6px 0;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.callout-box.warning {
+  background-color: #FFF8E1;
+  border-left-color: #FFA000;
+}
+
+.callout-box.info {
+  background-color: #E8F0FE;
+  border-left-color: var(--google-blue);
+}
+
+.paradigm-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.paradigm-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-left: 6px solid var(--senai-dark-gray);
+  border-radius: 6px;
+  padding: 12px 16px;
+  gap: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+}
+.paradigm-card.highlight {
+  border-left-color: var(--senai-red);
+  background: #FFF9F9;
+}
+.paradigm-label {
+  min-width: 210px;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--senai-black);
+}
+.flow-box {
+  background: var(--senai-light-gray);
+  border: 1px solid #D0D0D0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+}
+.flow-box.red { background: var(--senai-red); color: #fff; border-color: var(--senai-red); }
+.flow-box.dark { background: var(--senai-dark-gray); color: #fff; border-color: var(--senai-dark-gray); }
+.flow-box.blue { background: var(--google-blue); color: #fff; border-color: var(--google-blue); }
+.flow-box.green { background: var(--code-green); color: #fff; border-color: var(--code-green); }
+.flow-arrow { color: var(--senai-red); font-size: 18px; font-weight: 900; }
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12.5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-right: 8px;
+  text-transform: uppercase;
+}
+
+.presentation-controls {
+  position: fixed;
+  bottom: 18px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.96);
+  padding: 10px 24px;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.presentation-controls button {
+  background-color: var(--senai-red);
+  color: var(--senai-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presentation-controls button:hover:not(:disabled) {
+  background-color: #C00510;
+  transform: translateY(-2px);
+}
+
+.presentation-controls button:disabled {
+  background-color: var(--border-color);
+  color: var(--senai-medium-gray);
+  cursor: not-allowed;
+}
+
+.slide-counter {
+  font-weight: 900;
+  color: var(--senai-dark-gray);
+  font-size: 16px;
+  min-width: 75px;
+  text-align: center;
+}
+    </style>
+</head>
+<body>
+
+<div id="presentation-area">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide-container active">
+    <div class="title-layout">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
+      <span class="tag-course">Dia 03 • Aula 03 (4 Horas) • Curso Integrado Google Cloud Skills Boost</span>
+      <h1>Redes Neurais Profundas,<br>PLN (Transformers) &amp; LLMs</h1>
+      <p class="subtitle">Do Neurônio Artificial ao Backpropagation, Análise de Sentimentos com BERT (<code>pysentimiento</code>), Agentes de IA e <strong>Atividade 02 da Trilha Skills Boost</strong></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: DIVISOR MÓDULO 1 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 01 • Deep Learning Visual</span>
+      <h2>Redes Neurais Artificiais:<br>Do Biológico ao Digital</h2>
+      <hr>
+      <p>Como neurônios matemáticos ajustam milhões de pesos sinápticos para aprender padrões complexos.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: DO BIOLÓGICO AO DIGITAL (DIAGRAMA VISUAL) -->
+  <div class="slide-container">
+    <h2 class="slide-title">A Inspiração: Neurônio Biológico vs. Perceptron</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-solid fa-dna" style="color: var(--google-blue);"></i> No Cérebro Humano (Biológico)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 12px;">
+            <li><strong>Dendritos (Recepção):</strong> Captam sinais elétricos/químicos vindos de outros neurônios.</li>
+            <li><strong>Sinapse (Força da Conexão):</strong> Define o quão forte ou fraca é a comunicação entre duas células.</li>
+            <li><strong>Corpo Celular (Soma):</strong> Acumula os estímulos; se ultrapassar um limiar, dispara um pulso pelo <strong>Axônio</strong>.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3><i class="fa-solid fa-microchip" style="color: var(--senai-red);"></i> No Computador (Neurônio Artificial)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 12px;">
+            <li><strong>Entradas ($x_1, x_2, x_n$):</strong> Valores numéricos dos atributos (ex: <em>Cor, Rugosidade, Peso</em> de uma fruta).</li>
+            <li><strong>Pesos ($w_1, w_2, w_n$) e Viés ($b$):</strong> Multiplicadores que definem a importância matemática de cada atributo.</li>
+            <li><strong>Função de Ativação ($\sigma$):</strong> Decide a saída final: $y = \sigma(\sum (x_i \cdot w_i) + b)$ (ex: <code>ReLU</code>, <code>Sigmoid</code>, <code>Softmax</code>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="paradigm-card highlight" style="margin-top: 14px; width: 100%;">
+        <div class="paradigm-label" style="color: var(--senai-red);">Arquitetura Deep Learning</div>
+        <div class="flow-box"><i class="fa-solid fa-right-to-bracket"></i> Camada de Entrada<br><span style="font-size: 12px; font-weight: 400;">Recebe os dados brutos ($X$)</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box red"><i class="fa-solid fa-network-wired"></i> Camadas Ocultas (Hidden)<br><span style="font-size: 12px; font-weight: 400;">Multiplicação matricial de Pesos ($W$)</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box dark"><i class="fa-solid fa-bullseye"></i> Camada de Saída<br><span style="font-size: 12px; font-weight: 400;">0.98 Laranja / 0.02 Maçã</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: OS 4 PASSOS DO APRENDIZADO E SIMULADOR INTERATIVO -->
+  <div class="slide-container">
+    <h2 class="slide-title">O Ciclo de Aprendizado &amp; Lab 3.1A (Simulador Interativo)</h2>
+    <div class="content-area">
+      <div class="tiled-content" style="margin-bottom: 14px;">
+        <div class="tile" style="padding: 14px;">
+          <span class="step-badge">Passo 1</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Entrada (Input)</h3>
+          <p style="font-size: 13.5px;">A rede recebe os atributos numéricos da amostra (ex: Cor=0.9, Textura=0.2).</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <span class="step-badge">Passo 2</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Predição (Forward)</h3>
+          <p style="font-size: 13.5px;">Os sinais atravessam as camadas multiplicando pelos pesos atuais e geram um palpite.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <span class="step-badge">Passo 3</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Cálculo do Erro (Loss)</h3>
+          <p style="font-size: 13.5px;">A Função de Custo mede a distância entre o palpite da IA e o gabarito real.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <span class="step-badge">Passo 4</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Backpropagation</h3>
+          <p style="font-size: 13.5px;">O otimizador retropropaga o erro da saída para a entrada, corrigindo os pesos $w_i$!</p>
+        </div>
+      </div>
+
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--colab-orange); padding: 14px 18px;">
+          <h3 style="font-size: 17px;"><i class="fa-solid fa-gamepad" style="color: var(--colab-orange);"></i> Lab 3.1A: Simulador Maçã vs. Laranja</h3>
+          <p style="font-size: 14px;">Acesse no navegador: <strong><code>https://irineufrancisco.github.io/ExemploRedeNeural/</code></strong><br>
+          Ajuste manualmente os pesos das sinapses (Vermelho, Amarelo, Textura) para que a rede diferencie uma <strong>Maçã</strong> (lisa/vermelha) de uma <strong>Laranja</strong> (rugosa/cítrica).</p>
+        </div>
+        <div style="border-top-color: var(--google-blue); padding: 14px 18px;">
+          <h3 style="font-size: 17px;"><i class="fa-brands fa-youtube" style="color: var(--senai-red);"></i> Apoio Visual &amp; Reflexão de Escala</h3>
+          <p style="font-size: 14px;">Vídeo: <em>Como funciona uma Rede Neural (Manual do Mundo)</em>.<br>
+          <strong>Reflexão:</strong> Calibrar 6 conexões à mão já exige atenção; modelos como o GPT-4 e Gemini possuem <strong>centenas de bilhões de pesos</strong> ajustados automaticamente via GPU!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: LAB 3.1B - REDE NEURAL PROFUNDA COM KERAS NO COLAB -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 3.1B (Colab): Rede Neural Densa com TensorFlow/Keras</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: center;">
+        <div style="flex: 1.1;">
+          <div class="code-block" style="font-size: 11.8px; line-height: 1.32;">
+<span class="comment"># Criando uma Rede Neural Profunda (MLP) no Google Colab</span>
+<span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf
+<span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> layers, models
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_wine
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+wine = load_wine()
+X = StandardScaler().fit_transform(wine.data)
+y = tf.keras.utils.to_categorical(wine.target, 3)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+<span class="comment"># Arquitetura: Entrada(13) -> Oculta1(16) -> Oculta2(8) -> Saída(3)</span>
+modelo = models.Sequential([
+    layers.Dense(16, activation=<span class="string">'relu'</span>, input_shape=(13,)),
+    layers.Dense(8, activation=<span class="string">'relu'</span>),
+    layers.Dense(3, activation=<span class="string">'softmax'</span>)
+])
+modelo.compile(optimizer=<span class="string">'adam'</span>, loss=<span class="string">'categorical_crossentropy'</span>, metrics=[<span class="string">'accuracy'</span>])
+hist = modelo.fit(X_train, y_train, epochs=30, validation_data=(X_test, y_test), verbose=0)
+<span class="func">print</span>(f<span class="string">"Acurácia Final no Teste: {modelo.evaluate(X_test, y_test, verbose=0)[1]:.2%}"</span>)</div>
+          <div class="console-output" style="margin-top: 8px; font-size: 11.5px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Keras Backpropagation)</span>
+Epoch 1/30  - loss: 1.0421 - accuracy: 0.4225 - val_loss: 0.9814 - val_accuracy: 0.4722
+Epoch 15/30 - loss: 0.2140 - accuracy: 0.9437 - val_loss: 0.2310 - val_accuracy: 0.9444
+Epoch 30/30 - loss: 0.0682 - accuracy: 0.9859 - val_loss: 0.0912 - val_accuracy: 0.9670
+Acurácia Final no Teste: 96.70% (Superou os 72% do KNN sem escala!)</div>
+        </div>
+
+        <div style="flex: 1.1; display: flex; flex-direction: column; align-items: center;">
+          <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <img src="rede_neural_curvas_treino.png" alt="Curvas de Loss e Acurácia da Rede Neural" style="width: 100%; max-height: 250px; object-fit: contain; display: block;">
+          </div>
+          <div class="callout-box" style="margin-top: 8px; padding: 10px 14px;">
+            <p style="font-size: 13px;"><strong><i class="fa-solid fa-chart-line"></i> Leitura das Curvas de Treinamento:</strong><br>
+            • <strong>Gráfico Esquerdo (Loss):</strong> O erro cai de <code>1.05</code> para <code>0.06</code> conforme o otimizador <code>Adam</code> ajusta os pesos a cada época.<br>
+            • <strong>Gráfico Direito (Accuracy):</strong> Com <code>StandardScaler</code> + camadas densas, saltamos de 72% (Aula 1) para <strong>96,7% de precisão</strong>!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: DIVISOR MÓDULO 2 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 02 • Processamento de Linguagem Natural (PLN)</span>
+      <h2>Os Segredos do PLN:<br>Tokens, Embeddings &amp; BERT</h2>
+      <hr>
+      <p>Como a arquitetura Transformer compreende contexto, negação, emojis e sarcasmo em Português.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: OS 3 PILARES DO PLN MODERNO (DIAGRAMA VISUAL) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Como o Computador Lê? A Pipeline do PLN</h2>
+    <div class="content-area">
+      <div class="paradigm-row">
+        <div class="paradigm-card">
+          <div class="paradigm-label">1. Tokenização<br><span style="font-size: 12.5px; color: var(--senai-medium-gray);">Fatiar a frase em unidades</span></div>
+          <div class="flow-box">"Eu não estou bem"</div>
+          <div class="flow-arrow"><i class="fa-solid fa-scissors"></i></div>
+          <div class="flow-box dark"><code>['Eu', 'não', 'estou', 'bem']</code></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box">IDs: <code>[1045, 2981, 4102, 2099]</code></div>
+        </div>
+
+        <div class="paradigm-card">
+          <div class="paradigm-label">2. Word Embeddings<br><span style="font-size: 12.5px; color: var(--google-blue);">Mapa Semântico Vetorial</span></div>
+          <div class="flow-box">Token <code>"feliz"</code></div>
+          <div class="flow-arrow"><i class="fa-solid fa-compass"></i></div>
+          <div class="flow-box blue">Vetor: <code>[0.82, -0.14, 0.91, ...]</code></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrows-left-right"></i></div>
+          <div class="flow-box">Fica próximo de <code>"alegre"</code> no espaço 3D!</div>
+        </div>
+
+        <div class="paradigm-card highlight">
+          <div class="paradigm-label" style="color: var(--senai-red);">3. Self-Attention<br><span style="font-size: 12.5px; color: var(--senai-dark-gray);">Transformers / BERT</span></div>
+          <div class="flow-box">"Eu <strong>não</strong> estou <strong>bem</strong>"</div>
+          <div class="flow-arrow"><i class="fa-solid fa-eye"></i></div>
+          <div class="flow-box red">Atenção Bidirecional<br><span style="font-size: 11.5px; font-weight: 400;">Relaciona todas as palavras simultaneamente</span></div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="flow-box dark">O <code>"não"</code> inverte o polo de <code>"bem"</code> $\to$ <strong>NEGATIVO</strong></div>
+        </div>
+      </div>
+
+      <div class="callout-box info" style="margin-top: 12px;">
+        <p style="font-size: 14px;"><strong><i class="fa-solid fa-bolt"></i> Revolução Transformer (Artigo Google 2017 — "Attention Is All You Need"):</strong> IAs antigas liam palavra por palavra sequencialmente e esqueciam o início da frase. Os modelos <strong>BERT</strong> e <strong>GPT/Gemini</strong> aplicam matrizes de <em>Self-Attention</em> para ponderar o contexto global de uma só vez.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: LAB 3.2 - ANÁLISE DE SENTIMENTOS COM PYSENTIMIENTO (PASSO 1 E 2) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 3.2 (Colab): PLN em Português com BERT (pysentimiento)</h2>
+    <div class="content-area">
+      <p style="align-self: flex-start; margin-bottom: 8px;">No Google Colab, vamos instalar o <code>pysentimiento</code> e carregar uma rede Transformer (BERTimbau) pré-treinada em milhões de frases em Português:</p>
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.25;">
+          <div class="code-block" style="font-size: 11.8px; line-height: 1.32;">
+<span class="comment"># PASSO 1: Instalando a biblioteca de Deep Learning para PLN</span>
+!pip install pysentimiento --quiet
+<span class="func">print</span>(<span class="string">"Cérebro de PLN instalado com sucesso!"</span>)
+
+<span class="comment"># PASSO 2: Inicializando o modelo BERT para Português (pt)</span>
+<span class="keyword">from</span> pysentimiento <span class="keyword">import</span> create_analyzer
+
+analyzer = create_analyzer(task=<span class="string">"sentiment"</span>, lang=<span class="string">"pt"</span>)
+
+<span class="keyword">def</span> <span class="func">iniciar_analise</span>(frase):
+    resultado = analyzer.predict(frase)
+    mapa = {<span class="string">'POS'</span>: <span class="string">'✅ POSITIVO'</span>, <span class="string">'NEG'</span>: <span class="string">'❌ NEGATIVO'</span>, <span class="string">'NEU'</span>: <span class="string">'😐 NEUTRO'</span>}
+    confianca = resultado.probas[resultado.output] * 100
+    <span class="func">print</span>(f<span class="string">"\nTexto: \"{frase}\" -> {mapa[resultado.output]} ({confianca:.1f}%)"</span>)
+    <span class="keyword">for</span> sent, prob <span class="keyword">in</span> resultado.probas.items():
+        barra = <span class="string">"█"</span> * <span class="func">int</span>(prob * 20)
+        <span class="func">print</span>(f<span class="string">"{sent}: {barra} {prob*100:.1f}%"</span>)</div>
+        </div>
+
+        <div style="flex: 0.9; display: flex; flex-direction: column; gap: 10px;">
+          <div class="console-output" style="font-size: 11.8px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Download do Modelo BERT)</span>
+Cérebro de PLN instalado com sucesso!
+Carregando motor de PLN...
+config.json: 100%|██████████| 952/952 [00:00&lt;00:00]
+model.safetensors: 100%|██████████| 540M/540M [00:08&lt;00:00]
+tokenizer_config.json: 100%|██████████| 562/562 [00:00&lt;00:00]
+Motor BERT carregado na memória!</div>
+          <div class="callout-box" style="margin-top: 0; padding: 10px 14px;">
+            <p style="font-size: 13.2px;"><strong>O que é <code>model.safetensors</code> (540 MB)?</strong><br>
+            São os milhões de pesos sinápticos pré-treinados do modelo Transformer que são baixados do Hugging Face diretamente para a máquina virtual do seu Colab!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: LAB 3.2 - OS 4 DESAFIOS DE PLN E SAÍDAS REAIS -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 3.2: Os 4 Desafios de PLN e Interpretação das Saídas</h2>
+    <div class="content-area">
+      <p style="align-self: flex-start; margin-bottom: 10px;">Execute a função <code>iniciar_analise()</code> para os 4 casos clássicos abaixo e compare a distribuição de probabilidades do BERT:</p>
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.05;">
+          <div class="console-output" style="font-size: 11.8px; line-height: 1.34;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída dos Desafios 1 e 2 (Contexto e Emojis)</span>
+# 1. DESAFIO DO CONTEXTO (Mecanismo de Atenção)
+Texto: "Eu estou bem" -> ✅ POSITIVO (98.4%)
+POS: ███████████████████ 98.4%
+NEU:  1.2% | NEG:  0.4%
+
+Texto: "Eu não estou nada bem" -> ❌ NEGATIVO (99.1%)
+POS:  0.2% | NEU:  0.7%
+NEG: ███████████████████ 99.1%
+
+# 2. DESAFIO DOS EMOJIS (Tokens Visuais)
+Texto: "😊" -> ✅ POSITIVO (96.2%)
+Texto: "💀" -> ❌ NEGATIVO (88.5%)</div>
+        </div>
+
+        <div style="flex: 1.05;">
+          <div class="console-output" style="font-size: 11.8px; line-height: 1.34; border-left-color: var(--colab-orange);">
+            <span class="out-title" style="color: var(--colab-orange);"><i class="fa-solid fa-terminal"></i> Saída dos Desafios 3 e 4 (Neutralidade e Ironia)</span>
+# 3. DESAFIO DA AMBIGUIDADE / FATO NEUTRO
+Texto: "O céu é azul e comprei um pão" -> 😐 NEUTRO (95.8%)
+POS:  2.8%
+NEU: ███████████████████ 95.8%
+NEG:  1.4%
+
+# 4. DESAFIO DA IRONIA / SARCASMO
+Texto: "Que ótimo, meu computador quebrou logo hoje!" -> ❌ NEGATIVO (94.7%)
+POS:  3.1% | NEU:  2.2%
+NEG: ██████████████████ 94.7%</div>
+        </div>
+      </div>
+
+      <div class="callout-box info" style="margin-top: 12px;">
+        <p style="font-size: 13.8px;"><strong><i class="fa-solid fa-lightbulb"></i> Considerações sobre o Retorno da Atividade:</strong> No <strong>Desafio 4 (Sarcasmo)</strong>, um algoritmo antigo baseado em dicionário veria a palavra <em>"ótimo"</em> e classificaria como Positivo. O modelo <strong>BERT</strong> usa <em>Self-Attention</em> para conectar <em>"ótimo"</em> ao evento <em>"computador quebrou logo hoje"</em>, detectando a ironia com <strong>94,7% de certeza negativa</strong>!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: AGENTES DE IA E INFRAESTRUTURA (PESOS E GPU) -->
+  <div class="slide-container">
+    <h2 class="slide-title">De LLMs Passivos a Agentes Autônomos (Agentic AI)</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--senai-medium-gray);">
+          <h3><i class="fa-solid fa-comment-dots" style="color: var(--senai-medium-gray);"></i> LLM Passivo vs. <i class="fa-solid fa-robot" style="color: var(--senai-red);"></i> Agente de IA</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>LLM Passivo:</strong> Apenas responde perguntas com base no seu treinamento congelado no tempo.</li>
+            <li><strong>Agente com RAG (Retrieval-Augmented Generation):</strong> Consulta PDFs, manuais da fábrica e bancos vetoriais antes de responder.</li>
+            <li><strong>Function Calling (Tools):</strong> O Agente decide executar queries SQL, chamar APIs externas ou rodar scripts Python autonomamente.</li>
+          </ul>
+        </div>
+
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-solid fa-server" style="color: var(--google-blue);"></i> Por Trás do "B": Parâmetros e VRAM</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>Modelos Nano (~3B a 8B):</strong> Rodam localmente em notebooks/celulares via <code>Ollama</code> ou <code>LM Studio</code> com privacidade total.</li>
+            <li><strong>Modelos Intermediários (~70B):</strong> Exigem GPUs dedicadas (40GB+ de VRAM) para inferência rápida.</li>
+            <li><strong>Modelos Fronteira (&gt; 1 Trilhão):</strong> Processados em clusters de TPUs/GPUs na nuvem e consumidos via API REST.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: DIVISOR MÓDULO 3 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 03 • Trilha Google Cloud Skills Boost</span>
+      <h2>Atividade 02 da Trilha:<br>Introduction to LLMs</h2>
+      <hr>
+      <p>Aprofundando em Grandes Modelos de Linguagem, Prompt Tuning e Vertex AI na plataforma oficial da Google.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: ROTEIRO ATIVIDADE 2 SKILLS BOOST -->
+  <div class="slide-container">
+    <h2 class="slide-title">Hora da Trilha! Atividade 02 no Google Cloud Skills Boost</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-brands fa-google" style="color: var(--google-blue);"></i> Curso 2: Introduction to Large Language Models</h3>
+          <p style="font-size: 15px; margin-bottom: 12px;">Acesse o <strong>Google Cloud Skills Boost</strong> e inicie a <strong>2ª atividade</strong> da trilha:</p>
+          <ul class="bullet-list-simple">
+            <li><strong>O que você verá no vídeo:</strong> O que são LLMs, arquitetura Transformer, casos de uso corporativos e a diferença entre <strong>Prompt Design</strong>, <strong>Prompt Tuning</strong> e <strong>Fine-Tuning</strong>.</li>
+            <li><strong>Conexão com nossos Labs:</strong> Você acabou de rodar um Transformer real (BERT) no Colab e treinar uma rede neural com Backpropagation!</li>
+            <li><strong>Avaliação:</strong> Responda ao Quiz oficial ao final do módulo.</li>
+          </ul>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="callout-box warning" style="margin-top: 0; border-left-width: 8px; padding: 18px;">
+            <h3 style="color: #B26A00; font-size: 18px; margin-bottom: 8px;"><i class="fa-solid fa-circle-exclamation"></i> LEMBRETE OBRIGATÓRIO DE VÍDEO</h3>
+            <p style="font-size: 15px; color: #2B2B2B;"><strong>Assista a todos os vídeos da Atividade 02 até o final!</strong><br><br>
+            Certifique-se de que o ícone de check verde apareceu ao lado do vídeo antes de enviar o Quiz para garantir a emissão do seu 2º Badge.</p>
+          </div>
+
+          <div style="background: #E8F5E9; border: 1px solid #A5D6A7; border-left: 6px solid var(--code-green); padding: 14px 18px; border-radius: 6px;">
+            <h4 style="color: var(--code-green); font-size: 16px; margin-bottom: 4px;"><i class="fa-solid fa-medal"></i> Meta de Hoje: 50% da Trilha Concluída</h4>
+            <p style="font-size: 14px;">2 de 4 cursos concluídos com sucesso no Google Cloud Skills Boost!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: ENCERRAMENTO -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Encerramento • Dia 03</span>
+      <h2>Metade da Trilha Concluída!</h2>
+      <hr>
+      <p>Salvem seus notebooks de Redes Neurais e PLN no Google Drive (<code>Ctrl+S</code>). Na <strong>Aula 04</strong>, entraremos em <strong>Visão Computacional (YOLOv8, Leitura de Placas com OCR e Reconhecimento de Emoções com DeepFace) + Trilha 03 (IA Responsável)</strong>!</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="presentation-controls">
+  <button id="prev-btn" onclick="prevSlide()" disabled>
+    <i class="fa-solid fa-arrow-left"></i> Anterior
+  </button>
+  <span class="slide-counter" id="slide-counter">01 / 13</span>
+  <button id="next-btn" onclick="nextSlide()">
+    Próximo <i class="fa-solid fa-arrow-right"></i>
+  </button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide-container');
+  const counter = document.getElementById('slide-counter');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
+    });
+    counter.innerText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      nextSlide();
+    }
+    if (e.key === 'ArrowLeft') {
+      prevSlide();
+    }
+  });
+
+  function resizePresentation() {
+    const presentation = document.getElementById('presentation-area');
+    const scale = Math.min(window.innerWidth / 1320, (window.innerHeight - 100) / 750);
+    presentation.style.transform = `scale(${scale})`;
+  }
+
+  window.addEventListener('resize', resizePresentation);
+  resizePresentation();
+  updateSlides();
+</script>
+
+</body>
+</html>

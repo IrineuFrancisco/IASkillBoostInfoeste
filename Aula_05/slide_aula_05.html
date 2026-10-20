@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 05 - Chatbots com Dialogflow ES, Deploy PythonAnywhere e Conclusão Skills Boost (SENAI-SP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+:root {
+  --senai-red: #E30613;
+  --senai-black: #000000;
+  --senai-dark-gray: #2B2B2B;
+  --senai-medium-gray: #757575;
+  --senai-light-gray: #F2F2F2;
+  --senai-white: #FFFFFF;
+  --border-color: #E0E0E0;
+  --colab-orange: #F9AB00;
+  --google-blue: #1A73E8;
+  --code-green: #2E7D32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--senai-light-gray);
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#presentation-area {
+  width: 1280px;
+  height: 720px;
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.slide-container {
+  width: 100%;
+  height: 100%;
+  background-color: var(--senai-white);
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  padding: 38px 65px 72px 65px;
+  background-image: 
+    linear-gradient(to right, rgba(229, 229, 229, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(229, 229, 229, 0.35) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.slide-container.active {
+  display: flex;
+  animation: slideFadeIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 100%;
+  background-color: var(--senai-red);
+  z-index: 10;
+}
+
+.slide-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.06) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4, p, li, .subtitle {
+  margin: 0;
+  line-height: 1.38;
+}
+
+.slide-container h1 {
+  font-weight: 900;
+  color: var(--senai-red);
+  font-size: 50px;
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.slide-container .slide-title {
+  font-weight: 900;
+  color: var(--senai-black);
+  font-size: 27px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: left;
+  border-left: 6px solid var(--senai-red);
+  padding-left: 16px;
+}
+
+.slide-container h3 {
+  font-weight: 800;
+  color: var(--senai-black);
+  font-size: 18.5px;
+  margin-bottom: 8px;
+}
+
+.slide-container p, 
+.slide-container li, 
+.slide-container .subtitle {
+  color: var(--senai-dark-gray);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 25px;
+}
+
+.title-layout .tag-course {
+  background-color: var(--senai-light-gray);
+  color: var(--senai-black);
+  padding: 8px 18px;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--senai-red);
+  align-self: flex-start;
+}
+
+.title-layout .subtitle {
+  font-size: 21px;
+  color: var(--senai-medium-gray);
+  margin-top: 10px;
+  max-width: 960px;
+}
+
+.section-title-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.section-title-layout .module-tag {
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.section-title-layout h2 {
+  font-size: 48px;
+  color: var(--senai-black);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.section-title-layout hr {
+  width: 140px;
+  height: 7px;
+  background-color: var(--senai-red);
+  border: none;
+  margin: 20px auto;
+}
+
+.section-title-layout p {
+  max-width: 840px;
+  color: var(--senai-medium-gray);
+  font-size: 21px;
+}
+
+.two-column {
+  display: flex;
+  width: 100%;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.two-column > div { flex: 1; }
+
+.two-column.tiled > div {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-top: 5px solid var(--senai-red);
+  padding: 18px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.tiled-content {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.tile {
+  background-color: var(--senai-white);
+  border: 1px solid var(--border-color);
+  border-bottom: 5px solid var(--senai-red);
+  padding: 16px 16px;
+  border-radius: 6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.bullet-list-simple {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.bullet-list-simple li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 14.2px;
+}
+
+.bullet-list-simple li::before {
+  content: '■';
+  color: var(--senai-red);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 12px;
+}
+
+.code-block {
+  background-color: #1E1E1E;
+  color: #D4D4D4;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11.8px;
+  line-height: 1.32;
+  text-align: left;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 5px solid var(--senai-red);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.code-block span.keyword { color: #569CD6; font-weight: bold; }
+.code-block span.string { color: #CE9178; }
+.code-block span.comment { color: #6A9955; font-style: italic; }
+.code-block span.func { color: #DCDCAA; }
+
+.console-output {
+  background-color: #0D1117;
+  color: #E6EDF3;
+  padding: 10px 13px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11.5px;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  width: 100%;
+  border-left: 4px solid #2EA043;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.console-output .out-title {
+  color: #7EE787;
+  font-weight: bold;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #30363D;
+  padding-bottom: 3px;
+}
+
+.callout-box {
+  background-color: #FFF5F5;
+  border-left: 6px solid var(--senai-red);
+  padding: 10px 16px;
+  border-radius: 0 6px 6px 0;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.callout-box.warning {
+  background-color: #FFF8E1;
+  border-left-color: #FFA000;
+}
+
+.callout-box.info {
+  background-color: #E8F0FE;
+  border-left-color: var(--google-blue);
+}
+
+.table-layout { width: 100%; }
+.table-layout table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--senai-white);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+.table-layout th, .table-layout td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 13.8px;
+}
+.table-layout th {
+  background-color: var(--senai-red);
+  color: var(--senai-white);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+.table-layout tr:nth-child(even) { background-color: #FAFAFA; }
+
+.paradigm-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.paradigm-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-left: 6px solid var(--senai-dark-gray);
+  border-radius: 6px;
+  padding: 11px 15px;
+  gap: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+}
+.paradigm-card.highlight {
+  border-left-color: var(--senai-red);
+  background: #FFF9F9;
+}
+.paradigm-label {
+  min-width: 195px;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--senai-black);
+}
+.flow-box {
+  background: var(--senai-light-gray);
+  border: 1px solid #D0D0D0;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+}
+.flow-box.red { background: var(--senai-red); color: #fff; border-color: var(--senai-red); }
+.flow-box.dark { background: var(--senai-dark-gray); color: #fff; border-color: var(--senai-dark-gray); }
+.flow-box.blue { background: var(--google-blue); color: #fff; border-color: var(--google-blue); }
+.flow-box.green { background: var(--code-green); color: #fff; border-color: var(--code-green); }
+.flow-arrow { color: var(--senai-red); font-size: 16px; font-weight: 900; }
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--senai-red);
+  color: #fff;
+  font-weight: 800;
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+  text-transform: uppercase;
+}
+
+.presentation-controls {
+  position: fixed;
+  bottom: 18px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.96);
+  padding: 10px 24px;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.presentation-controls button {
+  background-color: var(--senai-red);
+  color: var(--senai-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presentation-controls button:hover:not(:disabled) {
+  background-color: #C00510;
+  transform: translateY(-2px);
+}
+
+.presentation-controls button:disabled {
+  background-color: var(--border-color);
+  color: var(--senai-medium-gray);
+  cursor: not-allowed;
+}
+
+.slide-counter {
+  font-weight: 900;
+  color: var(--senai-dark-gray);
+  font-size: 16px;
+  min-width: 75px;
+  text-align: center;
+}
+    </style>
+</head>
+<body>
+
+<div id="presentation-area">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide-container active">
+    <div class="title-layout">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
+      <span class="tag-course">Dia 05 • Aula 05 (4 Horas) • Grande Final &amp; Deploy em Nuvem</span>
+      <h1>Chatbots com Dialogflow,<br>PythonAnywhere &amp; Demo Day</h1>
+      <p class="subtitle">Arquitetura NLU (Intents, Entities, Slot Filling), Servidor Flask na Nuvem (<code>PythonAnywhere</code>), Projeto Final SIMI e <strong>Conclusão 100% da Trilha Skills Boost</strong></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: DIVISOR MÓDULO 1 -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 01 • Interfaces Conversacionais (NLU)</span>
+      <h2>Google Dialogflow ES:<br>O Cérebro do Chatbot</h2>
+      <hr>
+      <p>Compreendendo Intenções (Intents), Entidades (Entities), Contextos e Fulfillment via Webhook.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: ARQUITETURA NLU E PILARES DO DIALOGFLOW -->
+  <div class="slide-container">
+    <h2 class="slide-title">O que Acontece por Trás do Chat? (Arquitetura NLU)</h2>
+    <div class="content-area">
+      <div class="paradigm-card highlight" style="width: 100%; margin-bottom: 14px;">
+        <div class="paradigm-label" style="color: var(--senai-red);">Fluxo Completo<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Dialogflow + Nuvem</span></div>
+        <div class="flow-box">1. Usuário Digita<br><span style="font-size: 11px; font-weight: 400;">"Quero 2 coxinhas de frango"</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box blue">2. Intent + Entities<br><span style="font-size: 11px; font-weight: 400;"><code>pedido-coxinha</code> (qtde=2)</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box red">3. Webhook POST<br><span style="font-size: 11px; font-weight: 400;">Envia JSON ao PythonAnywhere</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-box dark">4. Resposta Flask<br><span style="font-size: 11px; font-weight: 400;">Retorna Card de Confirmação</span></div>
+      </div>
+
+      <div class="tiled-content">
+        <div class="tile" style="padding: 14px;">
+          <h3 style="font-size: 16px; color: var(--senai-red);"><i class="fa-solid fa-bullseye"></i> Intents (Intenções)</h3>
+          <p style="font-size: 13.5px;">O <strong>verbo / objetivo</strong> do usuário (ex: <code>pedido-coxinha</code>, <code>pedido.pizza</code>). Usa <em>Training Phrases</em> para generalizar frases nunca vistas por similaridade vetorial.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-tags"></i> Entities (Entidades)</h3>
+          <p style="font-size: 13.5px;">Os <strong>substantivos / variáveis</strong> extraídos da frase: Customizadas (<code>@produto</code>, <code>@Sabor</code>) ou de Sistema (<code>@sys.number</code>, <code>@sys.address</code>).</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <h3 style="font-size: 16px; color: var(--colab-orange);"><i class="fa-solid fa-list-check"></i> Slot Filling</h3>
+          <p style="font-size: 13.5px;">Quando marcamos um parâmetro como <strong>Required</strong>, o bot faz perguntas automáticas (<em>Prompts</em>) caso o cliente esqueça algum dado.</p>
+        </div>
+        <div class="tile" style="padding: 14px;">
+          <h3 style="font-size: 16px; color: var(--code-green);"><i class="fa-solid fa-memory"></i> Contextos</h3>
+          <p style="font-size: 13.5px;">A memória de curto prazo da conversa (<em>Lifespan</em> de interações), permitindo confirmar um pedido sem perder os dados anteriores.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: LAB 5.1 - PASSO A PASSO NO DIALOGFLOW (CANTINA SENAI & PIZZARIA) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.1: Configurando o Agente no Google Dialogflow ES</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 20px; align-items: stretch;">
+        <div style="flex: 1.05; background: #fff; border: 1px solid var(--border-color); border-top: 5px solid var(--google-blue); padding: 16px 18px; border-radius: 6px;">
+          <h3 style="font-size: 17px;"><i class="fa-solid fa-utensils" style="color: var(--google-blue);"></i> Parte A: Cantina SENAI (Para o Webhook)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 8px;">
+            <li><strong>1. Criar Agente:</strong> Acesse <code>dialogflow.cloud.google.com</code> $\to$ <strong>Create Agent</strong> $\to$ Nome: <code>SENAIBOT</code> | Idioma: <code>Portuguese (pt-br)</code>.</li>
+            <li><strong>2. Criar Entity (<code>@produto</code>):</strong> Vá em <em>Entities $\to$ Create Entity</em>, nomeie como <code>produto</code> e adicione os valores <code>coxinha de frango</code> e <code>coxinha de costela</code> (com sinônimos).</li>
+            <li><strong>3. Criar Intent (<code>pedido-coxinha</code>):</strong> Adicione frases de treino como <em>"Quero 2 coxinhas de frango"</em> e <em>"Vou querer 5 de costela"</em>.</li>
+            <li><strong>4. Action and Parameters:</strong> Marque <code>qtde</code> (<code>@sys.number</code>) e <code>produto</code> (<code>@produto</code>) como <strong>REQUIRED</strong>.</li>
+            <li><strong>5. Ativar Webhook:</strong> No rodapé da Intent, em <em>Fulfillment</em>, marque <strong>Enable webhook call for this intent</strong> e clique em <strong>Save</strong>!</li>
+          </ul>
+        </div>
+
+        <div style="flex: 1.15; display: flex; flex-direction: column; gap: 10px;">
+          <div class="table-layout">
+            <table>
+              <thead>
+                <tr>
+                  <th>Required</th>
+                  <th>Parameter Name</th>
+                  <th>Entity</th>
+                  <th>Value</th>
+                  <th>Prompt (Se o usuário esquecer)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>✅</td>
+                  <td><code>qtde</code></td>
+                  <td><code>@sys.number</code></td>
+                  <td><code>$qtde</code></td>
+                  <td>"Quantas unidades você deseja?"</td>
+                </tr>
+                <tr>
+                  <td>✅</td>
+                  <td><code>produto</code></td>
+                  <td><code>@produto</code></td>
+                  <td><code>$produto</code></td>
+                  <td>"Qual sabor? (Frango ou Costela)"</td>
+                </tr>
+                <tr>
+                  <td>✅ (Opcional)</td>
+                  <td><code>endereco</code></td>
+                  <td><code>@sys.address</code></td>
+                  <td><code>$endereco</code></td>
+                  <td>"Qual o local de entrega?"</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout-box info" style="margin-top: 0; padding: 10px 14px;">
+            <p style="font-size: 13.2px;"><strong><i class="fa-solid fa-comment-medical"></i> Publicação Moderna (Dialogflow Messenger):</strong><br>
+            No menu lateral esquerdo, clique em <strong>Integrations $\to$ Dialogflow Messenger $\to$ Enable</strong>. Ele gera a tag HTML <code>&lt;df-messenger&gt;</code> com o seu <code>agent-id</code> exclusivo para embutirmos no servidor PythonAnywhere!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: DIVISOR MÓDULO 2 (DEPLOY PYTHONANYWHERE) -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 02 • Laboratório 5.2 (Cloud Deployment)</span>
+      <h2>Backend Flask na Nuvem:<br>PythonAnywhere + Webhook</h2>
+      <hr>
+      <p>Hospedando uma API Flask pública com HTTPS para processar as intenções do Dialogflow em tempo real.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: LAB 5.2 - PASSOS 1 E 2: CONFIGURAÇÃO DO PYTHONANYWHERE -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.2: Passos 1 e 2 — Criando o Servidor no PythonAnywhere</h2>
+    <div class="content-area">
+      <div class="tiled-content">
+        <div class="tile" style="padding: 15px;">
+          <span class="step-badge">Passo 1</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Conta &amp; Web App</h3>
+          <p style="font-size: 13.5px;">1. Crie uma conta gratuita (<em>Beginner</em>) em <code>pythonanywhere.com</code>.<br>
+          2. Vá na aba <strong>Web $\to$ Add a new web app</strong>.<br>
+          3. Selecione o framework <strong>Flask</strong> e <strong>Python 3.10</strong>.</p>
+        </div>
+
+        <div class="tile" style="padding: 15px;">
+          <span class="step-badge">Passo 2</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Arquivos &amp; Ícone</h3>
+          <p style="font-size: 13.5px;">1. Na aba <strong>Files</strong>, entre na pasta <code>mysite/</code>.<br>
+          2. Crie a pasta <code>static/</code> e dentro dela <code>images/</code>.<br>
+          3. Faça upload de um ícone <code>robot.png</code> em <code>/static/images/</code>.</p>
+        </div>
+
+        <div class="tile" style="padding: 15px;">
+          <span class="step-badge">Passo 3</span>
+          <h3 style="margin-top: 8px; font-size: 16.5px;">Arquivo WSGI &amp; HTTPS</h3>
+          <p style="font-size: 13.5px;">1. Na aba <strong>Web</strong>, confira se o <em>WSGI configuration file</em> importa <code>from flask_app import app as application</code>.<br>
+          2. Em <em>Security</em>, ative <strong>Force HTTPS</strong>.</p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top: 12px; font-size: 12px;">
+<span class="comment"># Conteúdo padrão do arquivo WSGI configuration file (Aba Web do PythonAnywhere):</span>
+<span class="keyword">import</span> sys
+path = <span class="string">'/home/SEU_USUARIO/mysite'</span>
+<span class="keyword">if</span> path <span class="keyword">not in</span> sys.path:
+    sys.path.append(path)
+
+<span class="keyword">from</span> flask_app <span class="keyword">import</span> app <span class="keyword">as</span> application</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: LAB 5.2 - BLOCO A DO FLASK_APP.PY (ROTA GET / E DF-MESSENGER) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.2: Código <code>flask_app.py</code> — Bloco 1 (Página Web + Chat)</h2>
+    <div class="content-area">
+      <p style="align-self: flex-start; margin-bottom: 8px;">Abra <code>/home/SEU_USUARIO/mysite/flask_app.py</code> no editor do PythonAnywhere. O <strong>Bloco 1</strong> cria a rota principal <code>GET /</code> que exibe o site da Cantina com o balão do <code>&lt;df-messenger&gt;</code>:</p>
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.3;">
+          <div class="code-block" style="font-size: 11.4px; line-height: 1.3;">
+<span class="keyword">from</span> flask <span class="keyword">import</span> Flask, url_for, make_response, request, jsonify
+
+app = Flask(__name__)
+pedidos = [] <span class="comment"># Lista global em memória para armazenar os pedidos</span>
+
+@app.route(<span class="string">'/'</span>, methods=[<span class="string">"GET"</span>])
+<span class="keyword">def</span> <span class="func">website</span>():
+    <span class="comment"># IMPORTANTE: Substitua o agent-id pelo ID do seu agente Dialogflow!</span>
+    <span class="keyword">return</span> <span class="string">"""
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h2&gt;Cantina Inteligente SENAI-SP&lt;/h2&gt;
+        &lt;h4&gt;Atendimento Automatizado via Google Dialogflow + Flask&lt;/h4&gt;
+        &lt;script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"&gt;&lt;/script&gt;
+        &lt;df-messenger
+            intent="WELCOME"
+            chat-title="SENAIBOT"
+            agent-id="COLE-AQUI-O-SEU-AGENT-ID"
+            language-code="pt-br"
+            chat-icon='%s'&gt;
+        &lt;/df-messenger&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    """</span> % url_for(<span class="string">'static'</span>, filename=<span class="string">'images/robot.png'</span>)</div>
+        </div>
+
+        <div style="flex: 0.9; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+          <div class="callout-box info" style="margin-top: 0;">
+            <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-code"></i> Como funciona a Rota <code>/</code>?</h3>
+            <p style="font-size: 13.5px;">1. Quando o cliente acessa <code>https://seuusuario.pythonanywhere.com/</code> pelo navegador, o Flask executa <code>website()</code>.<br><br>
+            2. A tag <code>&lt;df-messenger&gt;</code> carrega o widget flutuante oficial do Google Cloud conectado ao seu <code>agent-id</code>.<br><br>
+            3. O <code>url_for('static', ...)</code> injeta dinamicamente o ícone <code>robot.png</code> no botão do chat!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: LAB 5.2 - BLOCO B DO FLASK_APP.PY (ROTA POST /WEBHOOK E RICH CARDS) -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.2: Código <code>flask_app.py</code> — Bloco 2 (Rota <code>/webhook</code>)</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 18px; align-items: stretch;">
+        <div style="flex: 1.3;">
+          <div class="code-block" style="font-size: 10.8px; line-height: 1.28;">
+@app.route(<span class="string">'/webhook'</span>, methods=[<span class="string">"POST"</span>])
+<span class="keyword">def</span> <span class="func">processarIntent</span>():
+    payload = request.get_json()
+    intent = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'intent'</span>, {})
+    
+    <span class="keyword">if</span> intent.get(<span class="string">'displayName'</span>) == <span class="string">'pedido-coxinha'</span>:
+        source = payload.get(<span class="string">"originalDetectIntentRequest"</span>, {}).get(<span class="string">"source"</span>)
+        resposta = {<span class="string">"fulfillmentMessages"</span>: []}
+        
+        parametro = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'parameters'</span>, {})
+        qtde = parametro.get(<span class="string">"qtde"</span>)
+        prod = parametro.get(<span class="string">"produto"</span>)
+
+        pedidos.append({<span class="string">"produto"</span>: prod, <span class="string">"qtde"</span>: qtde})
+        msg = f<span class="string">"Ok, seu pedido de {qtde:.0f} {prod} foi registrado no servidor!"</span>
+        <span class="keyword">return</span> enviarCards(msg, source, resposta)
+    
+    <span class="keyword">return</span> make_response(jsonify({<span class="string">"fulfillmentText"</span>: <span class="string">"Intent não reconhecida pelo Webhook."</span>}))
+
+<span class="keyword">def</span> <span class="func">enviarCards</span>(msg, source, resposta):
+    <span class="keyword">if</span> source == <span class="string">"DIALOGFLOW_CONSOLE"</span> <span class="keyword">or</span> source == <span class="string">"telegram"</span>:
+        resposta[<span class="string">'fulfillmentMessages'</span>].append({
+            <span class="string">"card"</span>: {<span class="string">"title"</span>: <span class="string">"Pedido Confirmado"</span>, <span class="string">"subtitle"</span>: msg}
+        })
+    <span class="keyword">else</span>:
+        resposta[<span class="string">"fulfillmentMessages"</span>].append({
+            <span class="string">"payload"</span>: {<span class="string">"richContent"</span>: [[{<span class="string">"type"</span>: <span class="string">"info"</span>, <span class="string">"title"</span>: <span class="string">"Confirmação de Pedido"</span>, <span class="string">"subtitle"</span>: msg}]]}
+        })
+    <span class="keyword">return</span> make_response(jsonify(resposta))</div>
+        </div>
+
+        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 8px;">
+          <div class="console-output" style="font-size: 11px;">
+            <span class="out-title"><i class="fa-solid fa-exchange-alt"></i> JSON Enviado pelo Dialogflow $\to$ /webhook</span>
+{
+  "queryResult": {
+    "queryText": "Quero 3 coxinhas de frango",
+    "parameters": {
+      "qtde": 3.0,
+      "produto": "coxinha de frango"
+    },
+    "intent": { "displayName": "pedido-coxinha" }
+  }
+}</div>
+          <div class="console-output" style="font-size: 11px; border-left-color: var(--colab-orange);">
+            <span class="out-title" style="color: var(--colab-orange);"><i class="fa-solid fa-reply"></i> JSON Retornado pelo Flask $\to$ Dialogflow</span>
+{
+  "fulfillmentMessages": [{
+    "payload": { "richContent": [[{
+      "type": "info",
+      "title": "Confirmação de Pedido",
+      "subtitle": "Ok, seu pedido de 3 coxinha de frango foi registrado no servidor!"
+    }]]}
+  }]
+}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: LAB 5.2 - PASSO 4: VINCULANDO O FULFILLMENT E TESTANDO -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.2: Passo 4 — Ativando o Webhook e Depurando Erros</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--code-green);">
+          <h3><i class="fa-solid fa-link" style="color: var(--code-green);"></i> Vinculando as Pontas (Fulfillment)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>1. Reload no PythonAnywhere:</strong> Salve o <code>flask_app.py</code>, vá na aba <strong>Web</strong> e clique no botão verde <strong>Reload</strong>.</li>
+            <li><strong>2. Copiar URL do Webhook:</strong> Copie o endereço público da sua aplicação acrescentando <code>/webhook</code> ao final:<br>
+            <code>https://seuusuario.pythonanywhere.com/webhook</code></li>
+            <li><strong>3. Colar no Dialogflow:</strong> No menu <strong>Fulfillment</strong> do Dialogflow, ative a chave <strong>Webhook (Enabled)</strong>, cole a URL e clique em <strong>Save</strong>.</li>
+            <li><strong>4. Teste Duplo:</strong> Teste no simulador lateral (<em>Try it now</em>) e diretamente na página web <code>https://seuusuario.pythonanywhere.com/</code>!</li>
+          </ul>
+        </div>
+
+        <div style="border-top-color: var(--colab-orange);">
+          <h3><i class="fa-solid fa-stethoscope" style="color: var(--colab-orange);"></i> Troubleshooting &amp; Expansão IoT (Wokwi)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 10px;">
+            <li><strong>Erro 500 ou "Webhook call failed":</strong> Na aba <strong>Web</strong> do PythonAnywhere, role até <strong>Log files $\to$ error.log</strong> e leia as últimas linhas (verifique indentação ou nome da variável no WSGI).</li>
+            <li><strong>Nome Exato da Intent:</strong> O nome no Dialogflow (<code>pedido-coxinha</code>) deve ser idêntico à string no <code>if intent.get('displayName')</code> do Python!</li>
+            <li><strong>Expansão IoT (Bônus Wokwi):</strong> Adicionando uma rota <code>GET /get_blinks</code> no mesmo Flask, um microcontrolador <strong>Raspberry Pi Pico W / ESP32</strong> no simulador Wokwi consegue ler os comandos do seu Chatbot e acionar LEDs/relés físicos!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: DIVISOR MÓDULO 3 (PROJETO FINAL SIMI) -->
+  <div class="slide-container">
+    <div class="section-title-layout">
+      <span class="module-tag">Módulo 03 • Projeto Integrador em Duplas</span>
+      <h2>Projeto Final SIMI:<br>TechVision Smart Store</h2>
+      <hr>
+      <p>Sistema Integrado de Monitoramento e Interação Inteligente (Visão Computacional + Dialogflow + Nuvem).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: PROTOCOLO DE ENTREGA DO PROJETO FINAL SIMI -->
+  <div class="slide-container">
+    <h2 class="slide-title">Protocolo de Entrega: Projeto Final SIMI (Em Duplas)</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 20px; align-items: stretch;">
+        <div style="flex: 1.05; background: #fff; border: 1px solid var(--border-color); border-left: 6px solid var(--senai-red); padding: 16px 18px; border-radius: 6px;">
+          <h3 style="font-size: 17px; color: var(--senai-red);"><i class="fa-solid fa-clipboard-check"></i> Links e Evidências Obrigatórias</h3>
+          <ul class="bullet-list-simple" style="margin-top: 8px;">
+            <li><strong>Link 1 (Google Colab — Visão):</strong> Notebook da Aula 04 detectando objetos/placas ou emoções com <code>YOLOv8</code> / <code>DeepFace</code>.</li>
+            <li><strong>Link 2 (Dialogflow ES — Agente):</strong> Agente configurado com Entidades, Intenções, Slot Filling e Dialogflow Messenger ativo.</li>
+            <li><strong>Link 3 (PythonAnywhere — Cloud):</strong> URL pública ativa (<code>https://dupla.pythonanywhere.com/webhook</code>).</li>
+            <li><strong>4 Prints no Relatório:</strong> (1) Detecção no Colab; (2) Código Flask no PythonAnywhere; (3) Aba Fulfillment ativa; (4) Chat respondendo na Web.</li>
+          </ul>
+        </div>
+
+        <div style="flex: 1.05;">
+          <div class="table-layout">
+            <table>
+              <thead>
+                <tr>
+                  <th>Critério de Avaliação</th>
+                  <th>Descrição Técnica</th>
+                  <th>Peso</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Integração Técnica</strong></td>
+                  <td>O sistema funciona de ponta a ponta (Visão + Bot + Nuvem)?</td>
+                  <td><strong>50%</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Documentação Formal</strong></td>
+                  <td>Os 4 prints e explicações estão claros e organizados?</td>
+                  <td><strong>20%</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Autonomia Cloud</strong></td>
+                  <td>A dupla realizou o deploy do Webhook no PythonAnywhere?</td>
+                  <td><strong>20%</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Apresentação (Pitch)</strong></td>
+                  <td>Os links estão ativos e os códigos comentados?</td>
+                  <td><strong>10%</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: CONCLUSÃO 100% DA TRILHA GOOGLE CLOUD SKILLS BOOST -->
+  <div class="slide-container">
+    <h2 class="slide-title">Trilha Google Cloud Skills Boost: Atividade 04 (100%!)</h2>
+    <div class="content-area">
+      <div class="two-column tiled">
+        <div style="border-top-color: var(--google-blue);">
+          <h3><i class="fa-brands fa-google" style="color: var(--google-blue);"></i> Atividade 04 &amp; Certificação Completa</h3>
+          <p style="font-size: 15px; margin-bottom: 10px;">Acesse o <strong>Google Cloud Skills Boost</strong> e conclua a <strong>4ª e última atividade</strong> da trilha <em>Iniciante: Introdução à IA Generativa</em>:</p>
+          <ul class="bullet-list-simple">
+            <li><strong>Checklist dos 4 Badges no seu Perfil Público:</strong></li>
+            <li>✅ <strong>Dia 02:</strong> <em>Introduction to Generative AI</em></li>
+            <li>✅ <strong>Dia 03:</strong> <em>Introduction to Large Language Models</em></li>
+            <li>✅ <strong>Dia 04:</strong> <em>Introduction to Responsible AI</em></li>
+            <li>✅ <strong>Dia 05 (Hoje):</strong> <em>4ª Atividade / Applying AI Principles with Google Cloud</em></li>
+          </ul>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="callout-box warning" style="margin-top: 0; border-left-width: 8px; padding: 16px;">
+            <h3 style="color: #B26A00; font-size: 17.5px; margin-bottom: 6px;"><i class="fa-solid fa-circle-exclamation"></i> VERIFICAÇÃO FINAL DOS VÍDEOS</h3>
+            <p style="font-size: 14.5px; color: #2B2B2B;">Confira se a barra de progresso da sua trilha atingiu <strong>100%</strong>! Se alguma das 4 atividades estiver abaixo de 100%, reabra o vídeo correspondente e deixe-o rodar até o último segundo.</p>
+          </div>
+
+          <div style="background: #E8F5E9; border: 1px solid #A5D6A7; border-left: 6px solid var(--code-green); padding: 14px 18px; border-radius: 6px;">
+            <h4 style="color: var(--code-green); font-size: 16px; margin-bottom: 4px;"><i class="fa-solid fa-trophy"></i> Parabéns, Desenvolvedores de IA!</h4>
+            <p style="font-size: 13.8px;">Compartilhem seus Badges oficiais do Google Cloud e o projeto hospedado no PythonAnywhere no seu LinkedIn e GitHub!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="presentation-controls">
+  <button id="prev-btn" onclick="prevSlide()" disabled>
+    <i class="fa-solid fa-arrow-left"></i> Anterior
+  </button>
+  <span class="slide-counter" id="slide-counter">01 / 12</span>
+  <button id="next-btn" onclick="nextSlide()">
+    Próximo <i class="fa-solid fa-arrow-right"></i>
+  </button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide-container');
+  const counter = document.getElementById('slide-counter');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
+    });
+    counter.innerText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      nextSlide();
+    }
+    if (e.key === 'ArrowLeft') {
+      prevSlide();
+    }
+  });
+
+  function resizePresentation() {
+    const presentation = document.getElementById('presentation-area');
+    const scale = Math.min(window.innerWidth / 1320, (window.innerHeight - 100) / 750);
+    presentation.style.transform = `scale(${scale})`;
+  }
+
+  window.addEventListener('resize', resizePresentation);
+  resizePresentation();
+  updateSlides();
+</script>
+
+</body>
+</html>
