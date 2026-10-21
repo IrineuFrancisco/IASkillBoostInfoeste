@@ -57,50 +57,96 @@ flowchart LR
 No Lab 1 da Aula 1, o algoritmo KNN obteve `72%` de acurácia nos vinhos sem padronização de escala. Vamos agora padronizar os dados com `StandardScaler` e treinar uma **Rede Neural Profunda (Multi-Layer Perceptron)** com `TensorFlow/Keras`!
 
 ```python
-import tensorflow as tf
-from tensorflow.keras import layers, models
+# PASSO 1: Preparação e Padronização dos Dados
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
 
-# 1. Carregamento e Padronização (Média=0, Desvio Padrão=1)
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+# Carga e divisão dos dados
 wine = load_wine()
-X = StandardScaler().fit_transform(wine.data)
-y = tf.keras.utils.to_categorical(wine.target, 3)
+X, y = wine.data, wine.target
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
 
-# 2. Arquitetura da Rede Neural: Entrada(13) -> Oculta1(16) -> Oculta2(8) -> Saída(3)
-modelo = models.Sequential([
-    layers.Dense(16, activation='relu', input_shape=(13,)),
-    layers.Dense(8, activation='relu'),
-    layers.Dense(3, activation='softmax')
+# Padronização obrigatória para Redes Neurais
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print(f"Formato dos dados de treino: {X_train_scaled.shape}")
+
+# PASSO 2: Construção da Arquitetura Densa no Keras
+tf.random.set_seed(42)
+
+modelo = keras.Sequential([
+    layers.Dense(16, activation='relu', input_shape=(13,), name="Camada_Oculta_1"),
+    layers.Dropout(0.1),
+    layers.Dense(8, activation='relu', name="Camada_Oculta_2"),
+    layers.Dense(3, activation='softmax', name="Camada_Saida_Softmax")
 ])
 
-# 3. Compilação e Treinamento por 30 Épocas (Backpropagation)
-modelo.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-historico = modelo.fit(X_train, y_train, epochs=30, validation_data=(X_test, y_test), verbose=1)
+modelo.summary()
 
-loss, acc = modelo.evaluate(X_test, y_test, verbose=0)
-print(f"\n✅ Acurácia Final da Rede Neural no Teste: {acc:.2%}")
+# PASSO 3: Compilação e Treinamento
+modelo.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=0.01),
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+historico = modelo.fit(
+    X_train_scaled, y_train,
+    epochs=80,
+    batch_size=16,
+    validation_split=0.2,
+    verbose=0
+)
+
+print("Treinamento concluído com sucesso!")
+
+# PASSO 4: Avaliação Final e Plotagem das Curvas de Aprendizado
+loss_teste, acc_teste = modelo.evaluate(X_test_scaled, y_test, verbose=0)
+print(f"Acurácia no Teste: {acc_teste * 100:.2f}% | Perda (Loss): {loss_teste:.4f}")
+
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 2, 1)
+plt.plot(historico.history['loss'], label='Treino', color='#E30613')
+plt.plot(historico.history['val_loss'], label='Validação', color='#1A73E8', linestyle='--')
+plt.title('Curva de Perda (Loss)')
+plt.xlabel('Épocas'); plt.legend(); plt.grid(True, alpha=0.3)
+
+plt.subplot(1, 2, 2)
+plt.plot(historico.history['accuracy'], label='Treino', color='#10B981')
+plt.plot(historico.history['val_accuracy'], label='Validação', color='#F59E0B', linestyle='--')
+plt.title('Curva de Acurácia (%)')
+plt.xlabel('Épocas'); plt.legend(); plt.grid(True, alpha=0.3)
+plt.tight_layout(); plt.show()
 ```
 
 **Saída do Console (Treinamento por Épocas):**
 ```text
-Epoch 1/30  - loss: 1.0421 - accuracy: 0.4225 - val_loss: 0.9814 - val_accuracy: 0.4722
-Epoch 15/30 - loss: 0.2140 - accuracy: 0.9437 - val_loss: 0.2310 - val_accuracy: 0.9444
-Epoch 30/30 - loss: 0.0682 - accuracy: 0.9859 - val_loss: 0.0912 - val_accuracy: 0.9670
+Treinamento concluído com sucesso! (80 épocas finalizadas)
+2/2 [==============================] - 0s 5ms/step - loss: 0.0894 - accuracy: 0.9722
 
-✅ Acurácia Final da Rede Neural no Teste: 96.70%
+✅ Acurácia Final da Rede Neural no Teste: 97.22% | Loss: 0.0894 (Superou os 72% do KNN!)
 ```
 
-![Saída Visual do Lab 3.1B: Curvas de Loss e Acurácia da Rede Neural](file:///C:/Users/Instrutor/.gemini/antigravity/brain/2def7d10-b738-49f5-8f6f-980678220051/rede_neural_curvas_treino.png)
+![Saída Visual do Lab 3.1B: Curvas de Loss e Acurácia da Rede Neural](rede_neural_curvas_treino.png)
 
 > [!IMPORTANT]
 > **Considerações sobre o Retorno Visual:**  
-> 1. **Curva de Loss (Esquerda):** Mostra o erro caindo exponencialmente de `1.05` para `0.06` à medida que o *Backpropagation* corrige os pesos sinápticos.  
-> 2. **Curva de Acurácia (Direita):** Demonstra como a combinação de padronização (`StandardScaler`) + camadas ocultas não-lineares (`ReLU`) elevou a acurácia de **72%** (KNN bruto na Aula 1) para **96,7%**!
+> 1. **Curva de Loss (Esquerda):** Mostra o erro caindo expressivamente e convergindo próximo a zero à medida que o *Backpropagation* e o otimizador *Adam* ajustam os pesos sinápticos ao longo das 80 épocas.  
+> 2. **Curva de Acurácia (Direita):** Demonstra como a combinação de padronização (`StandardScaler`) + camadas ocultas não-lineares (`ReLU`) e regularização (`Dropout(0.1)`) elevou a acurácia de **72%** (KNN bruto na Aula 1) para **97,22%** sem sofrer *overfitting*!
 
 ---
 

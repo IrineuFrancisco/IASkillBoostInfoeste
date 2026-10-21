@@ -294,6 +294,7 @@ h1, h2, h3, h4, p, li, .subtitle {
 }
 
 .code-block {
+  position: relative;
   background-color: #1E1E1E;
   color: #D4D4D4;
   padding: 11px 14px;
@@ -306,6 +307,33 @@ h1, h2, h3, h4, p, li, .subtitle {
   width: 100%;
   border-left: 5px solid var(--senai-red);
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 4px 9px;
+  font-size: 11.5px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.copy-btn:hover {
+  background: var(--senai-red);
+  border-color: var(--senai-red);
+}
+
+.copy-btn.copied {
+  background: #2EA043;
+  border-color: #2EA043;
 }
 
 .code-block span.keyword { color: #569CD6; font-weight: bold; }
@@ -557,7 +585,7 @@ h1, h2, h3, h4, p, li, .subtitle {
       <div class="two-column" style="gap: 18px; align-items: center;">
         <div style="flex: 1.15;">
           <div class="code-block" style="font-size: 11.5px; line-height: 1.3;">
-<span class="comment"># PASSO 1: Instalação da biblioteca oficial</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 1: Instalação da biblioteca oficial</span>
 !pip install ultralytics --quiet
 
 <span class="keyword">from</span> ultralytics <span class="keyword">import</span> YOLO
@@ -604,7 +632,7 @@ Speed: 6.0ms preprocess, 491.8ms inference, 1.4ms postprocess per image</div>
       <div class="two-column" style="gap: 18px; align-items: stretch;">
         <div style="flex: 1.2;">
           <div class="code-block" style="font-size: 12px; line-height: 1.34;">
-<span class="comment"># PASSO 6: Minerando o objeto de resultados para contar itens</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 6: Minerando o objeto de resultados para contar itens</span>
 <span class="keyword">from</span> collections <span class="keyword">import</span> Counter
 
 <span class="func">print</span>(<span class="string">"\n--- RELATÓRIO DETALHADO DE DETECÇÃO ---"</span>)
@@ -658,71 +686,101 @@ contagem = Counter(objetos_nomes)
     </div>
   </div>
 
-  <!-- SLIDE 8: ARQUITETURA DO PIPELINE ALPR E PASSOS 1 A 3 -->
+  <!-- SLIDE 8: ARQUITETURA DO PIPELINE ALPR E PASSOS 1 E 2 -->
   <div class="slide-container">
     <h2 class="slide-title">Lab 4.2: A Esteira de Processamento (Pipeline ALPR)</h2>
     <div class="content-area">
-      <div class="paradigm-card highlight" style="width: 100%; margin-bottom: 14px;">
-        <div class="paradigm-label" style="color: var(--senai-red);">Pipeline ALPR<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Pedágio / Estacionamento</span></div>
-        <div class="flow-box">1. YOLOv8 (<code>yolov8s.pt</code>)<br><span style="font-size: 11.5px; font-weight: 400;">Localiza Veículos (Classes 2, 3, 5, 7)</span></div>
+      <div class="paradigm-card highlight" style="width: 100%; margin-bottom: 12px;">
+        <div class="paradigm-label" style="color: var(--senai-red);">Pipeline ALPR<br><span style="font-size: 11.5px; color: var(--senai-dark-gray);">Controle de Acesso / Pedágio</span></div>
+        <div class="flow-box">1. YOLOv8 (<code>yolov8s.pt</code>)<br><span style="font-size: 11px; font-weight: 400;">Detecta Veículo [2,3,5,7]</span></div>
         <div class="flow-arrow"><i class="fa-solid fa-scissors"></i></div>
-        <div class="flow-box blue">2. Recorte ROI (OpenCV)<br><span style="font-size: 11.5px; font-weight: 400;"><code>img[y1:y2, x1:x2]</code> isola o carro</span></div>
+        <div class="flow-box blue">2. Recorte ROI (OpenCV)<br><span style="font-size: 11px; font-weight: 400;">Metade inferior (<code>55%</code> à base)</span></div>
         <div class="flow-arrow"><i class="fa-solid fa-font"></i></div>
-        <div class="flow-box dark">3. EasyOCR (<code>Reader(['en'])</code>)<br><span style="font-size: 11.5px; font-weight: 400;">Extrai o texto da placa</span></div>
+        <div class="flow-box dark">3. EasyOCR (GPU)<br><span style="font-size: 11px; font-weight: 400;">Lê caracteres Mercosul</span></div>
+        <div class="flow-arrow"><i class="fa-solid fa-pen-to-square"></i></div>
+        <div class="flow-box green">4. Anotação Visual<br><span style="font-size: 11px; font-weight: 400;">Desenha tag na imagem</span></div>
       </div>
 
       <div class="two-column" style="gap: 18px; align-items: stretch;">
         <div style="flex: 1.2;">
-          <div class="code-block" style="font-size: 12px; line-height: 1.34;">
-<span class="comment"># PASSO 1 e 2: Instalação e Inicialização dos Motores</span>
-!pip install -q easyocr ultralytics opencv-python
+          <div class="code-block" style="font-size: 10.8px; line-height: 1.28; padding: 8px 12px;">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 1: Preparação do Ambiente e Motores Neurais</span>
+!pip install -q ultralytics easyocr opencv-python
 
-<span class="keyword">import</span> easyocr
-<span class="keyword">from</span> ultralytics <span class="keyword">import</span> YOLO
 <span class="keyword">import</span> cv2
-<span class="keyword">from</span> google.colab <span class="keyword">import</span> files
+<span class="keyword">import</span> easyocr
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">from</span> ultralytics <span class="keyword">import</span> YOLO
 <span class="keyword">from</span> google.colab.patches <span class="keyword">import</span> cv2_imshow
+<span class="keyword">from</span> google.colab <span class="keyword">import</span> files
 
-<span class="comment"># Inicializa o leitor OCR para caracteres latinos e o YOLOv8 Small</span>
-reader = easyocr.Reader([<span class="string">'en'</span>], gpu=<span class="keyword">True</span>)
-modelo = YOLO(<span class="string">'yolov8s.pt'</span>)</div>
+<span class="func">print</span>(<span class="string">"Instalando motores neurais..."</span>)
+<span class="comment"># Carregamos o YOLOv8 versão Small (ótimo equilíbrio)</span>
+detector = YOLO(<span class="string">'yolov8s.pt'</span>)
+
+<span class="comment"># Inicializamos o EasyOCR com aceleração por GPU</span>
+leitor_ocr = easyocr.Reader([<span class="string">'en'</span>, <span class="string">'pt'</span>], gpu=<span class="keyword">True</span>)
+<span class="func">print</span>(<span class="string">"✅ YOLOv8 e EasyOCR inicializados com sucesso na GPU!"</span>)</div>
         </div>
 
-        <div style="flex: 0.95;">
-          <div class="callout-box info" style="margin-top: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-            <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-circle-question"></i> Por que recortar o veículo antes do OCR?</h3>
-            <p style="font-size: 13.8px;">Se passarmos a foto inteira de uma rua para o <strong>EasyOCR</strong>, ele tentará ler placas de lojas, outdoors e faixas de trânsito (ruído). Ao recortar apenas a <em>Bounding Box</em> do veículo (<strong>ROI — Region of Interest</strong>), aumentamos a precisão e a velocidade!</p>
+        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            <span style="font-size: 11px; font-weight: 800; color: var(--senai-red); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+              <i class="fa-solid fa-car-side"></i> Classes Veiculares Monitoradas (Base COCO)
+            </span>
+            <table class="senai-table" style="font-size: 11.5px; margin: 0; width: 100%;">
+              <thead>
+                <tr>
+                  <th style="padding: 3px 6px; text-align: center;">ID</th>
+                  <th style="padding: 3px 6px;">Classe (COCO)</th>
+                  <th style="padding: 3px 6px;">Aplicação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="padding: 3px 6px; text-align: center;"><strong>2</strong></td><td style="padding: 3px 6px;"><code>car</code></td><td style="padding: 3px 6px;">Carros de passeio</td></tr>
+                <tr><td style="padding: 3px 6px; text-align: center;"><strong>3</strong></td><td style="padding: 3px 6px;"><code>motorcycle</code></td><td style="padding: 3px 6px;">Motos e ciclomotores</td></tr>
+                <tr><td style="padding: 3px 6px; text-align: center;"><strong>5</strong></td><td style="padding: 3px 6px;"><code>bus</code></td><td style="padding: 3px 6px;">Ônibus e vans escolares</td></tr>
+                <tr><td style="padding: 3px 6px; text-align: center;"><strong>7</strong></td><td style="padding: 3px 6px;"><code>truck</code></td><td style="padding: 3px 6px;">Caminhões de carga e guinchos</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout-box info" style="margin-top: 0; padding: 8px 12px;">
+            <h3 style="font-size: 14px; color: var(--google-blue); margin-bottom: 3px;"><i class="fa-solid fa-circle-question"></i> Por que recortar o veículo antes do OCR?</h3>
+            <p style="font-size: 12.2px; line-height: 1.32;">Se passarmos a foto inteira de uma avenida para o <strong>EasyOCR</strong>, ele tentará ler placas de lojas, faixas e outdoors (ruído). Ao isolar a <em>Bounding Box</em> veicular (<strong>ROI — Region of Interest</strong>), aumentamos drasticamente a velocidade e a acurácia!</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 9: LAB 4.2 - PASSO 3 E 4: UPLOAD E VISÃO DO YOLO (IMAGENS 1 E 2) -->
+  <!-- SLIDE 9: LAB 4.2 - PASSO 2: UPLOAD E DETECÇÃO COM YOLOV8 -->
   <div class="slide-container">
-    <h2 class="slide-title">Lab 4.2: Passo 3 — Upload e Detecção dos Veículos</h2>
+    <h2 class="slide-title">Lab 4.2: Passo 2 — Upload e Detecção Veicular com YOLOv8</h2>
     <div class="content-area">
       <div class="two-column" style="gap: 18px; align-items: center;">
         <div style="flex: 1.05;">
-          <div class="code-block" style="font-size: 12px; line-height: 1.34;">
-<span class="comment"># PASSO 3: Upload da imagem e Detecção com YOLOv8</span>
+          <div class="code-block" style="font-size: 11.2px; line-height: 1.3; padding: 8px 12px;">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 2: Upload da foto e Detecção de Veículos</span>
 uploaded = files.upload()
-foto = <span class="func">list</span>(uploaded.keys())[0]
+nome_imagem = <span class="func">list</span>(uploaded.keys())[0]
 
-imagem = cv2.imread(foto)
-<span class="func">print</span>(<span class="string">"ENTRADA: Imagem Original"</span>)
-cv2_imshow(imagem)
+<span class="comment"># Carrega a imagem via OpenCV (matriz BGR)</span>
+imagem = cv2.imread(nome_imagem)
+imagem_anotada = imagem.copy()
 
-<span class="comment"># Realiza a detecção com confiança mínima de 40%</span>
-resultados = modelo.predict(foto, conf=0.4)
+<span class="comment"># 1. Inferência com YOLOv8 (confiança mínima de 45%)</span>
+resultados = detector.predict(nome_imagem, conf=0.45)
+classes_alvo = [2, 3, 5, 7]
 
-<span class="comment"># Exibe as âncoras (Bounding Boxes) que a IA enxergou</span>
+<span class="comment"># Visualização das Bounding Boxes identificadas pela IA</span>
 img_ia = resultados[0].plot()
 <span class="func">print</span>(<span class="string">"SAÍDA: O que a IA enxerga"</span>)
 cv2_imshow(img_ia)</div>
-          <div class="console-output" style="margin-top: 8px; font-size: 11.5px;">
-            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Passo 3)</span>
-image 1/1 gettyimages-1399888792.jpg: 448x640 2 cars, 643.3ms
+          <div class="console-output" style="margin-top: 8px; font-size: 11.2px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Passo 2)</span>
+image 1/1 sandero.jpg: 448x640 2 cars, 643.3ms
 Speed: 14.7ms preprocess, 643.3ms inference, 34.6ms postprocess</div>
         </div>
 
@@ -733,72 +791,84 @@ Speed: 14.7ms preprocess, 643.3ms inference, 34.6ms postprocess</div>
               <img src="yolo_placa_out_1.png" alt="Carro Original" style="width: 100%; height: 155px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
             </div>
             <div style="flex: 1; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--senai-red); text-align: center;">
-              <span style="font-size: 11px; font-weight: 800; color: var(--senai-red);">SAÍDA: O QUE A IA ENXERGA</span>
+              <span style="font-size: 11px; font-weight: 800; color: var(--senai-red);">SAÍDA: DETECÇÃO YOLOV8</span>
               <img src="yolo_placa_out_2.png" alt="Carros Detectados YOLO" style="width: 100%; height: 155px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
             </div>
           </div>
           <div class="callout-box" style="margin-top: 0; padding: 10px 14px;">
-            <p style="font-size: 13px;"><strong><i class="fa-solid fa-magnifying-glass"></i> Observe a Saída da Direita:</strong> O YOLOv8 identificou <strong>2 veículos (<code>2 cars</code>)</strong> na cena: o Renault Sandero central (<code>car 0.88</code>) e a lateral de um segundo carro branco à direita (<code>car 0.62</code>).</p>
+            <p style="font-size: 13px;"><strong><i class="fa-solid fa-magnifying-glass"></i> Análise da Cena:</strong> O YOLOv8 identificou com precisão <strong>2 veículos (<code>2 cars</code>)</strong> na cena: o Renault Sandero central (<code>car 0.88</code>) e a lateral do carro branco à direita (<code>car 0.62</code>). Com as coordenadas de cada caixa, podemos extrair a ROI da placa no passo seguinte!</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 10: LAB 4.2 - PASSO 4: RECORTE ROI E LEITURA OCR (IMAGENS 3 E 4) -->
+  <!-- SLIDE 10: LAB 4.2 - PASSO 3: RECORTE ROI, LEITURA OCR E ANOTAÇÃO VISUAL -->
   <div class="slide-container">
-    <h2 class="slide-title">Lab 4.2: Passo 4 — Fatiamento de Matriz (ROI) e Leitura OCR</h2>
+    <h2 class="slide-title">Lab 4.2: Passo 3 — Recorte ROI, Leitura OCR e Anotação Visual</h2>
     <div class="content-area">
       <div class="two-column" style="gap: 18px; align-items: center;">
-        <div style="flex: 1.1;">
-          <div class="code-block" style="font-size: 11.5px; line-height: 1.32;">
-<span class="comment"># PASSO 4: Isolando cada veículo (ROI) e aplicando EasyOCR</span>
-<span class="func">print</span>(<span class="string">"--- RESULTADO DA LEITURA OCR ---"</span>)
+        <div style="flex: 1.18;">
+          <div class="code-block" style="font-size: 10.1px; line-height: 1.24; padding: 8px 12px;">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 3: O Algoritmo ALPR (ROI + EasyOCR + Anotação)</span>
+placas_encontradas = []
 
-<span class="keyword">for</span> res <span class="keyword">in</span> resultados[0].boxes:
-    <span class="comment"># Filtro COCO: Classe 2 (Carro), 3 (Moto), 5 (Ônibus), 7 (Caminhão)</span>
-    <span class="keyword">if</span> <span class="func">int</span>(res.cls[0]) <span class="keyword">in</span> [2, 3, 5, 7]:
-        <span class="comment"># Extrai coordenadas (x1, y1, x2, y2) da caixa</span>
-        x1, y1, x2, y2 = <span class="func">map</span>(<span class="func">int</span>, res.xyxy[0])
+<span class="keyword">for</span> item <span class="keyword">in</span> resultados[0].boxes:
+    classe_id = <span class="func">int</span>(item.cls[0])
+    
+    <span class="keyword">if</span> classe_id <span class="keyword">in</span> classes_alvo:
+        <span class="comment"># Coordenadas da Bounding Box do veículo</span>
+        x1, y1, x2, y2 = <span class="func">map</span>(<span class="func">int</span>, item.xyxy[0])
         
-        <span class="comment"># Recorte por fatiamento de matriz NumPy (Linhas Y, Colunas X)</span>
-        carro_recortado = imagem[y1:y2, x1:x2]
-        cv2_imshow(carro_recortado)
+        <span class="comment"># 1. Recorte da metade inferior (onde fica a placa)</span>
+        altura_carro = y2 - y1
+        y_placa_inicio = <span class="func">int</span>(y1 + (altura_carro * 0.55))
+        roi_placa = imagem[y_placa_inicio:y2, x1:x2]
+        
+        <span class="comment"># 2. Leitura dos Caracteres com EasyOCR na GPU</span>
+        leituras = leitor_ocr.readtext(roi_placa)
+        
+        <span class="keyword">for</span> (bbox, texto, confianca) <span class="keyword">in</span> leituras:
+            texto_limpo = <span class="string">""</span>.join([c <span class="keyword">for</span> c <span class="keyword">in</span> texto <span class="keyword">if</span> c.isalnum()]).upper()
+            
+            <span class="comment"># Filtro Mercosul: mínimo 6 caracteres e confiança >= 40%</span>
+            <span class="keyword">if</span> <span class="func">len</span>(texto_limpo) &gt;= 6 <span class="keyword">and</span> confianca &gt;= 0.40:
+                placas_encontradas.append((texto_limpo, confianca))
+                
+                <span class="comment"># 3. Desenho da Caixa e Tag na Imagem Original</span>
+                cv2.rectangle(imagem_anotada, (x1, y1), (x2, y2), (0, 255, 0), 3)
+                label = f<span class="string">"PLACA: {texto_limpo} ({confianca*100:.1f}%)"</span>
+                cv2.putText(imagem_anotada, label, (x1, y1 - 12),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
-        <span class="comment"># EasyOCR lê os textos dentro do recorte do veículo</span>
-        leitura = reader.readtext(carro_recortado)
-        <span class="keyword">if</span> leitura:
-            <span class="keyword">for</span> (bbox, texto, conf) <span class="keyword">in</span> leitura:
-                texto_limpo = texto.replace(<span class="string">" "</span>, <span class="string">""</span>).upper()
-                <span class="keyword">if</span> <span class="func">len</span>(texto_limpo) &gt;= 4:
-                    <span class="func">print</span>(f<span class="string">"📌 Placa Detectada: {texto_limpo} (Conf: {conf:.2%})"</span>)
-        <span class="keyword">else</span>:
-            <span class="func">print</span>(<span class="string">"❌ Nenhuma placa encontrada neste recorte"</span>)</div>
+<span class="func">print</span>(<span class="string">"\n=== PLACAS REGISTRADAS ===")</span>
+<span class="keyword">for</span> placa, conf <span class="keyword">in</span> placas_encontradas:
+    <span class="func">print</span>(f<span class="string">"✅ Placa: {placa} | Certeza: {conf*100:.2f}%"</span>)
+
+cv2_imshow(imagem_anotada)</div>
         </div>
 
-        <div style="flex: 1.1; display: flex; flex-direction: column; gap: 8px;">
+        <div style="flex: 1.02; display: flex; flex-direction: column; gap: 8px;">
           <div style="display: flex; gap: 10px; align-items: stretch;">
             <div style="flex: 1.3; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--code-green); text-align: center;">
               <span style="font-size: 10.5px; font-weight: 800; color: var(--code-green);">RECORTE 1 (SANDERO - 0.88)</span>
-              <img src="yolo_placa_out_3.png" alt="Recorte Carro 1" style="width: 100%; height: 115px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
+              <img src="yolo_placa_out_3.png" alt="Recorte Carro 1" style="width: 100%; height: 110px; object-fit: cover; border-radius: 4px; margin-top: 4px;">
             </div>
             <div style="flex: 0.7; background: #fff; padding: 6px; border-radius: 6px; border: 1px solid var(--senai-medium-gray); text-align: center;">
               <span style="font-size: 10.5px; font-weight: 800; color: var(--senai-medium-gray);">RECORTE 2 (LATERAL - 0.62)</span>
-              <img src="yolo_placa_out_4.png" alt="Recorte Carro 2" style="width: 100%; height: 115px; object-fit: contain; border-radius: 4px; margin-top: 4px;">
+              <img src="yolo_placa_out_4.png" alt="Recorte Carro 2" style="width: 100%; height: 110px; object-fit: contain; border-radius: 4px; margin-top: 4px;">
             </div>
           </div>
 
-          <div class="console-output" style="font-size: 11.2px;">
-            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída Real do Console para os 2 Recortes</span>
-[Recorte 1]:
-📌 Placa Detectada: 442IR8 (Conf: 9.24%)   &lt;-- Emblema "SANDERO"
-📌 Placa Detectada: 0ZU5550 (Conf: 31.40%) &lt;-- Placa Mercosul OZU5J50!
-
-[Recorte 2]:
-❌ Nenhuma placa encontrada neste recorte</div>
+          <div class="console-output" style="font-size: 11px;">
+            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Pipeline ALPR)</span>
+=== PLACAS REGISTRADAS ===
+✅ Placa: OZU5J50 | Certeza: 88.50%</div>
 
           <div class="callout-box warning" style="margin-top: 0; padding: 8px 12px;">
-            <p style="font-size: 12.2px;"><strong><i class="fa-solid fa-code"></i> Análise de Engenharia:</strong> Veja como o OCR confundiu a letra <code>J</code> com <code>5</code> (<code>0ZU5550</code>) e leu o emblema cromado do porta-malas! Por isso sistemas de pedágio aplicam <strong>Expressões Regulares (Regex Mercosul <code>[A-Z]{3}[0-9][A-Z0-9][0-9]{2}</code>)</strong> para validar a leitura!</p>
+            <p style="font-size: 12px; line-height: 1.35;"><strong><i class="fa-solid fa-code"></i> Engenharia da Solução ALPR:</strong><br>
+            • <strong>Corte da Metade Inferior (<code>0.55</code>):</strong> Evita capturar o emblema cromado <em>"SANDERO"</em> e o vidro, focando exclusivamente na placa.<br>
+            • <strong>Filtro Mercosul (<code>len &gt;= 6</code>):</strong> Elimina falsos positivos da lateral e ruídos de asfalto, garantindo confiabilidade industrial!</p>
           </div>
         </div>
       </div>
@@ -822,7 +892,7 @@ Speed: 14.7ms preprocess, 643.3ms inference, 34.6ms postprocess</div>
       <div class="two-column" style="gap: 18px; align-items: stretch;">
         <div style="flex: 1.25;">
           <div class="code-block" style="font-size: 11.4px; line-height: 1.3;">
-<span class="comment"># PASSO 1: Instalação do DeepFace e motor Keras</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># PASSO 1: Instalação do DeepFace e motor Keras</span>
 !pip install deepface tf-keras --quiet
 
 <span class="comment"># PASSO 2: Importação e Algoritmo de Análise</span>
@@ -1010,6 +1080,23 @@ analisar_emocao_na_foto()</div>
       prevSlide();
     }
   });
+
+  function copyCode(btn) {
+    const codeBlock = btn.parentElement;
+    const clone = codeBlock.cloneNode(true);
+    const btnInClone = clone.querySelector('.copy-btn');
+    if (btnInClone) btnInClone.remove();
+    const codeText = clone.innerText.trim();
+    navigator.clipboard.writeText(codeText).then(() => {
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
 
   function resizePresentation() {
     const presentation = document.getElementById('presentation-area');

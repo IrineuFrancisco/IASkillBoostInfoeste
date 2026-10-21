@@ -326,6 +326,34 @@
       width: 100%;
       border-left: 5px solid var(--senai-red);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .copy-btn:hover {
+      background: var(--senai-red);
+      border-color: var(--senai-red);
+    }
+
+    .copy-btn.copied {
+      background: #2EA043;
+      border-color: #2EA043;
     }
 
     .code-block span.keyword {
@@ -944,41 +972,34 @@
                 </div>
             </div>
 
-            <div style="flex: 1.15;">
               <div class="code-block"
-                style="font-size: 12.2px; line-height: 1.34; border-left-color: var(--code-green);">
-                <span class="comment"># ✅ GABARITO: SISTEMA ESCOLAR V1.1 (7 Bugs Corrigidos)</span>
-                nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
-                <span class="comment"># 1. Conversão explícita de str para float()</span>
-                nota1 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 1:
-                  "</span>))
-                nota2 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 2:
-                  "</span>))
-                nota3 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 3:
-                  "</span>))
+                style="font-size: 11.8px; line-height: 1.34; border-left-color: var(--code-green);">
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># ✅ GABARITO: SISTEMA ESCOLAR V1.1 (7 Bugs Corrigidos)</span>
+nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
+<span class="comment"># 1. Conversão explícita de str para float()</span>
+nota1 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 1: "</span>))
+nota2 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 2: "</span>))
+nota3 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 3: "</span>))
 
-                <span class="comment"># 2. Parênteses garantindo a precedência da soma</span>
-                media = (nota1 + nota2 + nota3) / 3
+<span class="comment"># 2. Parênteses garantindo a precedência da soma</span>
+media = (nota1 + nota2 + nota3) / 3
 
-                <span class="comment"># 3 e 4. Dois-pontos (:) e encadeamento if / elif / else</span>
-                <span class="keyword">if</span> media &gt;= 7:
-                situacao = <span class="string">"APROVADO"</span>
-                <span class="keyword">elif</span> media &gt;= 5:
-                situacao = <span class="string">"RECUPERAÇÃO"</span>
-                <span class="keyword">else</span>:
-                situacao = <span class="string">"REPROVADO"</span>
+<span class="comment"># 3 e 4. Dois-pontos (:) e encadeamento if / elif / else</span>
+<span class="keyword">if</span> media &gt;= 7:
+    situacao = <span class="string">"APROVADO"</span>
+<span class="keyword">elif</span> media &gt;= 5:
+    situacao = <span class="string">"RECUPERAÇÃO"</span>
+<span class="keyword">else</span>:
+    situacao = <span class="string">"REPROVADO"</span>
 
-                <span class="comment"># 5. Chaves e aspas devidamente fechadas na f-string</span>
-                <span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media:.2f}
-                  e está: {situacao}"</span>)
+<span class="comment"># 5. Chaves e aspas devidamente fechadas na f-string</span>
+<span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media:.2f} e está: {situacao}"</span>)
 
-                mensalidade_base = 1200.00
-                desconto_porcentagem = <span class="func">float</span>(<span class="func">input</span>(<span
-                  class="string">"Quanto de desconto possui (%)? "</span>))
-                <span class="comment"># 6 e 7. Cálculo percentual correto e variável valor_final minúscula</span>
-                valor_final = mensalidade_base * (1 - desconto_porcentagem / 100)
-                <span class="func">print</span>(f<span class="string">"Valor final da mensalidade com desconto: R$
-                  {valor_final:.2f}"</span>)
+mensalidade_base = 1200.00
+desconto_porcentagem = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Quanto de desconto possui (%)? "</span>))
+<span class="comment"># 6 e 7. Cálculo percentual correto e variável valor_final minúscula</span>
+valor_final = mensalidade_base * (1 - desconto_porcentagem / 100)
+<span class="func">print</span>(f<span class="string">"Valor final da mensalidade com desconto: R$ {valor_final:.2f}"</span>)
               </div>
             </div>
           </div>
@@ -1004,51 +1025,49 @@
             dataset <code>ecommerce_clientes.csv</code>:</p>
           <div class="two-column" style="gap: 18px; align-items: stretch;">
             <div style="flex: 1.2;">
-              <div class="code-block" style="font-size: 12.2px;">
-                <span class="comment"># BLOCO 1: Gerando e inspecionando a base de E-Commerce</span>
-                <span class="keyword">import</span> pandas <span class="keyword">as</span> pd
-                <span class="keyword">import</span> numpy <span class="keyword">as</span> np
+              <div class="code-block" style="font-size: 12px; line-height: 1.34;">
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># BLOCO 1: Gerando e inspecionando a base de E-Commerce</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-                np.random.seed(42)
-                n = 200
-                tempo_site = np.random.uniform(1, 30, n).round(1)
-                paginas = np.random.randint(1, 20, n)
-                carrinho = np.random.uniform(20, 1500, n).round(2)
-                abandonos = np.random.randint(0, 6, n)
+np.random.seed(42)
+n = 200
+tempo_site = np.random.uniform(1, 30, n).round(1)
+paginas = np.random.randint(1, 20, n)
+carrinho = np.random.uniform(20, 1500, n).round(2)
+abandonos = np.random.randint(0, 6, n)
 
-                <span class="comment"># Regra de negócio histórica (0 = Abandonou, 1 = Comprou)</span>
-                score = (tempo_site * 0.4) + (paginas * 0.8) - (abandonos * 3.5) + (carrinho * 0.005)
-                comprou = (score &gt; 10).astype(<span class="func">int</span>)
+<span class="comment"># Regra de negócio histórica (0 = Abandonou, 1 = Comprou)</span>
+score = (tempo_site * 0.4) + (paginas * 0.8) - (abandonos * 3.5) + (carrinho * 0.005)
+comprou = (score &gt; 10).astype(<span class="func">int</span>)
 
-                df = pd.DataFrame({
-                <span class="string">'tempo_site_min'</span>: tempo_site,
-                <span class="string">'paginas_visitadas'</span>: paginas,
-                <span class="string">'valor_carrinho'</span>: carrinho,
-                <span class="string">'abandonos_anteriores'</span>: abandonos,
-                <span class="string">'comprou'</span>: comprou
-                })
-                df.to_csv(<span class="string">'ecommerce_clientes.csv'</span>, index=<span
-                  class="keyword">False</span>)
-                <span class="func">print</span>(df.head())
-                <span class="func">print</span>(<span class="string">"\nDistribuição da classe alvo:\n"</span>, df[<span
-                  class="string">'comprou'</span>].value_counts())
+df = pd.DataFrame({
+    <span class="string">'tempo_site_min'</span>: tempo_site,
+    <span class="string">'paginas_visitadas'</span>: paginas,
+    <span class="string">'valor_carrinho'</span>: carrinho,
+    <span class="string">'abandonos_anteriores'</span>: abandonos,
+    <span class="string">'comprou'</span>: comprou
+})
+df.to_csv(<span class="string">'ecommerce_clientes.csv'</span>, index=<span class="keyword">False</span>)
+<span class="func">print</span>(df.head())
+<span class="func">print</span>(<span class="string">"\nDistribuição da classe alvo:\n"</span>, df[<span class="string">'comprou'</span>].value_counts())
               </div>
             </div>
 
             <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
               <div class="console-output" style="font-size: 12px;">
                 <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Bloco 1)</span>
-                tempo_site_min paginas_visitadas valor_carrinho abandonos_anteriores comprou
-                0 11.9 15 894.21 1 1
-                1 28.6 19 1065.34 0 1
-                2 22.2 12 654.10 4 0
-                3 18.4 3 212.45 3 0
-                4 5.5 16 410.80 2 0
+                tempo_site_min  paginas_visitadas  valor_carrinho  abandonos_anteriores  comprou
+                0 11.9 11  638.56 2 0
+                1 28.6 17 1452.02 2 1
+                2 22.2  8  831.00 2 1
+                3 18.4  4  646.74 0 1
+                4  5.5  6  861.41 2 0
 
                 Distribuição da classe alvo:
                 comprou
-                0 112 (Abandonaram o carrinho)
-                1 88 (Concluíram a compra)
+                0 116 (Abandonaram o carrinho)
+                1  84 (Concluíram a compra)
               </div>
               <div class="callout-box info" style="margin-top: 0; padding: 10px 14px;">
                 <p style="font-size: 13.5px;"><strong>Entendendo as Features ($X$) e o Target ($Y$):</strong> Temos 4
@@ -1066,37 +1085,41 @@
         <div class="content-area">
           <div class="two-column" style="gap: 18px; align-items: center;">
             <div style="flex: 1.05;">
-              <div class="code-block" style="font-size: 11.8px; line-height: 1.32;">
-                <span class="comment"># BLOCO 2: Treinando o Modelo Discriminativo P(Y|X)</span>
-                <span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span>
-                train_test_split
-                <span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span>
-                RandomForestClassifier
-                <span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score,
-                confusion_matrix
-                <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
-                <span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+              <div class="code-block" style="font-size: 9.8px; line-height: 1.22;">
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, confusion_matrix
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
 
-                X = df.drop(<span class="string">'comprou'</span>, axis=1)
-                y = df[<span class="string">'comprou'</span>]
-                X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.25, random_state=42
-                )
+<span class="comment"># Garante que o df está carregado caso a célula anterior não tenha sido executada nesta sessão</span>
+<span class="keyword">try</span>:
+    df
+<span class="keyword">except</span> <span class="func">NameError</span>:
+    <span class="keyword">import</span> os
+    <span class="keyword">if</span> os.path.exists(<span class="string">'ecommerce_clientes.csv'</span>):
+        df = pd.read_csv(<span class="string">'ecommerce_clientes.csv'</span>)
+    <span class="keyword">else</span>:
+        <span class="keyword">raise</span> <span class="func">NameError</span>(<span class="string">"O DataFrame 'df' não está definido e o arquivo 'ecommerce_clientes.csv' não foi encontrado. Por favor, execute a primeira célula (QqbRrfJ5ENnh) primeiro."</span>)
 
-                rf = RandomForestClassifier(n_estimators=100, random_state=42)
-                rf.fit(X_train, y_train)
-                y_pred = rf.predict(X_test)
-                <span class="func">print</span>(f<span class="string">"Acurácia do Random Forest:
-                  {accuracy_score(y_test, y_pred):.2%}"</span>)
+X = df.drop(<span class="string">'comprou'</span>, axis=1)
+y = df[<span class="string">'comprou'</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-                <span class="comment"># Exibindo Matriz de Confusão e Feature Importance</span>
-                fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-                sns.heatmap(confusion_matrix(y_test, y_pred), annot=<span class="keyword">True</span>, fmt=<span
-                  class="string">'d'</span>, cmap=<span class="string">'Reds'</span>, ax=axes[0])
-                pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind=<span
-                  class="string">'barh'</span>, color=<span class="string">'#E30613'</span>, ax=axes[1])
-                plt.tight_layout()
-                plt.show()
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+<span class="func">print</span>(f<span class="string">"Acurácia do Random Forest: {accuracy_score(y_test, y_pred):.2%}"</span>)
+
+<span class="comment"># Exibindo Matriz de Confusão e Feature Importance</span>
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=<span class="keyword">True</span>, fmt=<span class="string">'d'</span>, cmap=<span class="string">'Reds'</span>, ax=axes[0])
+axes[0].set_title(<span class="string">'Matriz de Confusão'</span>)
+pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind=<span class="string">'barh'</span>, color=<span class="string">'#E30613'</span>, ax=axes[1])
+axes[1].set_title(<span class="string">'Feature Importance'</span>)
+plt.tight_layout()
+plt.show()
               </div>
             </div>
 
@@ -1129,40 +1152,40 @@
             criar uma mensagem de recuperação personalizada:</p>
           <div class="two-column" style="gap: 18px; align-items: stretch;">
             <div style="flex: 1.15;">
-              <div class="code-block" style="font-size: 12px; line-height: 1.32;">
-                <span class="comment"># BLOCO 3: Conectando ML Discriminativo + IA Generativa</span>
-                <span class="comment"># !pip install -q google-genai</span>
-                <span class="keyword">from</span> google <span class="keyword">import</span> genai
+              <div class="code-block" style="font-size: 11.2px; line-height: 1.3;">
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button><span class="comment"># BLOCO 3: Conectando ML Discriminativo + IA Generativa</span>
+<span class="comment"># !pip install -q google-genai</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> google <span class="keyword">import</span> genai
 
-                <span class="comment"># 1. Novo cliente em tempo real no site</span>
-                novo_cliente = pd.DataFrame([{
-                <span class="string">'tempo_site_min'</span>: 14.5, <span class="string">'paginas_visitadas'</span>: 8,
-                <span class="string">'valor_carrinho'</span>: 780.00, <span
-                  class="string">'abandonos_anteriores'</span>: 4
-                }])
+<span class="comment"># 1. Novo cliente em tempo real no site</span>
+novo_cliente = pd.DataFrame([{
+    <span class="string">'tempo_site_min'</span>: 14.5,
+    <span class="string">'paginas_visitadas'</span>: 8,
+    <span class="string">'valor_carrinho'</span>: 780.00,
+    <span class="string">'abandonos_anteriores'</span>: 4
+}])
 
-                prob_abandono = rf.predict_proba(novo_cliente)[0][0]
-                <span class="func">print</span>(f<span class="string">"⚠️ Risco de Abandono Calculado (ML):
-                  {prob_abandono:.1%}"</span>)
+prob_abandono = rf.predict_proba(novo_cliente)[0][0]
+<span class="func">print</span>(f<span class="string">"⚠️ Risco de Abandono Calculado (ML): {prob_abandono:.1%}"</span>)
 
-                <span class="comment"># 2. Se o risco > 70%, a IA Generativa cria o cupom em JSON</span>
-                <span class="keyword">if</span> prob_abandono &gt; 0.70:
-                prompt_sistema = f<span class="string">"""
-                  Persona: Especialista em Retenção de E-commerce.
-                  Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
-                  e {prob_abandono:.0%} de risco de abandono.
-                  Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
-                  Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
-                  """</span>
-                <span class="func">print</span>(<span class="string">"Prompt estruturado pronto para disparo na API
-                  Gemini!" + prompt_sistema</span>)
+<span class="comment"># 2. Se o risco &gt; 70%, a IA Generativa cria o cupom em JSON</span>
+<span class="keyword">if</span> prob_abandono &gt; 0.70:
+    prompt_sistema = f<span class="string">"""
+    Persona: Especialista em Retenção de E-commerce.
+    Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
+    e {prob_abandono:.0%} de risco de abandono.
+    Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
+    Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
+    """</span>
+    <span class="func">print</span>(<span class="string">"Prompt estruturado pronto para disparo na API Gemini!\n"</span> + prompt_sistema)
               </div>
             </div>
 
             <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
               <div class="console-output" style="font-size: 12.2px;">
                 <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Pipeline Híbrido (Bloco 3)</span>
-                ⚠️ Risco de Abandono Calculado (ML): 89.0%
+                ⚠️ Risco de Abandono Calculado (ML): 95.0%
                 Disparando gatilho para a API Generativa...
 
                 {
@@ -1345,6 +1368,23 @@
           prevSlide();
         }
       });
+
+      function copyCode(btn) {
+        const codeBlock = btn.parentElement;
+        const clone = codeBlock.cloneNode(true);
+        const btnInClone = clone.querySelector('.copy-btn');
+        if (btnInClone) btnInClone.remove();
+        const codeText = clone.innerText.trim();
+        navigator.clipboard.writeText(codeText).then(() => {
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      }
 
       function resizePresentation() {
         const presentation = document.getElementById('presentation-area');

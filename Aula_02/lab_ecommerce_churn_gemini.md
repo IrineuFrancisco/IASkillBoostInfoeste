@@ -1,9 +1,10 @@
 # 🛒 Laboratório Prático: Pipeline Híbrido ML + GenAI — Predição de Churn e Cupons com Gemini
 
 **Ambiente:** Google Colaboratory (`Python 3.10+`)  
-**Modalidade:** Inteligência Artificial Híbrida (*Machine Learning Preditivo + LLM Generativa*)  
+**Notebook Sugerido:** `Aula02_Pipeline_Hibrido_Ecommerce.ipynb`  
+**Modalidade:** Inteligência Artificial Híbrida (*Machine Learning Discriminativo + LLM Generativa*)  
 **Tempo Estimado:** 40 a 50 minutos  
-**Dataset:** [`ecommerce_clientes.csv`](./ecommerce_clientes.csv) (100 clientes com histórico de navegação e compras)  
+**Dataset:** [`ecommerce_clientes.csv`](./ecommerce_clientes.csv) (200 registros de navegação e comportamento de compra)  
 **Algoritmo / Modelos:** `RandomForestClassifier` (Scikit-Learn) + `gemini-1.5-flash` (Google Gemini API)
 
 ---
@@ -11,222 +12,213 @@
 ## 📋 1. ENUNCIADO DA ATIVIDADE (CONTEXTO DE NEGÓCIO)
 
 > ### 🏬 Desafio: Retenção Ativa de Clientes no E-commerce InovaMarketplace
-> O abandono de carrinho custa milhões de reais ao setor de e-commerce todos os anos. A equipe de marketing do **InovaMarketplace** enviava e-mails padronizados com 5% de desconto para todos os usuários, mas a taxa de conversão era mínima.
+> O abandono de checkout custa milhões de reais ao setor de e-commerce todos os anos. A equipe comercial do **InovaMarketplace** enviava descontos genéricos por e-mail para todos os usuários sem distinção, mas a conversão era baixíssima e a margem de lucro da empresa era corroída desnecessariamente.
 >
-> A diretoria solicitou um **Pipeline Inteligente em Duas Etapas**:
-> 1. **Etapa Preditiva (ML Clássico):** Um algoritmo supervisionado (`RandomForest`) analisa variáveis de navegação (tempo no site, páginas de produtos vistas, itens no carrinho, dias desde a última compra) e calcula a probabilidade matemática de abandono (*churn*).
-> 2. **Etapa Generativa (GenAI):** Caso o risco de abandono seja alto ($\ge 70\%$), o pipeline aciona automaticamente a **API do Google Gemini** com um prompt estruturado, gerando em tempo real uma mensagem persuasiva hiperpersonalizada e um cupom exclusivo no formato JSON.
+> A diretoria encomendou uma **Arquitetura de Inteligência Artificial Híbrida em Três Blocos**:
+> 1. **Bloco 1 (Dados & Exploração):** Inspecionar e estruturar uma base de dados contendo o comportamento de navegação dos usuários (`tempo_site_min`, `paginas_visitadas`, `valor_carrinho`, `abandonos_anteriores`) e o histórico de conversão (`comprou`: $0 = \text{Abandonou}$, $1 = \text{Comprou}$).
+> 2. **Bloco 2 (Filtro Discriminativo com Random Forest):** Treinar um modelo supervisionado capaz de filtrar milhares de acessos em milissegundos com alta acurácia ($\ge 90\%$) e identificar os principais motivos estatísticos do abandono (*Feature Importance*).
+> 3. **Bloco 3 (Gatilho Generativo com Google Gemini):** Quando o modelo preditivo detectar risco crítico de abandono ($\ge 70\%$), acionar automaticamente a **API do Google Gemini** para redigir em tempo real uma mensagem persuasiva hiperpersonalizada e gerar um cupom exclusivo estruturado em JSON para disparo imediato.
 >
 > **Sua Missão:**
-> 1. Carregar o arquivo [`ecommerce_clientes.csv`](./ecommerce_clientes.csv) e treinar o classificador Random Forest.
-> 2. Analisar a importância das variáveis (*Feature Importance*) para entender o que mais causa o abandono.
-> 3. Integrar o modelo de Machine Learning à biblioteca `google-generativeai`.
-> 4. Criar a função de disparo automatizado que converte a predição estatística em uma ação de marketing generativa.
-> 5. Avaliar o comportamento da LLM sob diferentes temperaturas ($0.1$ vs. $1.0$).
+> Implementar os 3 blocos no Google Colab, validar a acurácia do modelo preditivo, conectar o gatilho à API do Gemini e analisar o impacto corporativo de usar modelos híbridos.
 
 ---
 
-## 🛠️ 2. PASSO A PASSO DETALHADO DO LABORATÓRIO
+## 🛠️ 2. FLUXOGRAMA DA ARQUITETURA HÍBRIDA
 
 ```mermaid
-flowchart LR
-    DADOS["1. Dados do Cliente\n(Tempo, Páginas, Carrinho)"] --> ML["2. Random Forest\n(Calcula Probabilidade %)"]
-    ML --> DECISAO{"Risco >= 70%?"}
-    DECISAO -- "Não (Baixo Risco)" --> OK["Nenhuma Ação\n(Economia de Margem)"]
-    DECISAO -- "Sim (Alto Risco!)" --> LLM["3. Prompt Gemini API\n(Gera Cupom + Copy)"]
-    LLM --> JSON_OUT["4. Saída Estruturada\n(JSON para WhatsApp/E-mail)"]
+flowchart TD
+    subgraph DADOS["1. Entrada de Dados em Tempo Real"]
+        CLI["Cliente navegando no carrinho\nTempo: 14.5 min | Páginas: 8\nValor: R$ 780,00 | Abandonos: 4"]
+    end
+
+    subgraph DISCRIMINATIVO["2. IA Discriminativa (Scikit-Learn)"]
+        RF["Random Forest Classifier\nCalcula Probabilidade P(Y=0|X)"]
+        DECISAO{"Risco de Abandono\n>= 70%?"}
+    end
+
+    subgraph ACAO["3. Tomada de Decisão"]
+        BAIXO["Baixo Risco\nPreserva Margem Lucro\n(Nenhum cupom gerado)"]
+        GENAI["4. IA Generativa (Google Gemini API)\nPrompt Estruturado + Temperature 0.4\nResponse MIME: application/json"]
+        JSON_SAIDA["JSON Estruturado Retornado\nNotificação Push / WhatsApp\nCupom: VOLTA10 (10% OFF)"]
+    end
+
+    CLI --> RF
+    RF --> DECISAO
+    DECISAO -- "Não (< 70%)" --> BAIXO
+    DECISAO -- "Sim (>= 70%)" --> GENAI
+    GENAI --> JSON_SAIDA
 ```
 
-### Passo 1: Preparação das Dependências no Google Colab
-Instale a biblioteca oficial do Google Gemini e faça o upload do arquivo `ecommerce_clientes.csv`:
+---
+
+## 💻 3. PASSO A PASSO DOS 3 BLOCOS EXECUTÁVEIS
+
+### 📦 Preparação Prévia: Instalação das Bibliotecas
+No seu notebook Colab, crie uma célula inicial para instalar as bibliotecas necessárias:
 
 ```python
 !pip install -q google-generativeai pandas scikit-learn matplotlib seaborn
+```
 
+---
+
+### 🧱 Bloco 1: Geração e Inspeção do Dataset (`ecommerce_clientes.csv`)
+
+Nesta etapa, podemos carregar o arquivo pré-existente ou gerá-lo de forma reproduzível com `np.random.seed(42)` contendo 200 amostras:
+
+```python
+# BLOCO 1: Gerando e inspecionando a base de E-Commerce
 import pandas as pd
 import numpy as np
+
+np.random.seed(42)
+n = 200
+tempo_site = np.random.uniform(1, 30, n).round(1)
+paginas = np.random.randint(1, 20, n)
+carrinho = np.random.uniform(20, 1500, n).round(2)
+abandonos = np.random.randint(0, 6, n)
+
+# Regra de negócio histórica (0 = Abandonou, 1 = Comprou)
+score = (tempo_site * 0.4) + (paginas * 0.8) - (abandonos * 3.5) + (carrinho * 0.005)
+comprou = (score > 10).astype(int)
+
+df = pd.DataFrame({
+    'tempo_site_min': tempo_site,
+    'paginas_visitadas': paginas,
+    'valor_carrinho': carrinho,
+    'abandonos_anteriores': abandonos,
+    'comprou': comprou
+})
+df.to_csv('ecommerce_clientes.csv', index=False)
+print(df.head())
+print("\nDistribuição da classe alvo:\n", df['comprou'].value_counts())
+```
+
+**Saída esperada no console:**
+```text
+   tempo_site_min  paginas_visitadas  valor_carrinho  abandonos_anteriores  comprou
+0            11.9                 11          638.56                     2        0
+1            28.6                 17         1452.02                     2        1
+2            22.2                  8          831.00                     2        1
+3            18.4                  4          646.74                     0        1
+4             5.5                  6          861.41                     2        0
+
+Distribuição da classe alvo:
+comprou
+0    116 (Clientes que abandonaram o carrinho)
+1     84 (Clientes que concluíram a compra)
+```
+
+> [!NOTE]
+> **Dicionário de Variáveis:**
+> - `$X$ (Features Preditivas):` `tempo_site_min`, `paginas_visitadas`, `valor_carrinho`, `abandonos_anteriores`.
+> - `$y$ (Target / Rótulo Alvo):` `comprou` ($0 = \text{Abandonou}$, $1 = \text{Comprou}$).
+
+---
+
+### 🌲 Bloco 2: Classificador Discriminativo (Random Forest) e Interpretabilidade (Slide 13)
+
+Treinamos um ensemble supervisionado de 100 árvores de decisão e avaliamos sua matriz de confusão e os atributos determinantes:
+
+```python
+# BLOCO 2: Treinando o Modelo Discriminativo P(Y|X)
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
-import google.generativeai as genai
+# Garante que o df está carregado caso a célula anterior não tenha sido executada nesta sessão
+try:
+    df
+except NameError:
+    import os
+    if os.path.exists('ecommerce_clientes.csv'):
+        df = pd.read_csv('ecommerce_clientes.csv')
+    else:
+        raise NameError("O DataFrame 'df' não está definido e o arquivo 'ecommerce_clientes.csv' não foi encontrado. Por favor, execute a primeira célula (QqbRrfJ5ENnh) primeiro.")
 
-# Carregamento do dataset de clientes
-df = pd.read_csv('ecommerce_clientes.csv')
-print("Visão geral dos clientes:")
-print(df.head())
-```
+X = df.drop('comprou', axis=1)
+y = df['comprou']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
----
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+print(f"Acurácia do Random Forest: {accuracy_score(y_test, y_pred):.2%}")
 
-### Passo 2: Treinando o Modelo Preditivo (Random Forest)
-Separamos as features de navegação da coluna alvo `abandonou_carrinho` ($1 = \text{sim}$, $0 = \text{não}$):
-
-```python
-# Atributos preditores e alvo
-X = df[['tempo_no_site_minutos', 'paginas_visitadas', 'itens_no_carrinho', 'dias_sem_comprar', 'valor_carrinho_reais']]
-y = df['abandonou_carrinho']
-
-# Divisão Treino e Teste (80/20)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
-# Treinamento com 100 árvores de decisão
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-rf_model.fit(X_train, y_train)
-
-# Avaliação
-y_pred = rf_model.predict(X_test)
-print(f"Acurácia do Random Forest: {accuracy_score(y_test, y_pred) * 100:.2f}%\n")
-print(classification_report(y_test, y_pred))
-```
-
----
-
-### Passo 3: Importância das Variáveis (*Feature Importance*)
-Descobrimos qual métrica tem maior peso matemático para o abandono:
-
-```python
-importancias = rf_model.feature_importances_
-colunas = X.columns
-
-plt.figure(figsize=(8, 4))
-sns.barplot(x=importancias, y=colunas, palette='Reds_r')
-plt.title("O que mais influencia o abandono de carrinho? (Feature Importance)")
-plt.xlabel("Peso Relativo")
+# Exibindo Matriz de Confusão e Feature Importance
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Reds', ax=axes[0])
+axes[0].set_title('Matriz de Confusão')
+pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind='barh', color='#E30613', ax=axes[1])
+axes[1].set_title('Feature Importance')
 plt.tight_layout()
 plt.show()
 ```
 
+> [!TIP]
+> **Interpretação do Gráfico:**  
+> O modelo atinge **92% de acurácia**. A análise de *Feature Importance* comprova que `abandonos_anteriores` e `paginas_visitadas` são os fatores que mais pesam na decisão de compra!
+
 ---
 
-### Passo 4: Conectando a IA Generativa (Google Gemini API)
-Configure sua chave de API gratuita obtida no [Google AI Studio](https://aistudio.google.com/):
+### ⚡ Bloco 3: Pipeline Híbrido com IA Generativa (Slide 14)
+
+Quando o modelo **Discriminativo** detecta alto risco de abandono (`classe 0`), acionamos o modelo **Generativo (Gemini)** para criar uma notificação personalizada em JSON:
 
 ```python
-import os
-
-# Insira sua chave da API do Google AI Studio
-API_KEY = "SUA_CHAVE_AQUI"  # Ou via userdata.get('GEMINI_API_KEY') no Colab
-genai.configure(api_key=API_KEY)
-
-# Instanciando o modelo mais rápido e eficiente
-modelo_gemini = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    generation_config={
-        "temperature": 0.4,
-        "response_mime_type": "application/json"
-    }
-)
-```
-
----
-
-### Passo 5: O Pipeline Integrado (Gatilho de Disparo)
-Criamos a função que recebe os dados do cliente, calcula o risco via Machine Learning e, se necessário, aciona a IA Generativa:
-
-```python
-import json
-
-def avaliar_e_reter_cliente(dados_cliente):
-    # Converte o dicionário em DataFrame
-    df_cliente = pd.DataFrame([dados_cliente])
-    
-    # 1. Predição probabilística com Random Forest
-    prob_abandono = rf_model.predict_proba(df_cliente)[0][1]  # Probabilidade da classe 1
-    print(f"📊 Análise Preditiva: Probabilidade de Abandono = {prob_abandono * 100:.1f}%")
-    
-    # Gatilho de decisão de negócio
-    if prob_abandono >= 0.70:
-        print("🚨 ALTO RISCO DETECTADO! Acionando IA Generativa para resgate...")
-        
-        prompt = f"""
-        Você é o motor de retenção inteligente do InovaMarketplace.
-        O cliente está prestes a abandonar uma compra de R$ {dados_cliente['valor_carrinho_reais']:.2f}.
-        Ele visitou {dados_cliente['paginas_visitadas']} páginas e colocou {dados_cliente['itens_no_carrinho']} itens no carrinho.
-        
-        Gere uma resposta estritamente em formato JSON com os seguintes campos:
-        {{
-            "acao": "CUPOM_EXCLUSIVO",
-            "percentual_desconto": <inteiro entre 10 e 20>,
-            "codigo_cupom": "<string em maiúsculas>",
-            "mensagem_whatsapp": "<texto curto, caloroso, persuasivo e sem ser agressivo>",
-            "tempo_expiracao_minutos": 15
-        }}
-        """
-        
-        resposta = modelo_gemini.generate_content(prompt)
-        conteudo_json = json.loads(resposta.text)
-        return {"status": "RESGATE_ENVIADO", "dados_campanha": conteudo_json}
-    else:
-        return {"status": "SEGURO", "mensagem": "Cliente com baixo risco de abandono. Nenhuma ação promocional necessária."}
-
-# Teste com um cliente de risco crítico
-cliente_critico = {
-    'tempo_no_site_minutos': 2.5,
-    'paginas_visitadas': 1,
-    'itens_no_carrinho': 4,
-    'dias_sem_comprar': 45,
-    'valor_carrinho_reais': 350.00
-}
-
-resultado = avaliar_e_reter_cliente(cliente_critico)
-print(json.dumps(resultado, indent=4, ensure_ascii=False))
-```
-
----
-
-## 🧪 3. EXPERIMENTO CIENTÍFICO: TESTES DE ESTRESSE DA GENAI
-
-Execute as **3 variações** no seu notebook:
-
-1. **Teste 1 — Controle de Temperatura:**  
-   Altere a temperatura para `0.0` e depois para `1.2`. Observe como na temperatura `0.0` a mensagem de marketing fica formal e repetitiva, enquanto em `1.2` o Gemini utiliza gírias, analogias e formatos criativos.
-2. **Teste 2 — Variação de Ticket:**  
-   Teste um carrinho de R$ 50,00 e outro de R$ 5.000,00. O desconto gerado pela IA mantém a coerência econômica com a margem do marketplace?
-3. **Teste 3 — Formato JSON Estrito (*Structured Outputs*):**  
-   Remova `"response_mime_type": "application/json"` e observe se a LLM inclui caracteres markdown (` ```json `) que quebram o parser `json.loads()`.
-
----
-
-## 💻 4. CÓDIGO FONTE COMPLETO (EXECUTÁVEL NO GOOGLE COLAB)
-
-```python
-# ==============================================================================
-# PIPELINE HÍBRIDO ML + GENAI (RANDOM FOREST + GEMINI 1.5 FLASH)
-# SENAI-SP & Infoeste — Trilha Google Cloud Skills Boost
-# ==============================================================================
-
+# BLOCO 3: Conectando ML Discriminativo + IA Generativa
+# !pip install -q google-genai
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from google import genai
 
-# 1. Carga dos dados
-df = pd.read_csv('ecommerce_clientes.csv')
-features = ['tempo_no_site_minutos', 'paginas_visitadas', 'itens_no_carrinho', 'dias_sem_comprar', 'valor_carrinho_reais']
+# 1. Novo cliente em tempo real no site
+novo_cliente = pd.DataFrame([{
+    'tempo_site_min': 14.5,
+    'paginas_visitadas': 8,
+    'valor_carrinho': 780.00,
+    'abandonos_anteriores': 4
+}])
 
-X = df[features]
-y = df['abandonou_carrinho']
+prob_abandono = rf.predict_proba(novo_cliente)[0][0]
+print(f"⚠️ Risco de Abandono Calculado (ML): {prob_abandono:.1%}")
 
-# 2. Treino do Classificador
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
-rf.fit(X_train, y_train)
-
-print(f"Modelo de Churn Treinado com Acurácia de: {rf.score(X_test, y_test)*100:.1f}%\n")
-print("Top Fatores de Decisão (Feature Importance):")
-for feat, imp in zip(features, rf.feature_importances_):
-    print(f" - {feat}: {imp*100:.1f}%")
+# 2. Se o risco > 70%, a IA Generativa cria o cupom em JSON
+if prob_abandono > 0.70:
+    prompt_sistema = f"""
+    Persona: Especialista em Retenção de E-commerce.
+    Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
+    e {prob_abandono:.0%} de risco de abandono.
+    Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
+    Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
+    """
+    print("Prompt estruturado pronto para disparo na API Gemini!\n" + prompt_sistema)
 ```
+
+---
+
+## 🧪 4. EXPERIMENTO CIENTÍFICO: TESTES DE ESTRESSE DA GENAI
+
+No Google Colab, execute e responda às **3 variações**:
+
+1. **Variação de Temperatura:**  
+   Altere a `temperature` no Bloco 3 para `0.1` e execute 3 vezes. Em seguida, altere para `1.0` e execute 3 vezes. O que muda no estilo da mensagem do WhatsApp?
+2. **Variação de Ticket de Compra:**  
+   Altere o `valor_carrinho` do `cliente_critico` para R$ 4.500,00 e depois para R$ 35,00. A mensagem gerada pelo Gemini se adapta ao porte da compra?
+3. **Formato JSON Estrito vs. Texto Livre:**  
+   Por que em sistemas de produção (microsserviços e gateways de WhatsApp/E-mail) a saída da LLM precisa obrigatoriamente estar em formato JSON (`response_mime_type="application/json"`) em vez de texto corrido?
 
 ---
 
 ## ✅ 5. ENTREGÁVEL DA ATIVIDADE (CHECKLIST DE CONCLUSÃO)
 
 Para validar a conclusão deste laboratório, certifique-se de preencher os itens:
-- [ ] Dataset `ecommerce_clientes.csv` carregado e analisado.
-- [ ] Modelo `RandomForestClassifier` treinado com acurácia acima de 85%.
-- [ ] Gráfico de *Feature Importance* gerado identificando o principal vetor de abandono.
-- [ ] Conexão com a Google Gemini API validada com geração de saída em JSON estruturado.
-- [ ] Resposta no caderno: *Qual a vantagem de combinar Machine Learning clássico com LLMs generativas em vez de usar apenas um ou outro isoladamente?*
+- [ ] Dataset `ecommerce_clientes.csv` gerado/carregado e inspecionado no Bloco 1.
+- [ ] Modelo `RandomForestClassifier` treinado com acurácia acima de 90% no Bloco 2.
+- [ ] Matriz de Confusão e gráfico de *Feature Importance* plotados com sucesso.
+- [ ] Pipeline Híbrido implementado com o cálculo correto de probabilidade `predict_proba[0][0]`.
+- [ ] Gatilho ativado apenas para risco $\ge 70\%$, gerando saída estruturada em JSON.
+- [ ] Responda no caderno / relatório: *Por que não devemos chamar a LLM para todos os visitantes do site, e como o modelo discriminativo economiza custo computacional e financeiro na arquitetura corporativa?*

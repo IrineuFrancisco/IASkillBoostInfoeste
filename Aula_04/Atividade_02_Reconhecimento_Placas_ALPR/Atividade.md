@@ -40,58 +40,97 @@ flowchart LR
 ```
 
 ### Passo 1: Preparação do Ambiente com GPU
+No Google Colab:
+1. Vá no menu: `Ambiente de Execução` $\to$ `Alterar tipo de ambiente de execução` $\to$ **GPU T4**.
+2. Execute a instalação dos pacotes e inicialização dos motores:
+
 ```python
 !pip install -q ultralytics easyocr opencv-python
 
 import cv2
 import easyocr
 import numpy as np
+import matplotlib.pyplot as plt
 from ultralytics import YOLO
 from google.colab.patches import cv2_imshow
 from google.colab import files
 
+print("Instalando motores neurais...")
+# Carregamos o modelo YOLOv8 versão Small (ótimo equilíbrio entre velocidade e precisão)
 detector = YOLO('yolov8s.pt')
+
+# Inicializamos o EasyOCR com GPU
 leitor_ocr = easyocr.Reader(['en', 'pt'], gpu=True)
-print("✅ YOLOv8 e EasyOCR inicializados na GPU!")
+print("✅ YOLOv8 e EasyOCR inicializados com sucesso na GPU!")
 ```
 
 ---
 
-### Passo 2: O Algoritmo de Detecção e Recorte de ROI
+### Passo 2: Classes Veiculares no Dataset COCO
+O modelo YOLOv8 vem pré-treinado no dataset COCO com 80 categorias. Vamos monitorar apenas os 4 IDs de transporte:
+
+| ID | Classe em Inglês | Tradução |
+| :---: | :--- | :--- |
+| **`2`** | `car` | Carro de passeio |
+| **`3`** | `motorcycle` | Motocicleta |
+| **`5`** | `bus` | Ônibus |
+| **`7`** | `truck` | Caminhão de carga |
+
+---
+
+### Passo 3: Algoritmo Completo ALPR (Detecção, Recorte ROI, Leitura OCR e Anotação)
+Suba a foto de um carro para teste e execute o pipeline:
+
 ```python
+# Upload da foto do veículo
 uploaded = files.upload()
 nome_imagem = list(uploaded.keys())[0]
 
+# Carrega a imagem via OpenCV (matriz de pixels em BGR)
 imagem = cv2.imread(nome_imagem)
 imagem_anotada = imagem.copy()
 
+# 1. Inferência com YOLOv8
 resultados = detector.predict(nome_imagem, conf=0.45)
 classes_alvo = [2, 3, 5, 7]
+
+placas_encontradas = []
 
 for item in resultados[0].boxes:
     classe_id = int(item.cls[0])
     
     if classe_id in classes_alvo:
+        # Coordenadas da Bounding Box do veículo
         x1, y1, x2, y2 = map(int, item.xyxy[0])
         
-        # Recorte da metade inferior onde fica a placa
+        # 2. Recorte da Região Inferior do Veículo (onde fica a placa)
         altura_carro = y2 - y1
-        y_placa_inicio = int(y1 + (altura_carro * 0.55))
+        y_placa_inicio = int(y1 + (altura_carro * 0.55))  # Pega a metade inferior
         roi_placa = imagem[y_placa_inicio:y2, x1:x2]
         
+        # 3. Leitura dos Caracteres com EasyOCR
         leituras = leitor_ocr.readtext(roi_placa)
+        
         for (bbox, texto, confianca) in leituras:
             texto_limpo = "".join([c for c in texto if c.isalnum()]).upper()
             
+            # Filtro de tamanho de placa Mercosul (geralmente 7 caracteres)
             if len(texto_limpo) >= 6 and confianca >= 0.40:
-                print(f"Placa Encontrada: {texto_limpo} ({confianca*100:.1f}%)")
+                placas_encontradas.append((texto_limpo, confianca))
+                
+                # 4. Desenha na Imagem Original
                 cv2.rectangle(imagem_anotada, (x1, y1), (x2, y2), (0, 255, 0), 3)
-                cv2.putText(imagem_anotada, texto_limpo, (x1, y1 - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+                label = f"PLACA: {texto_limpo} ({confianca*100:.1f}%)"
+                cv2.putText(imagem_anotada, label, (x1, y1 - 12),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
+print("\n=== PLACAS REGISTRADAS ===")
+for placa, conf in placas_encontradas:
+    print(f"✅ Placa: {placa} | Certeza da Leitura: {conf*100:.2f}%")
+
+# Exibição do resultado anotado
 cv2_imshow(imagem_anotada)
 ```
-
 ---
 
 ## 🧪 3. EXPERIMENTO CIENTÍFICO: TESTES DE ESTRESSE EM VISÃO COMPUTACIONAL

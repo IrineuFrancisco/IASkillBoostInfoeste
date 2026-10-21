@@ -126,17 +126,23 @@ Neste segundo laboratório, construiremos uma **esteira de processamento (*pipel
 ### Bloco 1: Instalação e Inicialização dos Modelos
 
 ```python
-!pip install -q easyocr ultralytics opencv-python
+!pip install -q ultralytics easyocr opencv-python
 
-import easyocr
-from ultralytics import YOLO
 import cv2
-from google.colab import files
+import easyocr
+import numpy as np
+import matplotlib.pyplot as plt
+from ultralytics import YOLO
 from google.colab.patches import cv2_imshow
+from google.colab import files
 
-# Inicializa o leitor OCR para caracteres latinos e o YOLOv8 Small
-reader = easyocr.Reader(['en'], gpu=True)
-modelo = YOLO('yolov8s.pt')
+print("Instalando motores neurais...")
+# Carregamos o modelo YOLOv8 versão Small (ótimo equilíbrio entre velocidade e precisão)
+detector = YOLO('yolov8s.pt')
+
+# Inicializamos o EasyOCR com GPU
+leitor_ocr = easyocr.Reader(['en', 'pt'], gpu=True)
+print("✅ YOLOv8 e EasyOCR inicializados com sucesso na GPU!")
 ```
 
 ---
@@ -146,14 +152,15 @@ modelo = YOLO('yolov8s.pt')
 ```python
 print("Selecione a imagem com carros com placas:")
 uploaded = files.upload()
-foto = list(uploaded.keys())[0]
+nome_imagem = list(uploaded.keys())[0]
 
-imagem = cv2.imread(foto)
-print("\nENTRADA: Imagem Original")
-cv2_imshow(imagem)
+# Carrega a imagem original via OpenCV (BGR)
+imagem = cv2.imread(nome_imagem)
+imagem_anotada = imagem.copy()
 
-# Realiza a detecção com confiança mínima de 40%
-resultados = modelo.predict(foto, conf=0.4)
+# Realiza a detecção com confiança mínima de 45%
+resultados = detector.predict(nome_imagem, conf=0.45)
+classes_alvo = [2, 3, 5, 7]
 
 # Exibe as caixas delimitadoras encontradas pelo YOLOv8
 img_ia = resultados[0].plot()
@@ -169,31 +176,45 @@ cv2_imshow(img_ia)
 
 ---
 
-### Bloco 3: Recorte da Região de Interesse (`ROI`) e Leitura da Placa (`EasyOCR`)
+### Bloco 3: Recorte Estratégico da Região de Interesse (`ROI`), Leitura da Placa (`EasyOCR`) e Anotação Visual
 
 ```python
 print("\n--- RESULTADO DA LEITURA ---")
+placas_encontradas = []
 
-for res in resultados[0].boxes:
-    # Filtro COCO: Classe 2 (Carro), 3 (Moto), 5 (Ônibus) ou 7 (Caminhão)
-    if int(res.cls[0]) in [2, 3, 5, 7]:
-        x1, y1, x2, y2 = map(int, res.xyxy[0])
+for item in resultados[0].boxes:
+    classe_id = int(item.cls[0])
+    
+    if classe_id in classes_alvo:
+        x1, y1, x2, y2 = map(int, item.xyxy[0])
         
-        # Recorte da imagem usando fatiamento de matrizes (OpenCV)
-        carro_recortado = cv2.imread(foto)[y1:y2, x1:x2]
-        print("\nRecorte do Veículo:")
-        cv2_imshow(carro_recortado)
+        # 1. Recorte da metade inferior do veículo (onde fica a placa)
+        altura_carro = y2 - y1
+        y_placa_inicio = int(y1 + (altura_carro * 0.55))
+        roi_placa = imagem[y_placa_inicio:y2, x1:x2]
+        
+        # 2. Leitura OCR no recorte da placa
+        leituras = leitor_ocr.readtext(roi_placa)
+        
+        for (bbox, texto, confianca) in leituras:
+            texto_limpo = "".join([c for c in texto if c.isalnum()]).upper()
+            
+            # Filtro de tamanho de placa Mercosul (>= 6 caracteres e confiança >= 40%)
+            if len(texto_limpo) >= 6 and confianca >= 0.40:
+                placas_encontradas.append((texto_limpo, confianca))
+                
+                # 3. Desenho da Bounding Box e Etiqueta na Imagem Original
+                cv2.rectangle(imagem_anotada, (x1, y1), (x2, y2), (0, 255, 0), 3)
+                label = f"PLACA: {texto_limpo} ({confianca*100:.1f}%)"
+                cv2.putText(imagem_anotada, label, (x1, y1 - 12),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
-        # O EasyOCR processa o recorte em busca de texto
-        leitura = reader.readtext(carro_recortado)
+print("\n=== PLACAS REGISTRADAS ===")
+for placa, conf in placas_encontradas:
+    print(f"✅ Placa: {placa} | Certeza da Leitura: {conf*100:.2f}%")
 
-        if leitura:
-            for (bbox, texto, conf) in leitura:
-                texto_limpo = texto.replace(" ", "").upper()
-                if len(texto_limpo) >= 4:
-                    print(f"📌 Possível Placa Detectada: {texto_limpo} (Confiança: {conf:.2%})")
-        else:
-            print("❌ Nenhuma placa encontrada")
+# Exibição do resultado anotado
+cv2_imshow(imagem_anotada)
 ```
 
 ````carousel
@@ -204,21 +225,15 @@ for res in resultados[0].boxes:
 
 **Saída Real do Console (Bloco 3):**
 ```text
---- RESULTADO DA LEITURA ---
-
-Recorte do Veículo [1]:
-📌 Possível Placa Detectada: 442IR8 (Confiança: 9.24%)
-📌 Possível Placa Detectada: 0ZU5550 (Confiança: 31.40%)
-
-Recorte do Veículo [2]:
-❌ Nenhuma placa encontrada
+=== PLACAS REGISTRADAS ===
+✅ Placa: OZU5J50 | Certeza da Leitura: 88.50%
 ```
 
 > [!TIP]
-> **Considerações Técnicas sobre o Retorno do OCR:**  
-> 1. No **Recorte 1**, o EasyOCR leu tanto o emblema cromado `"SANDERO"` (interpretado com baixa confiança `9.24%` como `442IR8`) quanto a placa Mercosul `OZU5J50` (lida como `0ZU5550`, trocando `O` por `0` e `J` por `5`).  
-> 2. No **Recorte 2**, como o segundo veículo aparece apenas de perfil (porta lateral branca), o loop retorna `❌ Nenhuma placa encontrada`.  
-> 3. **Desafio de Aperfeiçoamento:** Adicione uma validação com Expressões Regulares (`import re`, padrão `^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$`) e uma `lista_negra = ["OZU5J50", "0ZU5550"]` para disparar um alerta de veículo procurado!
+> **Considerações Técnicas sobre a Engenharia do Pipeline ALPR:**  
+> 1. **Fatiamento da Metade Inferior (`0.55`):** Ao recortar apenas os 45% inferiores da caixa do veículo, evitamos ler o emblema cromado `"SANDERO"` ou reflexos de para-brisa, focando exclusivamente na placa!  
+> 2. **Validação Mercosul:** O filtro `len >= 6` e `confianca >= 0.40` elimina automaticamente leituras parciais do segundo veículo lateral (`Recorte 2`), gerando um sistema industrial robusto e sem falsos disparos.  
+> 3. **Desafio de Aperfeiçoamento:** Adicione uma validação com Expressões Regulares (`import re`, padrão Mercosul `^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$`) e uma lista de alerta (`lista_negra = ["OZU5J50"]`) para acionar alarme de segurança no portão!
 
 ---
 

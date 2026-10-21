@@ -178,16 +178,16 @@ print("\nDistribuição da classe alvo:\n", df['comprou'].value_counts())
 **Saída do Console (Bloco 1):**
 ```text
    tempo_site_min  paginas_visitadas  valor_carrinho  abandonos_anteriores  comprou
-0            11.9                 15          894.21                     1        1
-1            28.6                 19         1065.34                     0        1
-2            22.2                 12          654.10                     4        0
-3            18.4                  3          212.45                     3        0
-4             5.5                 16          410.80                     2        0
+0            11.9                 11          638.56                     2        0
+1            28.6                 17         1452.02                     2        1
+2            22.2                  8          831.00                     2        1
+3            18.4                  4          646.74                     0        1
+4             5.5                  6          861.41                     2        0
 
 Distribuição da classe alvo:
 comprou
-0    112
-1     88
+0    116
+1     84
 Name: count, dtype: int64
 ```
 
@@ -196,11 +196,22 @@ Name: count, dtype: int64
 ### Bloco 2: Treinamento Supervisionado (`RandomForestClassifier`) e Importância das Variáveis
 
 ```python
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# Garante que o df está carregado caso a célula anterior não tenha sido executada nesta sessão
+try:
+    df
+except NameError:
+    import os
+    if os.path.exists('ecommerce_clientes.csv'):
+        df = pd.read_csv('ecommerce_clientes.csv')
+    else:
+        raise NameError("O DataFrame 'df' não está definido e o arquivo 'ecommerce_clientes.csv' não foi encontrado. Por favor, execute a primeira célula (QqbRrfJ5ENnh) primeiro.")
 
 X = df.drop('comprou', axis=1)
 y = df['comprou']
@@ -212,14 +223,12 @@ y_pred = rf.predict(X_test)
 
 print(f"Acurácia do Random Forest: {accuracy_score(y_test, y_pred):.2%}")
 
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Reds', cbar=False, ax=axes[0])
-axes[0].set_title('Matriz de Confusão - Random Forest')
-axes[0].set_xlabel('Previsto')
-axes[0].set_ylabel('Real')
-
+# Exibindo Matriz de Confusão e Feature Importance
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Reds', ax=axes[0])
+axes[0].set_title('Matriz de Confusão')
 pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind='barh', color='#E30613', ax=axes[1])
-axes[1].set_title('Importância das Variáveis (Feature Importance)')
+axes[1].set_title('Feature Importance')
 plt.tight_layout()
 plt.show()
 ```
@@ -235,7 +244,12 @@ plt.show()
 ### Bloco 3: Acionando a IA Generativa para Retenção de Clientes
 
 ```python
-# Conectando a predição do Random Forest ao Prompt Estruturado do Gemini
+# BLOCO 3: Conectando ML Discriminativo + IA Generativa
+# !pip install -q google-genai
+import pandas as pd
+from google import genai
+
+# 1. Novo cliente em tempo real no site
 novo_cliente = pd.DataFrame([{
     'tempo_site_min': 14.5,
     'paginas_visitadas': 8,
@@ -244,16 +258,18 @@ novo_cliente = pd.DataFrame([{
 }])
 
 prob_abandono = rf.predict_proba(novo_cliente)[0][0]
-print(f"⚠️ Risco de Abandono Calculado pelo Modelo Discriminativo: {prob_abandono:.1%}")
+print(f"⚠️ Risco de Abandono Calculado (ML): {prob_abandono:.1%}")
 
+# 2. Se o risco > 70%, a IA Generativa cria o cupom em JSON
 if prob_abandono > 0.70:
-    prompt_retencao = f"""
+    prompt_sistema = f"""
     Persona: Especialista em Retenção de E-commerce.
-    Contexto: O cliente está com R$ {novo_cliente['valor_carrinho'][0]:.2f} no carrinho e nosso modelo preditivo apontou {prob_abandono:.0%} de probabilidade de abandono.
-    Tarefa: Crie uma notificação push curta e persuasiva oferecendo 10% de desconto com o cupom VOLTA10.
-    Formato: Retorne EXCLUSIVAMENTE um objeto JSON válido com as chaves "titulo", "mensagem" e "cupom".
+    Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
+    e {prob_abandono:.0%} de risco de abandono.
+    Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
+    Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
     """
-    print("\nPrompt gerado automaticamente para envio à API do Gemini:\n", prompt_retencao)
+    print("Prompt estruturado pronto para disparo na API Gemini!\n" + prompt_sistema)
 ```
 
 ---
