@@ -129,8 +129,9 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * Engenharia de Prompt: Pilares (Persona, Contexto, Tarefa, Formato), *Zero-Shot*, *Few-Shot* e *Chain-of-Thought*.
   * Introdução e boas práticas no ambiente **Google Colab**.
 * **Laboratórios Práticos:**
-  * 🍷 **Lab 1.1 (Supervisionado):** Classificador de Vinhos com `KNeighborsClassifier (KNN)` usando padronização `StandardScaler` e análise detalhada da Matriz de Confusão.
-  * 🌸 **Lab 1.2 (Não Supervisionado):** Agrupamento florístico com `KMeans` sobre o [iris.csv](./Aula_01/iris.csv), cálculo do Método do Cotovelo (*Elbow Method*) e verificação do Índice de Silhueta (*Silhouette Score*).
+  * 🤖 **Lab 1.0 (Visão No-Code):** [Treinando sua Primeira Rede Neural com Teachable Machine](./Aula_01/lab_teachable_machine.md)
+  * 🍷 **Lab 1.1 (Supervisionado):** [Classificador de Vinhos com KNN](./Aula_01/lab_vinhos_knn.md)
+  * 🌸 **Lab 1.2 (Não Supervisionado):** [Agrupamento Florístico com K-Means](./Aula_01/lab_iris_kmeans.md)
 * **Materiais da Aula:**
   * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_01/slide_aula_01.html) • [Ver Código](./Aula_01/slide_aula_01.html)
   * 📖 [Apostila / Material de Estudo](./Aula_01/material_aula_01.md)
@@ -149,8 +150,8 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * Modelos de Fundação (*Foundation Models*): Gemini, GPT-4o, Claude 3.5 Sonnet, Llama 3.
   * Hiperparâmetros de inferência: Temperatura ($0.0$ a $1.2+$), Top-K, Top-P e penalidade de repetição.
 * **Laboratórios Práticos:**
-  * 🧙‍♂️ **Lab 2.1 (Socratic Prompting):** *"O Oráculo de Python e o Código Amaldiçoado"* — Construção de System Prompt com guardrail rigoroso impedindo entregar a resposta pronta, exercitando *Rubber Duck Debugging* em 7 erros clássicos de Python.
-  * 🛒 **Lab 2.2 (Pipeline Híbrido ML + LLM):** Predição de abandono de carrinho em e-commerce ([ecommerce_clientes.csv](./Aula_02/ecommerce_clientes.csv)) com `RandomForestClassifier` (92% de acurácia) acionando a **Gemini API** para geração automática de cupons e mensagens promocionais hiperpersonalizadas em JSON.
+  * 🧙‍♂️ **Lab 2.1 (Socratic Prompting):** [O Oráculo de Python e o Código Amaldiçoado](./Aula_02/lab_oraculo_prompt_socratico.md)
+  * 🛒 **Lab 2.2 (Pipeline Híbrido ML + LLM):** [Predição de Churn e Cupons com Gemini](./Aula_02/lab_ecommerce_churn_gemini.md)
   * 🕹️ **Lab 2.3 (Desafio de IA Generativa):** Recriação de um clássico do Atari 2600 em HTML5 Canvas utilizando prompts iterativos.
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Generative AI* (**1º Badge conquistado**).
 * **Materiais da Aula:**
@@ -172,9 +173,9 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * PLN Moderno: Tokenização por subpalavras (*WordPiece*, *BPE*), Vetorização, Espaços Vetoriais e *Self-Attention*.
   * Arquitetura Transformers, modelos BERT, conceitos de RAG (*Retrieval-Augmented Generation*) e *Function Calling*.
 * **Laboratórios Práticos:**
-  * 🍎 **Lab 3.1A (Simulador Interativo):** Ajuste manual de pesos e bias no [Simulador de Redes Neurais Maçã vs. Laranja](https://irineufrancisco.github.io/ExemploRedeNeural/).
-  * 🧠 **Lab 3.1B (Keras / TensorFlow):** Construção de Rede Neural Densa (`keras.Sequential`) para o dataset de vinhos, elevando a acurácia de 72% para **96.7%**, com plotagem das curvas de perda e acurácia por época.
-  * 💬 **Lab 3.2 (BERT & pysentimiento):** Análise de sentimentos profunda em textos em português, testando desafios de contexto (negações, gírias, emojis e ironia).
+  * 🍎 **Lab 3.1A (Simulador Interativo):** Ajuste manual de sinapses no [Simulador de Redes Neurais](https://irineufrancisco.github.io/ExemploRedeNeural/).
+  * 🧠 **Lab 3.1B (Deep Learning Keras):** [Redes Neurais Profundas com Keras](./Aula_03/lab_redes_neurais_keras.md) (elevando acurácia para 96.7%).
+  * 💬 **Lab 3.2 (PLN com BERT):** [Análise de Sentimentos em Português com BERT](./Aula_03/lab_sentimentos_bert_pln.md) (testando negação, emojis e ironia).
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Large Language Models* (**2º Badge conquistado**).
 * **Materiais da Aula:**
   * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_03/slide_aula_03.html) • [Ver Código](./Aula_03/slide_aula_03.html)
@@ -195,9 +196,9 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * Reconhecimento Facial, extração de marcos (*facial landmarks*) e análise de microexpressões.
   * Ética e IA Responsável: Vieses em conjuntos de treino, privacidade, LGPD e impactos na segurança pública.
 * **Laboratórios Práticos:**
-  * 🎯 **Lab 4.1 (YOLOv8 — Detecção e Contagem):** Notebook [Detectar_objetos_em_fotos_v2.ipynb](./Aula_04/Detectar_objetos_em_fotos_v2.ipynb) executando inferência com modelo pré-treinado `yolov8s.pt` e gerando relatório quantitativo de classes.
-  * 🚗 **Lab 4.2 (ALPR — Leitura de Placas Veiculares):** Notebook [Detectar placa de carro_v3 (2).ipynb](./Aula_04/Detectar%20placa%20de%20carro_v3%20(2).ipynb) conectando detecção veicular com YOLOv8 $\to$ Recorte de Região de Interesse (ROI) $\to$ Reconhecimento Óptico de Caracteres com `EasyOCR` em placas padrão Mercosul.
-  * 😊 **Lab 4.3 (DeepFace):** Detecção de emoção dominante (*dominant_emotion*), estimativa de idade aparente e gênero a partir de imagens faciais.
+  * 🎯 **Lab 4.1 (YOLOv8 Detecção & Contagem):** [Detecção e Contagem de Objetos com YOLOv8](./Aula_04/lab_yolo_deteccao_objetos.md)
+  * 🚗 **Lab 4.2 (ALPR Leitura de Placas):** [Sistema ALPR de Leitura de Placas Mercosul](./Aula_04/lab_alpr_reconhecimento_placas.md)
+  * 😊 **Lab 4.3 (DeepFace):** Detecção de emoção dominante (*dominant_emotion*), idade aparente e gênero facial.
   * 🏅 **Trilha Google Cloud:** Conclusão da atividade *Introduction to Responsible AI* (**3º Badge conquistado**).
 * **Materiais da Aula:**
   * 🖥️ **Slides:** [Abrir Apresentação Online (GitHub Pages)](https://irineufrancisco.github.io/IASkillBoostInfoeste/Aula_04/slide_aula_04.html) • [Ver Código](./Aula_04/slide_aula_04.html)
@@ -218,8 +219,8 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * Configuração de microframework web **Flask** para atendimento a webhooks JSON.
   * Hospedagem e publicação de serviços na nuvem com **PythonAnywhere** (WSGI, Force HTTPS e rotas seguras).
 * **Laboratórios Práticos:**
-  * 🤖 **Lab 5.1 (Agente Conversacional Cantina SENAI):** Construção completa do chatbot `SENAIBOT` capaz de interagir, tirar dúvidas, anotar pedidos com slot filling e confirmar itens.
-  * ☁️ **Lab 5.2 (Cloud Deployment no PythonAnywhere):** Publicação do arquivo [flask_app.py](./Aula_05/flask_app.py) na nuvem, disponibilizando interface web responsiva e webhook para geração dinâmica de *Rich Content Cards*.
+  * 🤖 **Lab 5.1 (Dialogflow ES):** [Agente Conversacional Cantina SENAIBOT](./Aula_05/lab_dialogflow_agente_cantina.md) (Intents, Entities e Slot Filling).
+  * ☁️ **Lab 5.2 (Cloud Deployment):** [Deploy de Webhook Flask no PythonAnywhere](./Aula_05/lab_webhook_flask_pythonanywhere.md) (Fulfillment e Rich Cards).
   * 🛍️ **Projeto Integrador SIMI:** Apresentação da solução integrada *TechVision Smart Store*.
   * 🏅 **Trilha Google Cloud:** Finalização da 4ª atividade oficial (**100% da Trilha e 4 Badges alcançados**).
 * **Materiais da Aula:**

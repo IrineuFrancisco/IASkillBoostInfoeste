@@ -1,1159 +1,1362 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 02 - Modelos Discriminativos vs. Generativos, Prompt Socrático e Trilha 1 (SENAI-SP)</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-:root {
-  --senai-red: #E30613;
-  --senai-black: #000000;
-  --senai-dark-gray: #2B2B2B;
-  --senai-medium-gray: #757575;
-  --senai-light-gray: #F2F2F2;
-  --senai-white: #FFFFFF;
-  --border-color: #E0E0E0;
-  --colab-orange: #F9AB00;
-  --google-blue: #1A73E8;
-  --code-green: #2E7D32;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 02 - Modelos Discriminativos vs. Generativos, Prompt Socrático e Trilha 1 (SENAI-SP)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --senai-red: #E30613;
+      --senai-black: #000000;
+      --senai-dark-gray: #2B2B2B;
+      --senai-medium-gray: #757575;
+      --senai-light-gray: #F2F2F2;
+      --senai-white: #FFFFFF;
+      --border-color: #E0E0E0;
+      --colab-orange: #F9AB00;
+      --google-blue: #1A73E8;
+      --code-green: #2E7D32;
+    }
 
-* { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  background-color: var(--senai-light-gray);
-  margin: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  font-family: 'Montserrat', sans-serif;
-}
+    body {
+      background-color: var(--senai-light-gray);
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+    }
 
-#presentation-area {
-  width: 1280px;
-  height: 720px;
-  position: relative;
-  transform-origin: center center;
-  transition: transform 0.2s ease-out;
-}
+    #presentation-area {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      transform-origin: center center;
+      transition: transform 0.2s ease-out;
+    }
 
-.slide-container {
-  width: 100%;
-  height: 100%;
-  background-color: var(--senai-white);
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  display: none;
-  flex-direction: column;
-  padding: 40px 65px 75px 65px;
-  background-image: 
-    linear-gradient(to right, rgba(229, 229, 229, 0.35) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(229, 229, 229, 0.35) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
+    .slide-container {
+      width: 100%;
+      height: 100%;
+      background-color: var(--senai-white);
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      border-radius: 4px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      display: none;
+      flex-direction: column;
+      padding: 40px 65px 75px 65px;
+      background-image:
+        linear-gradient(to right, rgba(229, 229, 229, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(229, 229, 229, 0.35) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
 
-.slide-container.active {
-  display: flex;
-  animation: slideFadeIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-}
+    .slide-container.active {
+      display: flex;
+      animation: slideFadeIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
 
-@keyframes slideFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    @keyframes slideFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
 
-.slide-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 14px;
-  height: 100%;
-  background-color: var(--senai-red);
-  z-index: 10;
-}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.slide-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.06) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-}
+    .slide-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 14px;
+      height: 100%;
+      background-color: var(--senai-red);
+      z-index: 10;
+    }
 
-.slide-container > * {
-  position: relative;
-  z-index: 1;
-}
+    .slide-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle at top right, rgba(227, 6, 19, 0.06) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-h1, h2, h3, h4, p, li, .subtitle {
-  margin: 0;
-  line-height: 1.4;
-}
+    .slide-container>* {
+      position: relative;
+      z-index: 1;
+    }
 
-.slide-container h1 {
-  font-weight: 900;
-  color: var(--senai-red);
-  font-size: 56px;
-  line-height: 1.08;
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  margin-bottom: 16px;
-}
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    li,
+    .subtitle {
+      margin: 0;
+      line-height: 1.4;
+    }
 
-.slide-container .slide-title {
-  font-weight: 900;
-  color: var(--senai-black);
-  font-size: 30px;
-  margin-bottom: 18px;
-  text-transform: uppercase;
-  width: 100%;
-  text-align: left;
-  border-left: 6px solid var(--senai-red);
-  padding-left: 16px;
-}
+    .slide-container h1 {
+      font-weight: 900;
+      color: var(--senai-red);
+      font-size: 56px;
+      line-height: 1.08;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
 
-.slide-container h3 {
-  font-weight: 800;
-  color: var(--senai-black);
-  font-size: 20px;
-  margin-bottom: 8px;
-}
+    .slide-container .slide-title {
+      font-weight: 900;
+      color: var(--senai-black);
+      font-size: 30px;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      width: 100%;
+      text-align: left;
+      border-left: 6px solid var(--senai-red);
+      padding-left: 16px;
+    }
 
-.slide-container p, 
-.slide-container li, 
-.slide-container .subtitle {
-  color: var(--senai-dark-gray);
-  font-size: 16.5px;
-  font-weight: 400;
-}
+    .slide-container h3 {
+      font-weight: 800;
+      color: var(--senai-black);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
 
-.content-area {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
+    .slide-container p,
+    .slide-container li,
+    .slide-container .subtitle {
+      color: var(--senai-dark-gray);
+      font-size: 16.5px;
+      font-weight: 400;
+    }
 
-.title-layout {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  padding-left: 25px;
-}
+    .content-area {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
 
-.title-layout .tag-course {
-  background-color: var(--senai-light-gray);
-  color: var(--senai-black);
-  padding: 8px 18px;
-  display: inline-block;
-  font-weight: 800;
-  font-size: 15px;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  border: 1px solid var(--border-color);
-  border-left: 4px solid var(--senai-red);
-  align-self: flex-start;
-}
+    .title-layout {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      padding-left: 25px;
+    }
 
-.title-layout .subtitle {
-  font-size: 22px;
-  color: var(--senai-medium-gray);
-  margin-top: 10px;
-  max-width: 960px;
-}
+    .title-layout .tag-course {
+      background-color: var(--senai-light-gray);
+      color: var(--senai-black);
+      padding: 8px 18px;
+      display: inline-block;
+      font-weight: 800;
+      font-size: 15px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--senai-red);
+      align-self: flex-start;
+    }
 
-.section-title-layout {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
+    .title-layout .subtitle {
+      font-size: 22px;
+      color: var(--senai-medium-gray);
+      margin-top: 10px;
+      max-width: 960px;
+    }
 
-.section-title-layout .module-tag {
-  background: var(--senai-red);
-  color: #fff;
-  font-weight: 800;
-  font-size: 14px;
-  padding: 6px 18px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  letter-spacing: 1px;
-}
+    .section-title-layout {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+      width: 100%;
+    }
 
-.section-title-layout h2 {
-  font-size: 54px;
-  color: var(--senai-black);
-  font-weight: 900;
-  text-transform: uppercase;
-  margin-bottom: 15px;
-  line-height: 1.1;
-}
+    .section-title-layout .module-tag {
+      background: var(--senai-red);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
 
-.section-title-layout hr {
-  width: 140px;
-  height: 7px;
-  background-color: var(--senai-red);
-  border: none;
-  margin: 20px auto;
-}
+    .section-title-layout h2 {
+      font-size: 54px;
+      color: var(--senai-black);
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      line-height: 1.1;
+    }
 
-.section-title-layout p {
-  max-width: 840px;
-  color: var(--senai-medium-gray);
-  font-size: 23px;
-}
+    .section-title-layout hr {
+      width: 140px;
+      height: 7px;
+      background-color: var(--senai-red);
+      border: none;
+      margin: 20px auto;
+    }
 
-.two-column {
-  display: flex;
-  width: 100%;
-  gap: 26px;
-  align-items: stretch;
-}
+    .section-title-layout p {
+      max-width: 840px;
+      color: var(--senai-medium-gray);
+      font-size: 23px;
+    }
 
-.two-column > div { flex: 1; }
+    .two-column {
+      display: flex;
+      width: 100%;
+      gap: 26px;
+      align-items: stretch;
+    }
 
-.two-column.tiled > div {
-  background-color: var(--senai-white);
-  border: 1px solid var(--border-color);
-  border-top: 5px solid var(--senai-red);
-  padding: 22px 24px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-}
+    .two-column>div {
+      flex: 1;
+    }
 
-.tiled-content {
-  display: flex;
-  gap: 20px;
-  width: 100%;
-  justify-content: space-between;
-  align-items: stretch;
-}
+    .two-column.tiled>div {
+      background-color: var(--senai-white);
+      border: 1px solid var(--border-color);
+      border-top: 5px solid var(--senai-red);
+      padding: 22px 24px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
 
-.tile {
-  background-color: var(--senai-white);
-  border: 1px solid var(--border-color);
-  border-bottom: 5px solid var(--senai-red);
-  padding: 20px 20px;
-  border-radius: 6px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-}
+    .tiled-content {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      justify-content: space-between;
+      align-items: stretch;
+    }
 
-.tile .icon {
-  font-size: 32px;
-  color: var(--senai-red);
-  margin-bottom: 12px;
-}
+    .tile {
+      background-color: var(--senai-white);
+      border: 1px solid var(--border-color);
+      border-bottom: 5px solid var(--senai-red);
+      padding: 20px 20px;
+      border-radius: 6px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
 
-.bullet-list-simple {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .tile .icon {
+      font-size: 32px;
+      color: var(--senai-red);
+      margin-bottom: 12px;
+    }
 
-.bullet-list-simple li {
-  position: relative;
-  padding-left: 22px;
-  font-size: 15.5px;
-}
+    .bullet-list-simple {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-.bullet-list-simple li::before {
-  content: '■';
-  color: var(--senai-red);
-  position: absolute;
-  left: 0;
-  top: 2px;
-  font-size: 13px;
-}
+    .bullet-list-simple li {
+      position: relative;
+      padding-left: 22px;
+      font-size: 15.5px;
+    }
 
-.code-block {
-  background-color: #1E1E1E;
-  color: #D4D4D4;
-  padding: 13px 16px;
-  border-radius: 6px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 13.5px;
-  line-height: 1.38;
-  text-align: left;
-  white-space: pre-wrap;
-  width: 100%;
-  border-left: 5px solid var(--senai-red);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
+    .bullet-list-simple li::before {
+      content: '■';
+      color: var(--senai-red);
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 13px;
+    }
 
-.code-block span.keyword { color: #569CD6; font-weight: bold; }
-.code-block span.string { color: #CE9178; }
-.code-block span.comment { color: #6A9955; font-style: italic; }
-.code-block span.func { color: #DCDCAA; }
+    .code-block {
+      background-color: #1E1E1E;
+      color: #D4D4D4;
+      padding: 13px 16px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13.5px;
+      line-height: 1.38;
+      text-align: left;
+      white-space: pre-wrap;
+      width: 100%;
+      border-left: 5px solid var(--senai-red);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
 
-.console-output {
-  background-color: #0D1117;
-  color: #E6EDF3;
-  padding: 11px 14px;
-  border-radius: 6px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 12.2px;
-  line-height: 1.32;
-  white-space: pre-wrap;
-  width: 100%;
-  border-left: 4px solid #2EA043;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-}
+    .code-block span.keyword {
+      color: #569CD6;
+      font-weight: bold;
+    }
 
-.console-output .out-title {
-  color: #7EE787;
-  font-weight: bold;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: block;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #30363D;
-  padding-bottom: 3px;
-}
+    .code-block span.string {
+      color: #CE9178;
+    }
 
-.callout-box {
-  background-color: #FFF5F5;
-  border-left: 6px solid var(--senai-red);
-  padding: 14px 20px;
-  border-radius: 0 6px 6px 0;
-  width: 100%;
-  margin-top: 12px;
-}
+    .code-block span.comment {
+      color: #6A9955;
+      font-style: italic;
+    }
 
-.callout-box.warning {
-  background-color: #FFF8E1;
-  border-left-color: #FFA000;
-}
+    .code-block span.func {
+      color: #DCDCAA;
+    }
 
-.callout-box.info {
-  background-color: #E8F0FE;
-  border-left-color: var(--google-blue);
-}
+    .console-output {
+      background-color: #0D1117;
+      color: #E6EDF3;
+      padding: 11px 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12.2px;
+      line-height: 1.32;
+      white-space: pre-wrap;
+      width: 100%;
+      border-left: 4px solid #2EA043;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
 
-.table-layout { width: 100%; }
-.table-layout table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--senai-white);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-}
-.table-layout th, .table-layout td {
-  border: 1px solid var(--border-color);
-  padding: 11px 15px;
-  text-align: left;
-  font-size: 15px;
-}
-.table-layout th {
-  background-color: var(--senai-red);
-  color: var(--senai-white);
-  font-weight: 800;
-  text-transform: uppercase;
-  font-size: 14px;
-}
-.table-layout tr:nth-child(even) { background-color: #FAFAFA; }
+    .console-output .out-title {
+      color: #7EE787;
+      font-weight: bold;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #30363D;
+      padding-bottom: 3px;
+    }
 
-/* DIAGRAM FLOW CARDS */
-.paradigm-row {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-}
-.paradigm-card {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border: 1px solid var(--border-color);
-  border-left: 6px solid var(--senai-dark-gray);
-  border-radius: 6px;
-  padding: 14px 18px;
-  gap: 14px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
-}
-.paradigm-card.highlight {
-  border-left-color: var(--senai-red);
-  background: #FFF9F9;
-}
-.paradigm-label {
-  min-width: 225px;
-  font-weight: 800;
-  font-size: 15.5px;
-  color: var(--senai-black);
-}
-.flow-box {
-  background: var(--senai-light-gray);
-  border: 1px solid #D0D0D0;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  text-align: center;
-  flex: 1;
-}
-.flow-box.red {
-  background: var(--senai-red);
-  color: #fff;
-  border-color: var(--senai-red);
-}
-.flow-box.dark {
-  background: var(--senai-dark-gray);
-  color: #fff;
-  border-color: var(--senai-dark-gray);
-}
-.flow-box.blue {
-  background: var(--google-blue);
-  color: #fff;
-  border-color: var(--google-blue);
-}
-.flow-arrow {
-  color: var(--senai-red);
-  font-size: 18px;
-  font-weight: 900;
-}
+    .callout-box {
+      background-color: #FFF5F5;
+      border-left: 6px solid var(--senai-red);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      width: 100%;
+      margin-top: 12px;
+    }
 
-.prompt-pill {
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 12.5px;
-  margin-right: 4px;
-  margin-bottom: 4px;
-}
-.pill-p { background: #E3F2FD; color: #0D47A1; border: 1px solid #90CAF9; }
-.pill-t { background: #FCE4EC; color: #880E4F; border: 1px solid #F48FB1; }
-.pill-c { background: #E8F5E9; color: #1B5E20; border: 1px solid #A5D6A7; }
-.pill-f { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
+    .callout-box.warning {
+      background-color: #FFF8E1;
+      border-left-color: #FFA000;
+    }
 
-.step-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--senai-red);
-  color: #fff;
-  font-weight: 800;
-  font-size: 13px;
-  padding: 3px 10px;
-  border-radius: 4px;
-  margin-right: 8px;
-  text-transform: uppercase;
-}
+    .callout-box.info {
+      background-color: #E8F0FE;
+      border-left-color: var(--google-blue);
+    }
 
-.presentation-controls {
-  position: fixed;
-  bottom: 18px;
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.96);
-  padding: 10px 24px;
-  border-radius: 50px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  border: 1px solid var(--border-color);
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-}
+    .table-layout {
+      width: 100%;
+    }
 
-.presentation-controls button {
-  background-color: var(--senai-red);
-  color: var(--senai-white);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+    .table-layout table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--senai-white);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
 
-.presentation-controls button:hover:not(:disabled) {
-  background-color: #C00510;
-  transform: translateY(-2px);
-}
+    .table-layout th,
+    .table-layout td {
+      border: 1px solid var(--border-color);
+      padding: 11px 15px;
+      text-align: left;
+      font-size: 15px;
+    }
 
-.presentation-controls button:disabled {
-  background-color: var(--border-color);
-  color: var(--senai-medium-gray);
-  cursor: not-allowed;
-}
+    .table-layout th {
+      background-color: var(--senai-red);
+      color: var(--senai-white);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
 
-.slide-counter {
-  font-weight: 900;
-  color: var(--senai-dark-gray);
-  font-size: 16px;
-  min-width: 75px;
-  text-align: center;
-}
-    </style>
+    .table-layout tr:nth-child(even) {
+      background-color: #FAFAFA;
+    }
+
+    /* DIAGRAM FLOW CARDS */
+    .paradigm-row {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .paradigm-card {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-left: 6px solid var(--senai-dark-gray);
+      border-radius: 6px;
+      padding: 14px 18px;
+      gap: 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .paradigm-card.highlight {
+      border-left-color: var(--senai-red);
+      background: #FFF9F9;
+    }
+
+    .paradigm-label {
+      min-width: 225px;
+      font-weight: 800;
+      font-size: 15.5px;
+      color: var(--senai-black);
+    }
+
+    .flow-box {
+      background: var(--senai-light-gray);
+      border: 1px solid #D0D0D0;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      flex: 1;
+    }
+
+    .flow-box.red {
+      background: var(--senai-red);
+      color: #fff;
+      border-color: var(--senai-red);
+    }
+
+    .flow-box.dark {
+      background: var(--senai-dark-gray);
+      color: #fff;
+      border-color: var(--senai-dark-gray);
+    }
+
+    .flow-box.blue {
+      background: var(--google-blue);
+      color: #fff;
+      border-color: var(--google-blue);
+    }
+
+    .flow-arrow {
+      color: var(--senai-red);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .prompt-pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12.5px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+
+    .pill-p {
+      background: #E3F2FD;
+      color: #0D47A1;
+      border: 1px solid #90CAF9;
+    }
+
+    .pill-t {
+      background: #FCE4EC;
+      color: #880E4F;
+      border: 1px solid #F48FB1;
+    }
+
+    .pill-c {
+      background: #E8F5E9;
+      color: #1B5E20;
+      border: 1px solid #A5D6A7;
+    }
+
+    .pill-f {
+      background: #FFF3E0;
+      color: #E65100;
+      border: 1px solid #FFCC80;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--senai-red);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-right: 8px;
+      text-transform: uppercase;
+    }
+
+    .presentation-controls {
+      position: fixed;
+      bottom: 18px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.96);
+      padding: 10px 24px;
+      border-radius: 50px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      border: 1px solid var(--border-color);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .presentation-controls button {
+      background-color: var(--senai-red);
+      color: var(--senai-white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .presentation-controls button:hover:not(:disabled) {
+      background-color: #C00510;
+      transform: translateY(-2px);
+    }
+
+    .presentation-controls button:disabled {
+      background-color: var(--border-color);
+      color: var(--senai-medium-gray);
+      cursor: not-allowed;
+    }
+
+    .slide-counter {
+      font-weight: 900;
+      color: var(--senai-dark-gray);
+      font-size: 16px;
+      min-width: 75px;
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="presentation-area">
+  <div id="presentation-area">
 
-  <!-- SLIDE 1: CAPA -->
-  <div class="slide-container active">
-    <div class="title-layout">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
-      <span class="tag-course">Dia 02 • Aula 02 (4 Horas) • Curso Integrado Google Cloud Skills Boost</span>
-      <h1>Modelos Discriminativos<br>vs. Generativos &amp; Prompting</h1>
-      <p class="subtitle">Arquitetura de Modelos de Fundação, Prompting Socrático ("O Oráculo de Python"), Pipeline Híbrido no Google Colab e <strong>Atividade 01 da Trilha Skills Boost</strong></p>
+    <!-- SLIDE 1: CAPA -->
+    <div class="slide-container active">
+      <div class="title-layout">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png"
+          alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
+        <span class="tag-course">Dia 02 • Aula 02 (4 Horas) • Curso Integrado Google Cloud Skills Boost</span>
+        <h1>Modelos Discriminativos<br>vs. Generativos &amp; Prompting</h1>
+        <p class="subtitle">Arquitetura de Modelos de Fundação, Prompting Socrático ("O Oráculo de Python"), Pipeline
+          Híbrido no Google Colab e <strong>Atividade 01 da Trilha Skills Boost</strong></p>
+      </div>
     </div>
-  </div>
 
-  <!-- SLIDE 2: DIVISOR MÓDULO 1 -->
-  <div class="slide-container">
-    <div class="section-title-layout">
-      <span class="module-tag">Módulo 01 • Conceitos Visuais</span>
-      <h2>IA Discriminativa vs.<br>IA Generativa</h2>
-      <hr>
-      <p>A fronteira matemática entre classificar dados existentes e sintetizar criações inéditas.</p>
+    <!-- SLIDE 2: DIVISOR MÓDULO 1 -->
+    <div class="slide-container">
+      <div class="section-title-layout">
+        <span class="module-tag">Módulo 01 • Conceitos Visuais</span>
+        <h2>IA Discriminativa vs.<br>IA Generativa</h2>
+        <hr>
+        <p>A fronteira matemática entre classificar dados existentes e sintetizar criações inéditas.</p>
+      </div>
     </div>
-  </div>
 
-  <!-- SLIDE 3: DIAGRAMA VISUAL DISCRIMINATIVA VS GENERATIVA -->
-  <div class="slide-container">
-    <h2 class="slide-title">O Paradigma Matemático: P(Y|X) vs. P(X)</h2>
-    <div class="content-area">
-      <div class="paradigm-row">
-        <div class="paradigm-card">
-          <div class="paradigm-label">
-            <i class="fa-solid fa-filter" style="color: var(--google-blue);"></i> IA Discriminativa<br>
-            <span style="font-size: 13px; color: var(--google-blue);">Probabilidade Condicional P(Y | X)</span>
+    <!-- SLIDE 3: DIAGRAMA VISUAL DISCRIMINATIVA VS GENERATIVA -->
+    <div class="slide-container">
+      <h2 class="slide-title">O Paradigma Matemático: P(Y|X) vs. P(X)</h2>
+      <div class="content-area">
+        <div class="paradigm-row">
+          <div class="paradigm-card">
+            <div class="paradigm-label">
+              <i class="fa-solid fa-filter" style="color: var(--google-blue);"></i> IA Discriminativa<br>
+              <span style="font-size: 13px; color: var(--google-blue);">Probabilidade Condicional P(Y | X)</span>
+            </div>
+            <div class="flow-box"><i class="fa-solid fa-table"></i> Entrada (X)<br><span
+                style="font-size: 12px; font-weight: 400;">Foto, E-mail ou Tabela CSV</span></div>
+            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="flow-box blue"><i class="fa-solid fa-border-top-left"></i> Fronteira de Decisão<br><span
+                style="font-size: 12px; font-weight: 400;">KNN, Random Forest, SVM</span></div>
+            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="flow-box dark"><i class="fa-solid fa-tag"></i> Rótulo / Classe (Y)<br><span
+                style="font-size: 12px; font-weight: 400;">" É Spam (98%)" ou "Vinho Classe 0"</span></div>
           </div>
-          <div class="flow-box"><i class="fa-solid fa-table"></i> Entrada (X)<br><span style="font-size: 12px; font-weight: 400;">Foto, E-mail ou Tabela CSV</span></div>
-          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          <div class="flow-box blue"><i class="fa-solid fa-border-top-left"></i> Fronteira de Decisão<br><span style="font-size: 12px; font-weight: 400;">KNN, Random Forest, SVM</span></div>
-          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          <div class="flow-box dark"><i class="fa-solid fa-tag"></i> Rótulo / Classe (Y)<br><span style="font-size: 12px; font-weight: 400;">" É Spam (98%)" ou "Vinho Classe 0"</span></div>
-        </div>
 
-        <div class="paradigm-card highlight">
-          <div class="paradigm-label" style="color: var(--senai-red);">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> IA Generativa<br>
-            <span style="font-size: 13px; color: var(--senai-dark-gray);">Distribuição Conjunta P(X) / P(X | Y)</span>
-          </div>
-          <div class="flow-box"><i class="fa-solid fa-terminal"></i> Prompt / Contexto (Y)<br><span style="font-size: 12px; font-weight: 400;">Instrução em Linguagem Natural</span></div>
-          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          <div class="flow-box red"><i class="fa-solid fa-brain"></i> Modelo de Fundação<br><span style="font-size: 12px; font-weight: 400;">Amostragem no Espaço Latente</span></div>
-          <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          <div class="flow-box dark"><i class="fa-solid fa-file-code"></i> Instância Inédita (X*)<br><span style="font-size: 12px; font-weight: 400;">Código Python, Texto, Imagem, Áudio</span></div>
-        </div>
-      </div>
-
-      <div class="two-column tiled" style="margin-top: 16px;">
-        <div style="border-top-color: var(--google-blue); padding: 15px 20px;">
-          <h3 style="font-size: 17px;"><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--google-blue);"></i> Quando usar IA Discriminativa?</h3>
-          <p style="font-size: 14.5px;">Quando a resposta é um <strong>número, categoria ou alerta</strong> extraído de dados históricos: Previsão de Churn (abandono), detecção de fraude no cartão, aprovação de crédito ou contagem de peças.</p>
-        </div>
-        <div style="padding: 15px 20px;">
-          <h3 style="font-size: 17px;"><i class="fa-solid fa-sparkles" style="color: var(--senai-red);"></i> Quando usar IA Generativa?</h3>
-          <p style="font-size: 14.5px;">Quando o sistema precisa <strong>produzir um artefato complexo</strong>: Redigir uma mensagem personalizada para o cliente que abandonou o carrinho, explicar um bug, resumir contratos ou sintetizar imagens.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 4: FOUNDATION MODELS E TITÃS DO MERCADO -->
-  <div class="slide-container">
-    <h2 class="slide-title">Modelos de Fundação (Foundation Models) &amp; Ecossistema</h2>
-    <div class="content-area">
-      <div class="table-layout">
-        <table>
-          <thead>
-            <tr>
-              <th>Organização</th>
-              <th>Família de Modelos</th>
-              <th>Diferencial Arquitetural</th>
-              <th>Licença / Acesso</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Google DeepMind</strong></td>
-              <td>Gemini (Nano, Flash, Pro, Ultra)</td>
-              <td>Multimodalidade nativa desde o pré-treino (texto, código, áudio, vídeo) e janela de contexto de milhões de tokens.</td>
-              <td>Cloud API / AI Studio</td>
-            </tr>
-            <tr>
-              <td><strong>OpenAI</strong></td>
-              <td>GPT-4o, o1 / o3</td>
-              <td>Forte capacidade em raciocínio em cadeia (Chain-of-Thought) e geração estruturada de código.</td>
-              <td>Proprietário / API</td>
-            </tr>
-            <tr>
-              <td><strong>Anthropic</strong></td>
-              <td>Claude (Haiku, Sonnet, Opus)</td>
-              <td>Arquitetura <em>Constitutional AI</em> voltada à segurança, alinhamento ético e engenharia de software.</td>
-              <td>Proprietário / API</td>
-            </tr>
-            <tr>
-              <td><strong>Meta AI</strong></td>
-              <td>Llama 3 / 3.1 / 3.2</td>
-              <td>Pesos abertos (Open-Weights): permite baixar e executar localmente via Ollama/vLLM com privacidade total.</td>
-              <td>Open Weights / Local</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="callout-box info" style="margin-top: 14px;">
-        <p style="font-size: 14.5px;"><strong><i class="fa-solid fa-layer-group"></i> Por que "Modelo de Fundação"?</strong> Ao contrário do Machine Learning clássico (onde treinamos um modelo do zero para cada tarefa), um Foundation Model passa por um pré-treinamento massivo não supervisionado e serve como <strong>alicerce único</strong> para centenas de aplicações via <em>Prompting</em>, <em>RAG</em> ou <em>Fine-Tuning</em>.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 5: TEMPERATURA E CONTROLE DE CRIATIVIDADE -->
-  <div class="slide-container">
-    <h2 class="slide-title">Controle Matemático da Geração: Temperatura</h2>
-    <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 14px;">Os LLMs preveem uma distribuição de probabilidades para o próximo token. O hiperparâmetro <code>temperature</code> achata ou afunila essa curva:</p>
-      <div class="tiled-content">
-        <div class="tile" style="border-bottom-color: var(--google-blue);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="step-badge" style="background: var(--google-blue);">Temp: 0.0 a 0.2</span>
-            <i class="fa-solid fa-lock" style="color: var(--google-blue); font-size: 22px;"></i>
-          </div>
-          <h3 style="margin-top: 10px;">Determinístico / Lógico</h3>
-          <p style="font-size: 14.5px;">Escolhe sempre o token de maior probabilidade matemática (Greedy Decoding).<br><br><strong>Uso Ideal:</strong> Geração de JSON para APIs, SQL, refatoração de código e cálculos.</p>
-        </div>
-
-        <div class="tile" style="border-bottom-color: var(--code-green);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="step-badge" style="background: var(--code-green);">Temp: 0.4 a 0.7</span>
-            <i class="fa-solid fa-scale-balanced" style="color: var(--code-green); font-size: 22px;"></i>
-          </div>
-          <h3 style="margin-top: 10px;">Equilibrado / Natural</h3>
-          <p style="font-size: 14.5px;">Mantém a coerência técnica permitindo variações naturais de vocabulário.<br><br><strong>Uso Ideal:</strong> Assistentes virtuais, tutoria socrática, documentação e resumos.</p>
-        </div>
-
-        <div class="tile" style="border-bottom-color: var(--senai-red);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="step-badge">Temp: 0.8 a 1.2+</span>
-            <i class="fa-solid fa-fire" style="color: var(--senai-red); font-size: 22px;"></i>
-          </div>
-          <h3 style="margin-top: 10px;">Criativo / Exploratório</h3>
-          <p style="font-size: 14.5px;">Permite que tokens menos prováveis sejam sorteados. Acima de 1.2 aumenta o risco de <strong>alucinação</strong>.<br><br><strong>Uso Ideal:</strong> Brainstorming, criação de roteiros de jogos e campanhas de marketing.</p>
-        </div>
-      </div>
-      <div class="callout-box">
-        <p style="font-size: 14.5px;"><strong><i class="fa-solid fa-triangle-exclamation"></i> Regra de Produção:</strong> Quando quem vai ler a saída da IA é um script Python (via <code>json.loads()</code>), utilize sempre <code>temperature=0.1</code> e defina o <strong>Formato</strong> estrito no System Prompt.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 6: DIVISOR MÓDULO 2 -->
-  <div class="slide-container">
-    <div class="section-title-layout">
-      <span class="module-tag">Módulo 02 • Engenharia de Prompt Socrática</span>
-      <h2>O Detetive de Bugs &amp;<br>O Oráculo de Python</h2>
-      <hr>
-      <p>Transformando a IA de uma "calculadora que entrega respostas prontas" em um Mentor Investigativo.</p>
-    </div>
-  </div>
-
-  <!-- SLIDE 7: PATO DE BORRACHA E SOCRATIC PROMPTING -->
-  <div class="slide-container">
-    <h2 class="slide-title">Depuração com Pato de Borracha &amp; Socratic Prompting</h2>
-    <div class="content-area">
-      <div class="two-column tiled">
-        <div style="border-top-color: var(--colab-orange);">
-          <h3><i class="fa-solid fa-bug-slash" style="color: var(--colab-orange);"></i> Rubber Duck Debugging</h3>
-          <p style="font-size: 15px; margin-bottom: 12px;">Na engenharia de software clássica, o programador explica seu código linha por linha para um <strong>patinho de borracha</strong> na mesa. Ao verbalizar a lógica, o próprio cérebro identifica onde está a falha.</p>
-          <div style="background:#FFF8E1; padding:12px; border-radius:6px; border:1px solid #FFE082; font-size:14px;">
-            <strong>A Armadilha do Iniciante com IA:</strong> Colar o código com erro e dizer <em>"Conserta pra mim"</em>. O código roda, mas o desenvolvedor não aprende a diagnosticar a causa-raiz.
+          <div class="paradigm-card highlight">
+            <div class="paradigm-label" style="color: var(--senai-red);">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> IA Generativa<br>
+              <span style="font-size: 13px; color: var(--senai-dark-gray);">Distribuição Conjunta P(X) / P(X | Y)</span>
+            </div>
+            <div class="flow-box"><i class="fa-solid fa-terminal"></i> Prompt / Contexto (Y)<br><span
+                style="font-size: 12px; font-weight: 400;">Instrução em Linguagem Natural</span></div>
+            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="flow-box red"><i class="fa-solid fa-brain"></i> Modelo de Fundação<br><span
+                style="font-size: 12px; font-weight: 400;">Amostragem no Espaço Latente</span></div>
+            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="flow-box dark"><i class="fa-solid fa-file-code"></i> Instância Inédita (X*)<br><span
+                style="font-size: 12px; font-weight: 400;">Código Python, Texto, Imagem, Áudio</span></div>
           </div>
         </div>
-        <div>
-          <h3><i class="fa-solid fa-graduation-cap" style="color: var(--senai-red);"></i> Socratic Prompting (Fórmula C.I.C.P.)</h3>
-          <p style="font-size: 15px; margin-bottom: 10px;">Usamos restrições negativas (<em>Guardrails</em>) para obrigar o LLM a agir como um <strong>Tutor Socrático</strong> que guia o aluno por meio de perguntas:</p>
-          <ul class="bullet-list-simple">
-            <li><strong>C — Contexto:</strong> "Sou estudante de Python depurando um sistema escolar."</li>
-            <li><strong>I — Instrução + Restrição:</strong> "Analise o código, mas <strong>NUNCA entregue o código corrigido</strong>."</li>
-            <li><strong>C — Cenário:</strong> "Aponte os erros de sintaxe, tipo e lógica através de pistas e perguntas."</li>
-            <li><strong>P — Personalização:</strong> "Adote a persona de um Oráculo/Detetive implacável."</li>
-          </ul>
+
+        <div class="two-column tiled" style="margin-top: 16px;">
+          <div style="border-top-color: var(--google-blue); padding: 15px 20px;">
+            <h3 style="font-size: 17px;"><i class="fa-solid fa-magnifying-glass-chart"
+                style="color: var(--google-blue);"></i> Quando usar IA Discriminativa?</h3>
+            <p style="font-size: 14.5px;">Quando a resposta é um <strong>número, categoria ou alerta</strong> extraído
+              de dados históricos: Previsão de Churn (abandono), detecção de fraude no cartão, aprovação de crédito ou
+              contagem de peças.</p>
+          </div>
+          <div style="padding: 15px 20px;">
+            <h3 style="font-size: 17px;"><i class="fa-solid fa-sparkles" style="color: var(--senai-red);"></i> Quando
+              usar IA Generativa?</h3>
+            <p style="font-size: 14.5px;">Quando o sistema precisa <strong>produzir um artefato complexo</strong>:
+              Redigir uma mensagem personalizada para o cliente que abandonou o carrinho, explicar um bug, resumir
+              contratos ou sintetizar imagens.</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SLIDE 8: LAB 2.1 - PASSO 1: O RITUAL DE INVOCAÇÃO -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.1: O Oráculo de Python — Passo 1 (Invocação)</h2>
-    <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 10px;"><span class="step-badge">Passo 1</span> Abra o Gemini ou ChatGPT e cole exatamente o <strong>System Prompt em Latim</strong> abaixo para calibrar as regras do Oráculo:</p>
-      <div class="code-block" style="font-size: 14px; border-left-color: var(--colab-orange);">
-<span class="comment"># 📜 O RITUAL DE INVOCAÇÃO (Copie e cole no seu LLM)</span>
-<span class="string">"Age ut praeceptor eruditus artis pythonicae. Alumnus tibi codicem mendosum mittet. Cave! Praeceptum est tibi: noli umquam codicem emendatum reddere. Officium tuum est errores indicare per interrogationes et indicia. Gravis: Cum alumno lingua lusitana tantum loquere (papo em português), sed memento regulas tui officii. Si alumnus responsum directum rogat, nega. Si intellegisti, responde tantum: 'O Oráculo está preparado. Envie o código amaldiçoado.'"</span></div>
-
-      <div class="two-column" style="margin-top: 12px; gap: 18px;">
-        <div class="console-output" style="flex: 1;">
-          <span class="out-title"><i class="fa-solid fa-robot"></i> Resposta Imediata da IA (Handshake)</span>
-O Oráculo está preparado. Envie o código amaldiçoado.</div>
-        <div class="callout-box info" style="flex: 1.3; margin-top: 0;">
-          <p style="font-size: 13.8px;"><strong><i class="fa-solid fa-language"></i> Por que o prompt em Latim funciona?</strong><br>
-          1. Demonstra a <strong>capacidade cross-lingual</strong> dos Transformers (lê regras em Latim e aplica em Português).<br>
-          2. <code>noli umquam codicem emendatum reddere</code> ("nunca devolva o código corrigido") funciona como um <strong>Guardrail comportamental rígido</strong>.</p>
+    <!-- SLIDE 4: FOUNDATION MODELS E TITÃS DO MERCADO -->
+    <div class="slide-container">
+      <h2 class="slide-title">Modelos de Fundação (Foundation Models) &amp; Ecossistema</h2>
+      <div class="content-area">
+        <div class="table-layout">
+          <table>
+            <thead>
+              <tr>
+                <th>Organização</th>
+                <th>Família de Modelos</th>
+                <th>Diferencial Arquitetural</th>
+                <th>Licença / Acesso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Google DeepMind</strong></td>
+                <td>Gemini (Nano, Flash, Pro, Ultra)</td>
+                <td>Multimodalidade nativa desde o pré-treino (texto, código, áudio, vídeo) e janela de contexto de
+                  milhões de tokens.</td>
+                <td>Cloud API / AI Studio</td>
+              </tr>
+              <tr>
+                <td><strong>OpenAI</strong></td>
+                <td>GPT-4o, o1 / o3</td>
+                <td>Forte capacidade em raciocínio em cadeia (Chain-of-Thought) e geração estruturada de código.</td>
+                <td>Proprietário / API</td>
+              </tr>
+              <tr>
+                <td><strong>Anthropic</strong></td>
+                <td>Claude (Haiku, Sonnet, Opus)</td>
+                <td>Arquitetura <em>Constitutional AI</em> voltada à segurança, alinhamento ético e engenharia de
+                  software.</td>
+                <td>Proprietário / API</td>
+              </tr>
+              <tr>
+                <td><strong>Meta AI</strong></td>
+                <td>Llama 3 / 3.1 / 3.2</td>
+                <td>Pesos abertos (Open-Weights): permite baixar e executar localmente via Ollama/vLLM com privacidade
+                  total.</td>
+                <td>Open Weights / Local</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout-box info" style="margin-top: 14px;">
+          <p style="font-size: 14.5px;"><strong><i class="fa-solid fa-layer-group"></i> Por que "Modelo de
+              Fundação"?</strong> Ao contrário do Machine Learning clássico (onde treinamos um modelo do zero para cada
+            tarefa), um Foundation Model passa por um pré-treinamento massivo não supervisionado e serve como
+            <strong>alicerce único</strong> para centenas de aplicações via <em>Prompting</em>, <em>RAG</em> ou
+            <em>Fine-Tuning</em>.</p>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SLIDE 9: LAB 2.1 - PASSO 2: O CÓDIGO AMALDIÇOADO -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.1: Passo 2 — Enviando "O Código Amaldiçoado"</h2>
-    <div class="content-area">
-      <div class="two-column" style="gap: 20px; align-items: flex-start;">
-        <div style="flex: 1.25;">
-          <div class="code-block" style="font-size: 12.2px; line-height: 1.32;">
-<span class="comment"># --- SISTEMA DE GESTÃO ESCOLAR V1.0 (Com 7 Bugs!) ---</span>
-<span class="func">print</span>(<span class="string">"--- Bem-vindo ao Sistema Escolar ---"</span>)
-nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
-nota1 = <span class="func">input</span>(<span class="string">"Nota 1: "</span>)
-nota2 = <span class="func">input</span>(<span class="string">"Nota 2: "</span>)
-nota3 = <span class="func">input</span>(<span class="string">"Nota 3: "</span>)
+    <!-- SLIDE 5: TEMPERATURA E CONTROLE DE CRIATIVIDADE -->
+    <div class="slide-container">
+      <h2 class="slide-title">Controle Matemático da Geração: Temperatura</h2>
+      <div class="content-area">
+        <p style="align-self: flex-start; margin-bottom: 14px;">Os LLMs preveem uma distribuição de probabilidades para
+          o próximo token. O hiperparâmetro <code>temperature</code> achata ou afunila essa curva:</p>
+        <div class="tiled-content">
+          <div class="tile" style="border-bottom-color: var(--google-blue);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="step-badge" style="background: var(--google-blue);">Temp: 0.0 a 0.2</span>
+              <i class="fa-solid fa-lock" style="color: var(--google-blue); font-size: 22px;"></i>
+            </div>
+            <h3 style="margin-top: 10px;">Determinístico / Lógico</h3>
+            <p style="font-size: 14.5px;">Escolhe sempre o token de maior probabilidade matemática (Greedy
+              Decoding).<br><br><strong>Uso Ideal:</strong> Geração de JSON para APIs, SQL, refatoração de código e
+              cálculos.</p>
+          </div>
 
-<span class="comment"># Bug 1 e 2: Tipo (str) e Precedência Matemática</span>
-media = nota1 + nota2 + nota3 / 3
+          <div class="tile" style="border-bottom-color: var(--code-green);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="step-badge" style="background: var(--code-green);">Temp: 0.4 a 0.7</span>
+              <i class="fa-solid fa-scale-balanced" style="color: var(--code-green); font-size: 22px;"></i>
+            </div>
+            <h3 style="margin-top: 10px;">Equilibrado / Natural</h3>
+            <p style="font-size: 14.5px;">Mantém a coerência técnica permitindo variações naturais de
+              vocabulário.<br><br><strong>Uso Ideal:</strong> Assistentes virtuais, tutoria socrática, documentação e
+              resumos.</p>
+          </div>
 
-<span class="comment"># Bug 3 e 4: Sintaxe (:) e Lógica condicional (if seguido de if)</span>
-<span class="keyword">if</span> media &gt;= 7
-    situacao = <span class="string">"APROVADO"</span>
-<span class="keyword">if</span> media &lt; 7:
-    situacao = <span class="string">"RECUPERAÇÃO"</span>
-<span class="keyword">else</span>:
-    situacao = <span class="string">"REPROVADO"</span>
-
-<span class="comment"># Bug 5: F-string e aspas não fechadas</span>
-<span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media} e está: {situacao)</span>
-
-<span class="comment"># --- SETOR FINANCEIRO ---</span>
-mensalidade_base = 1200.00
-desconto_porcentagem = <span class="func">input</span>(<span class="string">"Quanto de desconto possui (%)? "</span>)
-<span class="comment"># Bug 6: Subtração direta de str em vez de percentual</span>
-valor_final = mensalidade_base - desconto_porcentagem
-<span class="comment"># Bug 7: Case Sensitivity (NameError)</span>
-<span class="func">print</span>(f<span class="string">"Valor final com desconto: R$ {Valor_Final}"</span>)</div>
+          <div class="tile" style="border-bottom-color: var(--senai-red);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="step-badge">Temp: 0.8 a 1.2+</span>
+              <i class="fa-solid fa-fire" style="color: var(--senai-red); font-size: 22px;"></i>
+            </div>
+            <h3 style="margin-top: 10px;">Criativo / Exploratório</h3>
+            <p style="font-size: 14.5px;">Permite que tokens menos prováveis sejam sorteados. Acima de 1.2 aumenta o
+              risco de <strong>alucinação</strong>.<br><br><strong>Uso Ideal:</strong> Brainstorming, criação de
+              roteiros de jogos e campanhas de marketing.</p>
+          </div>
         </div>
+        <div class="callout-box">
+          <p style="font-size: 14.5px;"><strong><i class="fa-solid fa-triangle-exclamation"></i> Regra de
+              Produção:</strong> Quando quem vai ler a saída da IA é um script Python (via <code>json.loads()</code>),
+            utilize sempre <code>temperature=0.1</code> e defina o <strong>Formato</strong> estrito no System Prompt.
+          </p>
+        </div>
+      </div>
+    </div>
 
-        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
-          <div style="background:#FFF; border:1px solid var(--border-color); border-left:5px solid var(--senai-red); padding:14px 16px; border-radius:6px;">
-            <h3 style="font-size:16px; color:var(--senai-red);"><i class="fa-solid fa-magnifying-glass"></i> Missão do Aluno com o Oráculo</h3>
-            <p style="font-size:13.8px; margin-bottom:8px;">Cole o código acima na conversa com o Oráculo e investigue as 3 categorias de falhas:</p>
-            <ul class="bullet-list-simple" style="gap:6px;">
-              <li style="font-size:13.5px;"><strong>Erros de Sintaxe (<code>SyntaxError</code>):</strong> O interpretador Python nem inicia a execução (ex: linha 12 e linha 20).</li>
-              <li style="font-size:13.5px;"><strong>Erros de Tipo e Nome (<code>TypeError</code> / <code>NameError</code>):</strong> O <code>input()</code> retorna texto (<code>str</code>) e variáveis diferenciam maiúsculas de minúsculas.</li>
-              <li style="font-size:13.5px;"><strong>Erros de Lógica:</strong> O programa roda sem travar, mas calcula a média e o desconto de forma errada!</li>
+    <!-- SLIDE 6: DIVISOR MÓDULO 2 -->
+    <div class="slide-container">
+      <div class="section-title-layout">
+        <span class="module-tag">Módulo 02 • Engenharia de Prompt Socrática</span>
+        <h2>O Detetive de Bugs &amp;<br>O Oráculo de Python</h2>
+        <hr>
+        <p>Transformando a IA de uma "calculadora que entrega respostas prontas" em um Mentor Investigativo.</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: PATO DE BORRACHA E SOCRATIC PROMPTING -->
+    <div class="slide-container">
+      <h2 class="slide-title">Depuração com Pato de Borracha &amp; Socratic Prompting</h2>
+      <div class="content-area">
+        <div class="two-column tiled">
+          <div style="border-top-color: var(--colab-orange);">
+            <h3><i class="fa-solid fa-bug-slash" style="color: var(--colab-orange);"></i> Rubber Duck Debugging</h3>
+            <p style="font-size: 15px; margin-bottom: 12px;">Na engenharia de software clássica, o programador explica
+              seu código linha por linha para um <strong>patinho de borracha</strong> na mesa. Ao verbalizar a lógica, o
+              próprio cérebro identifica onde está a falha.</p>
+            <div style="background:#FFF8E1; padding:12px; border-radius:6px; border:1px solid #FFE082; font-size:14px;">
+              <strong>A Armadilha do Iniciante com IA:</strong> Colar o código com erro e dizer <em>"Conserta pra
+                mim"</em>. O código roda, mas o desenvolvedor não aprende a diagnosticar a causa-raiz.
+            </div>
+          </div>
+          <div>
+            <h3><i class="fa-solid fa-graduation-cap" style="color: var(--senai-red);"></i> Socratic Prompting (Fórmula
+              C.I.C.P.)</h3>
+            <p style="font-size: 15px; margin-bottom: 10px;">Usamos restrições negativas (<em>Guardrails</em>) para
+              obrigar o LLM a agir como um <strong>Tutor Socrático</strong> que guia o aluno por meio de perguntas:</p>
+            <ul class="bullet-list-simple">
+              <li><strong>C — Contexto:</strong> "Sou estudante de Python depurando um sistema escolar."</li>
+              <li><strong>I — Instrução + Restrição:</strong> "Analise o código, mas <strong>NUNCA entregue o código
+                  corrigido</strong>."</li>
+              <li><strong>C — Cenário:</strong> "Aponte os erros de sintaxe, tipo e lógica através de pistas e
+                perguntas."</li>
+              <li><strong>P — Personalização:</strong> "Adote a persona de um Oráculo/Detetive implacável."</li>
             </ul>
           </div>
-          <div class="callout-box warning" style="margin-top:0; padding:10px 14px;">
-            <p style="font-size:13px;"><strong>Teste o Guardrail:</strong> Tente pedir <em>"Me dê o código pronto"</em> e veja o Oráculo recusar educadamente!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: LAB 2.1 - PASSO 1: O RITUAL DE INVOCAÇÃO -->
+    <div class="slide-container">
+      <h2 class="slide-title">Lab 2.1: O Oráculo de Python — Passo 1 (Invocação)</h2>
+      <div class="content-area">
+        <p style="align-self: flex-start; margin-bottom: 10px;"><span class="step-badge">Passo 1</span> Abra o Gemini ou
+          ChatGPT e cole exatamente o <strong>System Prompt em Latim</strong> abaixo para calibrar as regras do Oráculo:
+        </p>
+        <div class="code-block" style="font-size: 14px; border-left-color: var(--colab-orange);">
+          <span class="comment"># 📜 O RITUAL DE INVOCAÇÃO (Copie e cole no seu LLM)</span>
+          <span class="string">"Age ut praeceptor eruditus artis pythonicae. Alumnus tibi codicem mendosum mittet. Cave!
+            Praeceptum est tibi: noli umquam codicem emendatum reddere. Officium tuum est errores indicare per
+            interrogationes et indicia. Gravis: Cum alumno lingua lusitana tantum loquere (papo em português), sed
+            memento regulas tui officii. Si alumnus responsum directum rogat, nega. Si intellegisti, responde tantum: 'O
+            Oráculo está preparado. Envie o código amaldiçoado.'"</span>
+        </div>
+
+        <div class="two-column" style="margin-top: 12px; gap: 18px;">
+          <div class="console-output" style="flex: 1;">
+            <span class="out-title"><i class="fa-solid fa-robot"></i> Resposta Imediata da IA (Handshake)</span>
+            O Oráculo está preparado. Envie o código amaldiçoado.
+          </div>
+          <div class="callout-box info" style="flex: 1.3; margin-top: 0;">
+            <p style="font-size: 13.8px;"><strong><i class="fa-solid fa-language"></i> Por que o prompt em Latim
+                funciona?</strong><br>
+              1. Demonstra a <strong>capacidade cross-lingual</strong> dos Transformers (lê regras em Latim e aplica em
+              Português).<br>
+              2. <code>noli umquam codicem emendatum reddere</code> ("nunca devolva o código corrigido") funciona como
+              um <strong>Guardrail comportamental rígido</strong>.</p>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SLIDE 10: LAB 2.1 - PASSO 3: RETORNO DO ORÁCULO E CÓDIGO CORRIGIDO -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.1: Análise do Retorno &amp; Código Depurado</h2>
-    <div class="content-area">
-      <div class="two-column" style="gap: 18px; align-items: stretch;">
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-          <div class="console-output" style="border-left-color: var(--colab-orange); font-size: 12.2px;">
-            <span class="out-title" style="color: #F9AB00;"><i class="fa-solid fa-comments"></i> Retorno Socrático do Oráculo (Exemplo)</span>
-"Jovem aprendiz, vejo 7 maldições em seu pergaminho:
-1. Na linha 12 (`if media >= 7`), que símbolo sagrado do Python anuncia o início de um bloco indentado?
-2. Na linha 9 (`nota1 + nota2 + nota3 / 3`), o que a função `input()` entrega: números ou palavras? E qual operação matemática é executada primeiro sem parênteses?
-3. Se um aluno tirar média 8, ele entra no primeiro `if`, mas o que acontece quando o código chega no segundo `if media < 7:` seguido de `else`?"</div>
-          <div class="console-output" style="font-size: 12px;">
-            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Sistema Corrigido no Colab</span>
---- Bem-vindo ao Sistema Escolar ---
-Digite o nome do aluno: Lucas
-Nota 1: 8.0 | Nota 2: 7.5 | Nota 3: 8.5
-O aluno Lucas ficou com média 8.00 e está: APROVADO
-Quanto de desconto o aluno possui (%)? 15
-Valor final da mensalidade com desconto: R$ 1020.00</div>
-        </div>
+    <!-- SLIDE 9: LAB 2.1 - PASSO 2: O CÓDIGO AMALDIÇOADO -->
+    <div class="slide-container">
+      <h2 class="slide-title">Lab 2.1: Passo 2 — Enviando "O Código Amaldiçoado"</h2>
+      <div class="content-area">
+        <div class="two-column" style="gap: 20px; align-items: flex-start;">
+          <div style="flex: 1.25;">
+            <div class="code-block" style="font-size: 12.2px; line-height: 1.32;">
+              <span class="comment"># --- SISTEMA DE GESTÃO ESCOLAR V1.0 (Com 7 Bugs!) ---</span>
+              <span class="func">print</span>(<span class="string">"--- Bem-vindo ao Sistema Escolar ---"</span>)
+              nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
+              nota1 = <span class="func">input</span>(<span class="string">"Nota 1: "</span>)
+              nota2 = <span class="func">input</span>(<span class="string">"Nota 2: "</span>)
+              nota3 = <span class="func">input</span>(<span class="string">"Nota 3: "</span>)
 
-        <div style="flex: 1.15;">
-          <div class="code-block" style="font-size: 12.2px; line-height: 1.34; border-left-color: var(--code-green);">
-<span class="comment"># ✅ GABARITO: SISTEMA ESCOLAR V1.1 (7 Bugs Corrigidos)</span>
-nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
-<span class="comment"># 1. Conversão explícita de str para float()</span>
-nota1 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 1: "</span>))
-nota2 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 2: "</span>))
-nota3 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 3: "</span>))
+              <span class="comment"># Bug 1 e 2: Tipo (str) e Precedência Matemática</span>
+              media = nota1 + nota2 + nota3 / 3
 
-<span class="comment"># 2. Parênteses garantindo a precedência da soma</span>
-media = (nota1 + nota2 + nota3) / 3
+              <span class="comment"># Bug 3 e 4: Sintaxe (:) e Lógica condicional (if seguido de if)</span>
+              <span class="keyword">if</span> media &gt;= 7
+              situacao = <span class="string">"APROVADO"</span>
+              <span class="keyword">if</span> media &lt; 7:
+              situacao = <span class="string">"RECUPERAÇÃO"</span>
+              <span class="keyword">else</span>:
+              situacao = <span class="string">"REPROVADO"</span>
 
-<span class="comment"># 3 e 4. Dois-pontos (:) e encadeamento if / elif / else</span>
-<span class="keyword">if</span> media &gt;= 7:
-    situacao = <span class="string">"APROVADO"</span>
-<span class="keyword">elif</span> media &gt;= 5:
-    situacao = <span class="string">"RECUPERAÇÃO"</span>
-<span class="keyword">else</span>:
-    situacao = <span class="string">"REPROVADO"</span>
+              <span class="comment"># Bug 5: F-string e aspas não fechadas</span>
+              <span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media} e
+                está: {situacao)</span>
 
-<span class="comment"># 5. Chaves e aspas devidamente fechadas na f-string</span>
-<span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media:.2f} e está: {situacao}"</span>)
+              <span class="comment"># --- SETOR FINANCEIRO ---</span>
+              mensalidade_base = 1200.00
+              desconto_porcentagem = <span class="func">input</span>(<span class="string">"Quanto de desconto possui
+                (%)? "</span>)
+              <span class="comment"># Bug 6: Subtração direta de str em vez de percentual</span>
+              valor_final = mensalidade_base - desconto_porcentagem
+              <span class="comment"># Bug 7: Case Sensitivity (NameError)</span>
+              <span class="func">print</span>(f<span class="string">"Valor final com desconto: R$ {Valor_Final}"</span>)
+            </div>
+          </div>
 
-mensalidade_base = 1200.00
-desconto_porcentagem = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Quanto de desconto possui (%)? "</span>))
-<span class="comment"># 6 e 7. Cálculo percentual correto e variável valor_final minúscula</span>
-valor_final = mensalidade_base * (1 - desconto_porcentagem / 100)
-<span class="func">print</span>(f<span class="string">"Valor final da mensalidade com desconto: R$ {valor_final:.2f}"</span>)</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 11: DIVISOR MÓDULO 3 -->
-  <div class="slide-container">
-    <div class="section-title-layout">
-      <span class="module-tag">Módulo 03 • Laboratórios no Google Colab</span>
-      <h2>Pipeline Híbrido (ML + GenAI)<br>&amp; Desafio Atari</h2>
-      <hr>
-      <p>Unindo um classificador supervisionado (Random Forest) à geração automática de campanhas com Gemini.</p>
-    </div>
-  </div>
-
-  <!-- SLIDE 12: LAB 2.2 - BLOCO 1: DATASET E-COMMERCE -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.2 (Colab): Predição de E-Commerce — Bloco 1</h2>
-    <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 10px;">Abra um novo notebook no Google Colab (<code>Aula02_Pipeline_Hibrido_Ecommerce.ipynb</code>) e execute o <strong>Bloco 1</strong> para criar o dataset <code>ecommerce_clientes.csv</code>:</p>
-      <div class="two-column" style="gap: 18px; align-items: stretch;">
-        <div style="flex: 1.2;">
-          <div class="code-block" style="font-size: 12.2px;">
-<span class="comment"># BLOCO 1: Gerando e inspecionando a base de E-Commerce</span>
-<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
-<span class="keyword">import</span> numpy <span class="keyword">as</span> np
-
-np.random.seed(42)
-n = 200
-tempo_site = np.random.uniform(1, 30, n).round(1)
-paginas = np.random.randint(1, 20, n)
-carrinho = np.random.uniform(20, 1500, n).round(2)
-abandonos = np.random.randint(0, 6, n)
-
-<span class="comment"># Regra de negócio histórica (0 = Abandonou, 1 = Comprou)</span>
-score = (tempo_site * 0.4) + (paginas * 0.8) - (abandonos * 3.5) + (carrinho * 0.005)
-comprou = (score &gt; 10).astype(<span class="func">int</span>)
-
-df = pd.DataFrame({
-    <span class="string">'tempo_site_min'</span>: tempo_site,
-    <span class="string">'paginas_visitadas'</span>: paginas,
-    <span class="string">'valor_carrinho'</span>: carrinho,
-    <span class="string">'abandonos_anteriores'</span>: abandonos,
-    <span class="string">'comprou'</span>: comprou
-})
-df.to_csv(<span class="string">'ecommerce_clientes.csv'</span>, index=<span class="keyword">False</span>)
-<span class="func">print</span>(df.head())
-<span class="func">print</span>(<span class="string">"\nDistribuição da classe alvo:\n"</span>, df[<span class="string">'comprou'</span>].value_counts())</div>
-        </div>
-
-        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
-          <div class="console-output" style="font-size: 12px;">
-            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Bloco 1)</span>
-   tempo_site_min  paginas_visitadas  valor_carrinho  abandonos_anteriores  comprou
-0            11.9                 15          894.21                     1        1
-1            28.6                 19         1065.34                     0        1
-2            22.2                 12          654.10                     4        0
-3            18.4                  3          212.45                     3        0
-4             5.5                 16          410.80                     2        0
-
-Distribuição da classe alvo:
-comprou
-0    112  (Abandonaram o carrinho)
-1     88  (Concluíram a compra)</div>
-          <div class="callout-box info" style="margin-top: 0; padding: 10px 14px;">
-            <p style="font-size: 13.5px;"><strong>Entendendo as Features ($X$) e o Target ($Y$):</strong> Temos 4 variáveis comportamentais numéricas ($X$) e a coluna alvo binária <code>comprou</code> ($Y \in \{0, 1\}$).</p>
+          <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
+            <div
+              style="background:#FFF; border:1px solid var(--border-color); border-left:5px solid var(--senai-red); padding:14px 16px; border-radius:6px;">
+              <h3 style="font-size:16px; color:var(--senai-red);"><i class="fa-solid fa-magnifying-glass"></i> Missão do
+                Aluno com o Oráculo</h3>
+              <p style="font-size:13.8px; margin-bottom:8px;">Cole o código acima na conversa com o Oráculo e investigue
+                as 3 categorias de falhas:</p>
+              <ul class="bullet-list-simple" style="gap:6px;">
+                <li style="font-size:13.5px;"><strong>Erros de Sintaxe (<code>SyntaxError</code>):</strong> O
+                  interpretador Python nem inicia a execução (ex: linha 12 e linha 20).</li>
+                <li style="font-size:13.5px;"><strong>Erros de Tipo e Nome (<code>TypeError</code> /
+                    <code>NameError</code>):</strong> O <code>input()</code> retorna texto (<code>str</code>) e
+                  variáveis diferenciam maiúsculas de minúsculas.</li>
+                <li style="font-size:13.5px;"><strong>Erros de Lógica:</strong> O programa roda sem travar, mas calcula
+                  a média e o desconto de forma errada!</li>
+              </ul>
+            </div>
+            <div class="callout-box warning" style="margin-top:0; padding:10px 14px;">
+              <p style="font-size:13px;"><strong>Teste o Guardrail:</strong> Tente pedir <em>"Me dê o código
+                  pronto"</em> e veja o Oráculo recusar educadamente!</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SLIDE 13: LAB 2.2 - BLOCO 2: RANDOM FOREST + GRÁFICO REAL -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.2: Bloco 2 — Classificador Discriminativo (Random Forest)</h2>
-    <div class="content-area">
-      <div class="two-column" style="gap: 18px; align-items: center;">
-        <div style="flex: 1.05;">
-          <div class="code-block" style="font-size: 11.8px; line-height: 1.32;">
-<span class="comment"># BLOCO 2: Treinando o Modelo Discriminativo P(Y|X)</span>
-<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
-<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
-<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, confusion_matrix
-<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
-<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+    <!-- SLIDE 10: LAB 2.1 - PASSO 3: RETORNO DO ORÁCULO E CÓDIGO CORRIGIDO -->
+    <div class="slide-container">
+      <h2 class="slide-title">Lab 2.1: Análise do Retorno &amp; Código Depurado</h2>
+      <div class="content-area">
+        <div class="two-column" style="gap: 18px; align-items: stretch;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div class="console-output" style="border-left-color: var(--colab-orange); font-size: 12.2px;">
+              <span class="out-title" style="color: #F9AB00;"><i class="fa-solid fa-comments"></i> Retorno Socrático do
+                Oráculo (Exemplo)</span>
+              "Jovem aprendiz, vejo 7 maldições em seu pergaminho:
+              1. Na linha 12 (`if media >= 7`), que símbolo sagrado do Python anuncia o início de um bloco indentado?
+              2. Na linha 9 (`nota1 + nota2 + nota3 / 3`), o que a função `input()` entrega: números ou palavras? E qual
+              operação matemática é executada primeiro sem parênteses?
+              3. Se um aluno tirar média 8, ele entra no primeiro `if`, mas o que acontece quando o código chega no
+              segundo `if media < 7:` seguido de `else`?"</div>
+                <div class="console-output" style="font-size: 12px;">
+                  <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Sistema Corrigido no
+                    Colab</span>
+                  --- Bem-vindo ao Sistema Escolar ---
+                  Digite o nome do aluno: Lucas
+                  Nota 1: 8.0 | Nota 2: 7.5 | Nota 3: 8.5
+                  O aluno Lucas ficou com média 8.00 e está: APROVADO
+                  Quanto de desconto o aluno possui (%)? 15
+                  Valor final da mensalidade com desconto: R$ 1020.00
+                </div>
+            </div>
 
-X = df.drop(<span class="string">'comprou'</span>, axis=1)
-y = df[<span class="string">'comprou'</span>]
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.25, random_state=42
-)
+            <div style="flex: 1.15;">
+              <div class="code-block"
+                style="font-size: 12.2px; line-height: 1.34; border-left-color: var(--code-green);">
+                <span class="comment"># ✅ GABARITO: SISTEMA ESCOLAR V1.1 (7 Bugs Corrigidos)</span>
+                nome_aluno = <span class="func">input</span>(<span class="string">"Digite o nome do aluno: "</span>)
+                <span class="comment"># 1. Conversão explícita de str para float()</span>
+                nota1 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 1:
+                  "</span>))
+                nota2 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 2:
+                  "</span>))
+                nota3 = <span class="func">float</span>(<span class="func">input</span>(<span class="string">"Nota 3:
+                  "</span>))
 
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
-rf.fit(X_train, y_train)
-y_pred = rf.predict(X_test)
-<span class="func">print</span>(f<span class="string">"Acurácia do Random Forest: {accuracy_score(y_test, y_pred):.2%}"</span>)
+                <span class="comment"># 2. Parênteses garantindo a precedência da soma</span>
+                media = (nota1 + nota2 + nota3) / 3
 
-<span class="comment"># Exibindo Matriz de Confusão e Feature Importance</span>
-fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-sns.heatmap(confusion_matrix(y_test, y_pred), annot=<span class="keyword">True</span>, fmt=<span class="string">'d'</span>, cmap=<span class="string">'Reds'</span>, ax=axes[0])
-pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind=<span class="string">'barh'</span>, color=<span class="string">'#E30613'</span>, ax=axes[1])
-plt.tight_layout()
-plt.show()</div>
-        </div>
+                <span class="comment"># 3 e 4. Dois-pontos (:) e encadeamento if / elif / else</span>
+                <span class="keyword">if</span> media &gt;= 7:
+                situacao = <span class="string">"APROVADO"</span>
+                <span class="keyword">elif</span> media &gt;= 5:
+                situacao = <span class="string">"RECUPERAÇÃO"</span>
+                <span class="keyword">else</span>:
+                situacao = <span class="string">"REPROVADO"</span>
 
-        <div style="flex: 1.15; display: flex; flex-direction: column; align-items: center;">
-          <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <img src="ecommerce_matriz_importancia.png" alt="Matriz de Confusão e Importância das Variáveis E-commerce" style="width: 100%; max-height: 255px; object-fit: contain; display: block;">
-          </div>
-          <div class="callout-box" style="margin-top: 10px; padding: 10px 14px;">
-            <p style="font-size: 13.2px;"><strong><i class="fa-solid fa-chart-bar"></i> Leitura da Saída Visual:</strong><br>
-            1. <strong>Matriz de Confusão (Esquerda):</strong> Atingiu <strong>92% de acurácia</strong> nas 50 amostras de teste.<br>
-            2. <strong>Feature Importance (Direita):</strong> Revela que <code>abandonos_anteriores</code> e <code>paginas_visitadas</code> são os fatores que mais pesam na decisão de compra!</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+                <span class="comment"># 5. Chaves e aspas devidamente fechadas na f-string</span>
+                <span class="func">print</span>(f<span class="string">"O aluno {nome_aluno} ficou com média {media:.2f}
+                  e está: {situacao}"</span>)
 
-  <!-- SLIDE 14: LAB 2.2 - BLOCO 3: PIPELINE HÍBRIDO COM GEMINI -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.2: Bloco 3 — Acionando a IA Generativa (Pipeline Híbrido)</h2>
-    <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 8px;">Quando o modelo <strong>Discriminativo</strong> detecta alto risco de abandono (<code>classe 0</code>), acionamos o modelo <strong>Generativo (Gemini)</strong> para criar uma mensagem de recuperação personalizada:</p>
-      <div class="two-column" style="gap: 18px; align-items: stretch;">
-        <div style="flex: 1.15;">
-          <div class="code-block" style="font-size: 12px; line-height: 1.32;">
-<span class="comment"># BLOCO 3: Conectando ML Discriminativo + IA Generativa</span>
-<span class="comment"># !pip install -q google-genai</span>
-<span class="keyword">from</span> google <span class="keyword">import</span> genai
-
-<span class="comment"># 1. Novo cliente em tempo real no site</span>
-novo_cliente = pd.DataFrame([{
-    <span class="string">'tempo_site_min'</span>: 14.5, <span class="string">'paginas_visitadas'</span>: 8,
-    <span class="string">'valor_carrinho'</span>: 780.00, <span class="string">'abandonos_anteriores'</span>: 4
-}])
-
-prob_abandono = rf.predict_proba(novo_cliente)[0][0]
-<span class="func">print</span>(f<span class="string">"⚠️ Risco de Abandono Calculado (ML): {prob_abandono:.1%}"</span>)
-
-<span class="comment"># 2. Se o risco > 70%, a IA Generativa cria o cupom em JSON</span>
-<span class="keyword">if</span> prob_abandono &gt; 0.70:
-    prompt_sistema = f<span class="string">"""
-    Persona: Especialista em Retenção de E-commerce.
-    Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
-    e {prob_abandono:.0%} de risco de abandono.
-    Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
-    Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
-    """</span>
-    <span class="func">print</span>(<span class="string">"Prompt estruturado pronto para disparo na API Gemini!"</span>)</div>
-        </div>
-
-        <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
-          <div class="console-output" style="font-size: 12.2px;">
-            <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Pipeline Híbrido (Bloco 3)</span>
-⚠️ Risco de Abandono Calculado (ML): 89.0%
-Disparando gatilho para a API Generativa...
-
-{
-  "titulo": "Seu carrinho de R$ 780,00 está esperando! 🎁",
-  "mensagem": "Notamos que você selecionou itens incríveis! Finalize sua compra nos próximos 15 minutos e ganhe R$ 78,00 de desconto imediato.",
-  "cupom": "VOLTA10"
-}</div>
-          <div class="callout-box" style="margin-top: 0; padding: 10px 14px;">
-            <p style="font-size: 13.5px;"><strong><i class="fa-solid fa-gears"></i> Arquitetura Corporativa Real:</strong> Chamar um LLM para cada visitante do site seria caro e lento. O modelo <strong>Discriminativo</strong> filtra milhões de eventos em milissegundos e aciona a <strong>IA Generativa</strong> apenas para os casos críticos!</p>
+                mensalidade_base = 1200.00
+                desconto_porcentagem = <span class="func">float</span>(<span class="func">input</span>(<span
+                  class="string">"Quanto de desconto possui (%)? "</span>))
+                <span class="comment"># 6 e 7. Cálculo percentual correto e variável valor_final minúscula</span>
+                valor_final = mensalidade_base * (1 - desconto_porcentagem / 100)
+                <span class="func">print</span>(f<span class="string">"Valor final da mensalidade com desconto: R$
+                  {valor_final:.2f}"</span>)
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- SLIDE 15: LAB 2.3 - DESAFIO ATARI COM IA -->
-  <div class="slide-container">
-    <h2 class="slide-title">Lab 2.3 (Desafio em Duplas): De Volta ao Futuro do Atari com IA</h2>
-    <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 12px;">Aplicando Engenharia de Prompt iterativa para recriar um jogo clássico do <strong>Atari 2600</strong> (<em>Breakout, Space Invaders, Enduro, River Raid, Frogger</em>) em um único arquivo HTML5:</p>
-      <div class="tiled-content">
-        <div class="tile" style="padding: 16px;">
-          <span class="step-badge">Etapa 1</span>
-          <h3 style="margin-top: 8px; font-size: 17px;">Curadoria &amp; Mecânica</h3>
-          <p style="font-size: 13.8px;">Escolha 1 clássico do Atari 2600 e liste suas regras físicas: controles do jogador, condição de pontuação, velocidade e colisão (Game Over).</p>
-        </div>
-        <div class="tile" style="padding: 16px;">
-          <span class="step-badge">Etapa 2</span>
-          <h3 style="margin-top: 8px; font-size: 17px;">Prompt do Motor (HTML5)</h3>
-          <p style="font-size: 13.8px;">Use a fórmula <strong>C.I.C.P.</strong> para solicitar à IA um código completo em arquivo único (<code>jogo_atari.html</code>) usando <code>&lt;canvas&gt;</code> e JavaScript puro.</p>
-        </div>
-        <div class="tile" style="padding: 16px;">
-          <span class="step-badge">Etapa 3</span>
-          <h3 style="margin-top: 8px; font-size: 17px;">Estética Pixel Art 8-Bit</h3>
-          <p style="font-size: 13.8px;">Gere sprites ou solicite que a IA desenhe matrizes de pixels retrô e efeitos sonoros sintetizados via <code>Web Audio API</code>.</p>
-        </div>
-        <div class="tile" style="padding: 16px;">
-          <span class="step-badge">Etapa 4</span>
-          <h3 style="margin-top: 8px; font-size: 17px;">Debug Iterativo</h3>
-          <p style="font-size: 13.8px;">Salve no VS Code ou Bloco de Notas como <code>.html</code>, abra no navegador e use prompts de ajuste fino para calibrar colisões e placar.</p>
+      <!-- SLIDE 11: DIVISOR MÓDULO 3 -->
+      <div class="slide-container">
+        <div class="section-title-layout">
+          <span class="module-tag">Módulo 03 • Laboratórios no Google Colab</span>
+          <h2>Pipeline Híbrido (ML + GenAI)<br>&amp; Desafio Atari</h2>
+          <hr>
+          <p>Unindo um classificador supervisionado (Random Forest) à geração automática de campanhas com Gemini.</p>
         </div>
       </div>
 
-      <div class="code-block" style="margin-top: 12px; font-size: 12.5px;">
-<span class="comment"># 🎮 Prompt Mestre Sugerido (Teste e personalize para o jogo da sua dupla):</span>
-<span class="string">"Atue como um Desenvolvedor Sênior de Jogos Retrô. Crie um clone funcional do jogo Breakout (Atari 2600) usando HTML5 Canvas e JavaScript em um único arquivo .html. Requisitos: 1) Raquete controlada pelo mouse/teclado; 2) Fileiras de blocos coloridos com pontuação; 3) Sistema de 3 vidas e tela de Game Over; 4) Visual retrô neon 8-bit. Retorne o código completo e comentado."</span></div>
-    </div>
-  </div>
+      <!-- SLIDE 12: LAB 2.2 - BLOCO 1: DATASET E-COMMERCE -->
+      <div class="slide-container">
+        <h2 class="slide-title">Lab 2.2 (Colab): Predição de E-Commerce — Bloco 1</h2>
+        <div class="content-area">
+          <p style="align-self: flex-start; margin-bottom: 10px;">Abra um novo notebook no Google Colab
+            (<code>Aula02_Pipeline_Hibrido_Ecommerce.ipynb</code>) e execute o <strong>Bloco 1</strong> para criar o
+            dataset <code>ecommerce_clientes.csv</code>:</p>
+          <div class="two-column" style="gap: 18px; align-items: stretch;">
+            <div style="flex: 1.2;">
+              <div class="code-block" style="font-size: 12.2px;">
+                <span class="comment"># BLOCO 1: Gerando e inspecionando a base de E-Commerce</span>
+                <span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+                <span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-  <!-- SLIDE 16: DIVISOR MÓDULO 4 -->
-  <div class="slide-container">
-    <div class="section-title-layout">
-      <span class="module-tag">Módulo 04 • Trilha Google Cloud Skills Boost</span>
-      <h2>Atividade 01 da Trilha:<br>Introduction to Generative AI</h2>
-      <hr>
-      <p>Consolidando os conceitos da aula e conquistando o 1º Badge Oficial do Google Cloud.</p>
-    </div>
-  </div>
+                np.random.seed(42)
+                n = 200
+                tempo_site = np.random.uniform(1, 30, n).round(1)
+                paginas = np.random.randint(1, 20, n)
+                carrinho = np.random.uniform(20, 1500, n).round(2)
+                abandonos = np.random.randint(0, 6, n)
 
-  <!-- SLIDE 17: ROTEIRO ATIVIDADE 1 SKILLS BOOST -->
-  <div class="slide-container">
-    <h2 class="slide-title">Hora da Trilha! Atividade 01 no Google Cloud Skills Boost</h2>
-    <div class="content-area">
-      <div class="two-column tiled">
-        <div style="border-top-color: var(--google-blue);">
-          <h3><i class="fa-brands fa-google" style="color: var(--google-blue);"></i> Curso 1: Introduction to Generative AI</h3>
-          <p style="font-size: 15px; margin-bottom: 12px;">Acesse sua conta na plataforma <strong>Google Cloud Skills Boost</strong> e inicie a <strong>1ª atividade</strong> da trilha <em>Iniciante: Introdução à IA Generativa</em>:</p>
-          <ul class="bullet-list-simple">
-            <li><strong>O que você verá no vídeo:</strong> Definição formal de IA Generativa pelo Google Cloud, relação entre ML, Deep Learning e Modelos de Fundação.</li>
-            <li><strong>Conexão com nossos Labs:</strong> Você verá na teoria oficial exatamente a diferença entre modelos <strong>Discriminativos ($P(Y|X)$)</strong> e <strong>Generativos ($P(X)$)</strong> que programamos hoje no Colab!</li>
-            <li><strong>Avaliação:</strong> Questionário oficial (Quiz) ao final do módulo.</li>
-          </ul>
-        </div>
+                <span class="comment"># Regra de negócio histórica (0 = Abandonou, 1 = Comprou)</span>
+                score = (tempo_site * 0.4) + (paginas * 0.8) - (abandonos * 3.5) + (carrinho * 0.005)
+                comprou = (score &gt; 10).astype(<span class="func">int</span>)
 
-        <div style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div class="callout-box warning" style="margin-top: 0; border-left-width: 8px; padding: 18px;">
-            <h3 style="color: #B26A00; font-size: 18px; margin-bottom: 8px;"><i class="fa-solid fa-circle-exclamation"></i> REGRA OBRIGATÓRIA DE CONCLUSÃO</h3>
-            <p style="font-size: 15px; color: #2B2B2B;"><strong>Assista ao vídeo completo até o último segundo!</strong><br><br>
-            A plataforma Google Cloud Skills Boost monitora a telemetria do player de vídeo. Se você pular o vídeo direto para o Quiz, a atividade ficará travada em 50% e <strong>não emitirá o Badge oficial</strong>.</p>
-          </div>
+                df = pd.DataFrame({
+                <span class="string">'tempo_site_min'</span>: tempo_site,
+                <span class="string">'paginas_visitadas'</span>: paginas,
+                <span class="string">'valor_carrinho'</span>: carrinho,
+                <span class="string">'abandonos_anteriores'</span>: abandonos,
+                <span class="string">'comprou'</span>: comprou
+                })
+                df.to_csv(<span class="string">'ecommerce_clientes.csv'</span>, index=<span
+                  class="keyword">False</span>)
+                <span class="func">print</span>(df.head())
+                <span class="func">print</span>(<span class="string">"\nDistribuição da classe alvo:\n"</span>, df[<span
+                  class="string">'comprou'</span>].value_counts())
+              </div>
+            </div>
 
-          <div style="background: #E8F5E9; border: 1px solid #A5D6A7; border-left: 6px solid var(--code-green); padding: 14px 18px; border-radius: 6px;">
-            <h4 style="color: var(--code-green); font-size: 16px; margin-bottom: 4px;"><i class="fa-solid fa-medal"></i> Meta de Hoje: 25% da Trilha Concluída</h4>
-            <p style="font-size: 14px;">Vídeo 100% assistido + Quiz aprovado = <strong>1º Selo Oficial Google Cloud</strong> no seu perfil!</p>
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
+              <div class="console-output" style="font-size: 12px;">
+                <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Console (Bloco 1)</span>
+                tempo_site_min paginas_visitadas valor_carrinho abandonos_anteriores comprou
+                0 11.9 15 894.21 1 1
+                1 28.6 19 1065.34 0 1
+                2 22.2 12 654.10 4 0
+                3 18.4 3 212.45 3 0
+                4 5.5 16 410.80 2 0
+
+                Distribuição da classe alvo:
+                comprou
+                0 112 (Abandonaram o carrinho)
+                1 88 (Concluíram a compra)
+              </div>
+              <div class="callout-box info" style="margin-top: 0; padding: 10px 14px;">
+                <p style="font-size: 13.5px;"><strong>Entendendo as Features ($X$) e o Target ($Y$):</strong> Temos 4
+                  variáveis comportamentais numéricas ($X$) e a coluna alvo binária <code>comprou</code> ($Y \in \{0,
+                  1\}$).</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- SLIDE 13: LAB 2.2 - BLOCO 2: RANDOM FOREST + GRÁFICO REAL -->
+      <div class="slide-container">
+        <h2 class="slide-title">Lab 2.2: Bloco 2 — Classificador Discriminativo (Random Forest)</h2>
+        <div class="content-area">
+          <div class="two-column" style="gap: 18px; align-items: center;">
+            <div style="flex: 1.05;">
+              <div class="code-block" style="font-size: 11.8px; line-height: 1.32;">
+                <span class="comment"># BLOCO 2: Treinando o Modelo Discriminativo P(Y|X)</span>
+                <span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span>
+                train_test_split
+                <span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span>
+                RandomForestClassifier
+                <span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score,
+                confusion_matrix
+                <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+                <span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+
+                X = df.drop(<span class="string">'comprou'</span>, axis=1)
+                y = df[<span class="string">'comprou'</span>]
+                X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.25, random_state=42
+                )
+
+                rf = RandomForestClassifier(n_estimators=100, random_state=42)
+                rf.fit(X_train, y_train)
+                y_pred = rf.predict(X_test)
+                <span class="func">print</span>(f<span class="string">"Acurácia do Random Forest:
+                  {accuracy_score(y_test, y_pred):.2%}"</span>)
+
+                <span class="comment"># Exibindo Matriz de Confusão e Feature Importance</span>
+                fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+                sns.heatmap(confusion_matrix(y_test, y_pred), annot=<span class="keyword">True</span>, fmt=<span
+                  class="string">'d'</span>, cmap=<span class="string">'Reds'</span>, ax=axes[0])
+                pd.Series(rf.feature_importances_, index=X.columns).sort_values().plot(kind=<span
+                  class="string">'barh'</span>, color=<span class="string">'#E30613'</span>, ax=axes[1])
+                plt.tight_layout()
+                plt.show()
+              </div>
+            </div>
+
+            <div style="flex: 1.15; display: flex; flex-direction: column; align-items: center;">
+              <div
+                style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <img src="ecommerce_matriz_importancia.png"
+                  alt="Matriz de Confusão e Importância das Variáveis E-commerce"
+                  style="width: 100%; max-height: 255px; object-fit: contain; display: block;">
+              </div>
+              <div class="callout-box" style="margin-top: 10px; padding: 10px 14px;">
+                <p style="font-size: 13.2px;"><strong><i class="fa-solid fa-chart-bar"></i> Leitura da Saída
+                    Visual:</strong><br>
+                  1. <strong>Matriz de Confusão (Esquerda):</strong> Atingiu <strong>92% de acurácia</strong> nas 50
+                  amostras de teste.<br>
+                  2. <strong>Feature Importance (Direita):</strong> Revela que <code>abandonos_anteriores</code> e
+                  <code>paginas_visitadas</code> são os fatores que mais pesam na decisão de compra!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 14: LAB 2.2 - BLOCO 3: PIPELINE HÍBRIDO COM GEMINI -->
+      <div class="slide-container">
+        <h2 class="slide-title">Lab 2.2: Bloco 3 — Acionando a IA Generativa (Pipeline Híbrido)</h2>
+        <div class="content-area">
+          <p style="align-self: flex-start; margin-bottom: 8px;">Quando o modelo <strong>Discriminativo</strong> detecta
+            alto risco de abandono (<code>classe 0</code>), acionamos o modelo <strong>Generativo (Gemini)</strong> para
+            criar uma mensagem de recuperação personalizada:</p>
+          <div class="two-column" style="gap: 18px; align-items: stretch;">
+            <div style="flex: 1.15;">
+              <div class="code-block" style="font-size: 12px; line-height: 1.32;">
+                <span class="comment"># BLOCO 3: Conectando ML Discriminativo + IA Generativa</span>
+                <span class="comment"># !pip install -q google-genai</span>
+                <span class="keyword">from</span> google <span class="keyword">import</span> genai
+
+                <span class="comment"># 1. Novo cliente em tempo real no site</span>
+                novo_cliente = pd.DataFrame([{
+                <span class="string">'tempo_site_min'</span>: 14.5, <span class="string">'paginas_visitadas'</span>: 8,
+                <span class="string">'valor_carrinho'</span>: 780.00, <span
+                  class="string">'abandonos_anteriores'</span>: 4
+                }])
+
+                prob_abandono = rf.predict_proba(novo_cliente)[0][0]
+                <span class="func">print</span>(f<span class="string">"⚠️ Risco de Abandono Calculado (ML):
+                  {prob_abandono:.1%}"</span>)
+
+                <span class="comment"># 2. Se o risco > 70%, a IA Generativa cria o cupom em JSON</span>
+                <span class="keyword">if</span> prob_abandono &gt; 0.70:
+                prompt_sistema = f<span class="string">"""
+                  Persona: Especialista em Retenção de E-commerce.
+                  Contexto: Cliente com R$ {novo_cliente['valor_carrinho'][0]} no carrinho
+                  e {prob_abandono:.0%} de risco de abandono.
+                  Tarefa: Gere uma notificação push curta oferecendo 10% OFF (cupom VOLTA10).
+                  Formato: Retorne APENAS JSON com as chaves "titulo", "mensagem", "cupom".
+                  """</span>
+                <span class="func">print</span>(<span class="string">"Prompt estruturado pronto para disparo na API
+                  Gemini!" + prompt_sistema</span>)
+              </div>
+            </div>
+
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 10px;">
+              <div class="console-output" style="font-size: 12.2px;">
+                <span class="out-title"><i class="fa-solid fa-terminal"></i> Saída do Pipeline Híbrido (Bloco 3)</span>
+                ⚠️ Risco de Abandono Calculado (ML): 89.0%
+                Disparando gatilho para a API Generativa...
+
+                {
+                "titulo": "Seu carrinho de R$ 780,00 está esperando! 🎁",
+                "mensagem": "Notamos que você selecionou itens incríveis! Finalize sua compra nos próximos 15 minutos e
+                ganhe R$ 78,00 de desconto imediato.",
+                "cupom": "VOLTA10"
+                }
+              </div>
+              <div class="callout-box" style="margin-top: 0; padding: 10px 14px;">
+                <p style="font-size: 13.5px;"><strong><i class="fa-solid fa-gears"></i> Arquitetura Corporativa
+                    Real:</strong> Chamar um LLM para cada visitante do site seria caro e lento. O modelo
+                  <strong>Discriminativo</strong> filtra milhões de eventos em milissegundos e aciona a <strong>IA
+                    Generativa</strong> apenas para os casos críticos!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 15: LAB 2.3 - DESAFIO ATARI COM IA -->
+      <div class="slide-container">
+        <h2 class="slide-title">Lab 2.3 (Desafio em Duplas): De Volta ao Futuro do Atari com IA</h2>
+        <div class="content-area">
+          <p style="align-self: flex-start; margin-bottom: 12px;">Aplicando Engenharia de Prompt iterativa para recriar
+            um jogo clássico do <strong>Atari 2600</strong> (<em>Breakout, Space Invaders, Enduro, River Raid,
+              Frogger</em>) em um único arquivo HTML5:</p>
+          <div class="tiled-content">
+            <div class="tile" style="padding: 16px;">
+              <span class="step-badge">Etapa 1</span>
+              <h3 style="margin-top: 8px; font-size: 17px;">Curadoria &amp; Mecânica</h3>
+              <p style="font-size: 13.8px;">Escolha 1 clássico do Atari 2600 e liste suas regras físicas: controles do
+                jogador, condição de pontuação, velocidade e colisão (Game Over).</p>
+            </div>
+            <div class="tile" style="padding: 16px;">
+              <span class="step-badge">Etapa 2</span>
+              <h3 style="margin-top: 8px; font-size: 17px;">Prompt do Motor (HTML5)</h3>
+              <p style="font-size: 13.8px;">Use a fórmula <strong>C.I.C.P.</strong> para solicitar à IA um código
+                completo em arquivo único (<code>jogo_atari.html</code>) usando <code>&lt;canvas&gt;</code> e JavaScript
+                puro.</p>
+            </div>
+            <div class="tile" style="padding: 16px;">
+              <span class="step-badge">Etapa 3</span>
+              <h3 style="margin-top: 8px; font-size: 17px;">Estética Pixel Art 8-Bit</h3>
+              <p style="font-size: 13.8px;">Gere sprites ou solicite que a IA desenhe matrizes de pixels retrô e efeitos
+                sonoros sintetizados via <code>Web Audio API</code>.</p>
+            </div>
+            <div class="tile" style="padding: 16px;">
+              <span class="step-badge">Etapa 4</span>
+              <h3 style="margin-top: 8px; font-size: 17px;">Debug Iterativo</h3>
+              <p style="font-size: 13.8px;">Salve no VS Code ou Bloco de Notas como <code>.html</code>, abra no
+                navegador e use prompts de ajuste fino para calibrar colisões e placar.</p>
+            </div>
+          </div>
+
+          <div class="code-block" style="margin-top: 12px; font-size: 12.5px;">
+            <span class="comment"># 🎮 Prompt Mestre Sugerido (Teste e personalize para o jogo da sua dupla):</span>
+            <span class="string">"Atue como um Desenvolvedor Sênior de Jogos Retrô. Crie um clone funcional do jogo
+              Breakout (Atari 2600) usando HTML5 Canvas e JavaScript em um único arquivo .html. Requisitos: 1) Raquete
+              controlada pelo mouse/teclado; 2) Fileiras de blocos coloridos com pontuação; 3) Sistema de 3 vidas e tela
+              de Game Over; 4) Visual retrô neon 8-bit. Retorne o código completo e comentado."</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 16: DIVISOR MÓDULO 4 -->
+      <div class="slide-container">
+        <div class="section-title-layout">
+          <span class="module-tag">Módulo 04 • Trilha Google Cloud Skills Boost</span>
+          <h2>Atividade 01 da Trilha:<br>Introduction to Generative AI</h2>
+          <hr>
+          <p>Consolidando os conceitos da aula e conquistando o 1º Badge Oficial do Google Cloud.</p>
+        </div>
+      </div>
+
+      <!-- SLIDE 17: ROTEIRO ATIVIDADE 1 SKILLS BOOST -->
+      <div class="slide-container">
+        <h2 class="slide-title">Hora da Trilha! Atividade 01 no Google Cloud Skills Boost</h2>
+        <div class="content-area">
+          <div class="two-column tiled">
+            <div style="border-top-color: var(--google-blue);">
+              <h3><i class="fa-brands fa-google" style="color: var(--google-blue);"></i> Curso 1: Introduction to
+                Generative AI</h3>
+              <p style="font-size: 15px; margin-bottom: 12px;">Acesse sua conta na plataforma <strong>Google Cloud
+                  Skills Boost</strong> e inicie a <strong>1ª atividade</strong> da trilha <em>Iniciante: Introdução à
+                  IA Generativa</em>:</p>
+              <ul class="bullet-list-simple">
+                <li><strong>O que você verá no vídeo:</strong> Definição formal de IA Generativa pelo Google Cloud,
+                  relação entre ML, Deep Learning e Modelos de Fundação.</li>
+                <li><strong>Conexão com nossos Labs:</strong> Você verá na teoria oficial exatamente a diferença entre
+                  modelos <strong>Discriminativos ($P(Y|X)$)</strong> e <strong>Generativos ($P(X)$)</strong> que
+                  programamos hoje no Colab!</li>
+                <li><strong>Avaliação:</strong> Questionário oficial (Quiz) ao final do módulo.</li>
+              </ul>
+            </div>
+
+            <div style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div class="callout-box warning" style="margin-top: 0; border-left-width: 8px; padding: 18px;">
+                <h3 style="color: #B26A00; font-size: 18px; margin-bottom: 8px;"><i
+                    class="fa-solid fa-circle-exclamation"></i> REGRA OBRIGATÓRIA DE CONCLUSÃO</h3>
+                <p style="font-size: 15px; color: #2B2B2B;"><strong>Assista ao vídeo completo até o último
+                    segundo!</strong><br><br>
+                  A plataforma Google Cloud Skills Boost monitora a telemetria do player de vídeo. Se você pular o vídeo
+                  direto para o Quiz, a atividade ficará travada em 50% e <strong>não emitirá o Badge oficial</strong>.
+                </p>
+              </div>
+
+              <div
+                style="background: #E8F5E9; border: 1px solid #A5D6A7; border-left: 6px solid var(--code-green); padding: 14px 18px; border-radius: 6px;">
+                <h4 style="color: var(--code-green); font-size: 16px; margin-bottom: 4px;"><i
+                    class="fa-solid fa-medal"></i> Meta de Hoje: 25% da Trilha Concluída</h4>
+                <p style="font-size: 14px;">Vídeo 100% assistido + Quiz aprovado = <strong>1º Selo Oficial Google
+                    Cloud</strong> no seu perfil!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 18: ENCERRAMENTO -->
+      <div class="slide-container">
+        <div class="section-title-layout">
+          <span class="module-tag">Encerramento • Dia 02</span>
+          <h2>Excelente Trabalho!</h2>
+          <hr>
+          <p>Salvem seus notebooks no Google Drive (<code>Ctrl+S</code>), validem o 1º Badge da trilha Google Cloud
+            Skills Boost e preparem-se para a <strong>Aula 03: Redes Neurais Profundas, PLN (Transformers/BERT) e Trilha
+              02 (LLMs)</strong>!</p>
+        </div>
+      </div>
+
     </div>
-  </div>
 
-  <!-- SLIDE 18: ENCERRAMENTO -->
-  <div class="slide-container">
-    <div class="section-title-layout">
-      <span class="module-tag">Encerramento • Dia 02</span>
-      <h2>Excelente Trabalho!</h2>
-      <hr>
-      <p>Salvem seus notebooks no Google Drive (<code>Ctrl+S</code>), validem o 1º Badge da trilha Google Cloud Skills Boost e preparem-se para a <strong>Aula 03: Redes Neurais Profundas, PLN (Transformers/BERT) e Trilha 02 (LLMs)</strong>!</p>
+    <div class="presentation-controls">
+      <button id="prev-btn" onclick="prevSlide()" disabled>
+        <i class="fa-solid fa-arrow-left"></i> Anterior
+      </button>
+      <span class="slide-counter" id="slide-counter">01 / 18</span>
+      <button id="next-btn" onclick="nextSlide()">
+        Próximo <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </div>
-  </div>
 
-</div>
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll('.slide-container');
+      const counter = document.getElementById('slide-counter');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
 
-<div class="presentation-controls">
-  <button id="prev-btn" onclick="prevSlide()" disabled>
-    <i class="fa-solid fa-arrow-left"></i> Anterior
-  </button>
-  <span class="slide-counter" id="slide-counter">01 / 18</span>
-  <button id="next-btn" onclick="nextSlide()">
-    Próximo <i class="fa-solid fa-arrow-right"></i>
-  </button>
-</div>
+      function updateSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('active', index === currentSlide);
+        });
+        counter.innerText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === slides.length - 1;
+      }
 
-<script>
-  let currentSlide = 0;
-  const slides = document.querySelectorAll('.slide-container');
-  const counter = document.getElementById('slide-counter');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
+      function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      }
 
-  function updateSlides() {
-    slides.forEach((slide, index) => {
-      slide.classList.toggle('active', index === currentSlide);
-    });
-    counter.innerText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
-    prevBtn.disabled = currentSlide === 0;
-    nextBtn.disabled = currentSlide === slides.length - 1;
-  }
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      }
 
-  function nextSlide() {
-    if (currentSlide < slides.length - 1) {
-      currentSlide++;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          nextSlide();
+        }
+        if (e.key === 'ArrowLeft') {
+          prevSlide();
+        }
+      });
+
+      function resizePresentation() {
+        const presentation = document.getElementById('presentation-area');
+        const scale = Math.min(window.innerWidth / 1320, (window.innerHeight - 100) / 750);
+        presentation.style.transform = `scale(${scale})`;
+      }
+
+      window.addEventListener('resize', resizePresentation);
+      resizePresentation();
       updateSlides();
-    }
-  }
-
-  function prevSlide() {
-    if (currentSlide > 0) {
-      currentSlide--;
-      updateSlides();
-    }
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') {
-      e.preventDefault();
-      nextSlide();
-    }
-    if (e.key === 'ArrowLeft') {
-      prevSlide();
-    }
-  });
-
-  function resizePresentation() {
-    const presentation = document.getElementById('presentation-area');
-    const scale = Math.min(window.innerWidth / 1320, (window.innerHeight - 100) / 750);
-    presentation.style.transform = `scale(${scale})`;
-  }
-
-  window.addEventListener('resize', resizePresentation);
-  resizePresentation();
-  updateSlides();
-</script>
+    </script>
 
 </body>
+
 </html>
