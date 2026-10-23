@@ -259,97 +259,94 @@ h1, h2, h3, h4, p, li, .subtitle {
   padding: 16px 16px;
   border-radius: 6px;
   flex: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .bullet-list-simple {
   list-style: none;
   padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 9px;
 }
 
 .bullet-list-simple li {
   position: relative;
   padding-left: 20px;
-  font-size: 14.2px;
+  font-size: 13.8px;
 }
 
 .bullet-list-simple li::before {
-  content: '■';
-  color: var(--senai-red);
+  content: '▪';
   position: absolute;
   left: 0;
-  top: 2px;
-  font-size: 12px;
+  color: var(--senai-red);
+  font-size: 18px;
+  line-height: 1;
 }
 
 .code-block {
   background-color: #1E1E1E;
   color: #D4D4D4;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 6px;
   font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 11.8px;
-  line-height: 1.32;
-  text-align: left;
-  white-space: pre-wrap;
+  font-size: 12.5px;
+  line-height: 1.35;
+  white-space: pre;
   width: 100%;
-  border-left: 5px solid var(--senai-red);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-left: 4px solid var(--senai-red);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
 }
 
-.code-block span.keyword { color: #569CD6; font-weight: bold; }
-.code-block span.string { color: #CE9178; }
-.code-block span.comment { color: #6A9955; font-style: italic; }
-.code-block span.func { color: #DCDCAA; }
+.code-block .keyword { color: #569CD6; font-weight: bold; }
+.code-block .string { color: #CE9178; }
+.code-block .comment { color: #6A9955; font-style: italic; }
+.code-block .func { color: #DCDCAA; }
+.code-block .decorator { color: #C586C0; }
 
 .console-output {
-  background-color: #0D1117;
-  color: #E6EDF3;
-  padding: 10px 13px;
+  background: #0D1117;
+  color: #58A6FF;
+  padding: 11px 15px;
   border-radius: 6px;
-  font-family: 'Consolas', 'Courier New', monospace;
+  font-family: 'Consolas', monospace;
   font-size: 11.5px;
-  line-height: 1.3;
   white-space: pre-wrap;
   width: 100%;
-  border-left: 4px solid #2EA043;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  border-left: 4px solid var(--google-blue);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .console-output .out-title {
-  color: #7EE787;
-  font-weight: bold;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #8B949E;
   display: block;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #30363D;
-  padding-bottom: 3px;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
 }
 
 .callout-box {
-  background-color: #FFF5F5;
-  border-left: 6px solid var(--senai-red);
-  padding: 10px 16px;
+  background-color: var(--senai-light-gray);
+  border-left: 5px solid var(--senai-red);
+  padding: 12px 18px;
   border-radius: 0 6px 6px 0;
+  margin-top: 14px;
   width: 100%;
-  margin-top: 8px;
-}
-
-.callout-box.warning {
-  background-color: #FFF8E1;
-  border-left-color: #FFA000;
 }
 
 .callout-box.info {
   background-color: #E8F0FE;
   border-left-color: var(--google-blue);
+}
+
+.callout-box.warning {
+  background-color: #FFF8E1;
+  border-left-color: var(--colab-orange);
 }
 
 .table-layout { width: 100%; }
@@ -361,16 +358,16 @@ h1, h2, h3, h4, p, li, .subtitle {
 }
 .table-layout th, .table-layout td {
   border: 1px solid var(--border-color);
-  padding: 8px 12px;
+  padding: 7px 11px;
   text-align: left;
-  font-size: 13.8px;
+  font-size: 13px;
 }
 .table-layout th {
   background-color: var(--senai-red);
   color: var(--senai-white);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 .table-layout tr:nth-child(even) { background-color: #FAFAFA; }
 
@@ -387,7 +384,7 @@ h1, h2, h3, h4, p, li, .subtitle {
   border: 1px solid var(--border-color);
   border-left: 6px solid var(--senai-dark-gray);
   border-radius: 6px;
-  padding: 11px 15px;
+  padding: 10px 14px;
   gap: 10px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.04);
 }
@@ -398,15 +395,15 @@ h1, h2, h3, h4, p, li, .subtitle {
 .paradigm-label {
   min-width: 195px;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--senai-black);
 }
 .flow-box {
   background: var(--senai-light-gray);
   border: 1px solid #D0D0D0;
-  padding: 7px 10px;
+  padding: 6px 9px;
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   text-align: center;
   flex: 1;
@@ -415,7 +412,7 @@ h1, h2, h3, h4, p, li, .subtitle {
 .flow-box.dark { background: var(--senai-dark-gray); color: #fff; border-color: var(--senai-dark-gray); }
 .flow-box.blue { background: var(--google-blue); color: #fff; border-color: var(--google-blue); }
 .flow-box.green { background: var(--code-green); color: #fff; border-color: var(--code-green); }
-.flow-arrow { color: var(--senai-red); font-size: 16px; font-weight: 900; }
+.flow-arrow { color: var(--senai-red); font-size: 15px; font-weight: 900; }
 
 .step-badge {
   display: inline-flex;
@@ -424,7 +421,7 @@ h1, h2, h3, h4, p, li, .subtitle {
   background: var(--senai-red);
   color: #fff;
   font-weight: 800;
-  font-size: 11.5px;
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 4px;
   margin-right: 6px;
@@ -450,28 +447,30 @@ h1, h2, h3, h4, p, li, .subtitle {
   background-color: var(--senai-red);
   color: var(--senai-white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
+  padding: 9px 20px;
+  border-radius: 30px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(227, 6, 19, 0.25);
 }
 
 .presentation-controls button:hover:not(:disabled) {
-  background-color: #C00510;
+  background-color: #BF040F;
   transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(227, 6, 19, 0.35);
 }
 
 .presentation-controls button:disabled {
   background-color: var(--border-color);
   color: var(--senai-medium-gray);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .slide-counter {
@@ -493,7 +492,7 @@ h1, h2, h3, h4, p, li, .subtitle {
       <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/SENAI_S%C3%A3o_Paulo_logo.png" alt="Logo SENAI São Paulo" style="height: 56px; width: auto; align-self: flex-start; margin-bottom: 22px;">
       <span class="tag-course">Dia 05 • Aula 05 (4 Horas) • Grande Final &amp; Deploy em Nuvem</span>
       <h1>Chatbots com Dialogflow,<br>PythonAnywhere &amp; Demo Day</h1>
-      <p class="subtitle">Arquitetura NLU (Intents, Entities, Slot Filling), Servidor Flask na Nuvem (<code>PythonAnywhere</code>), Projeto Final SIMI e <strong>Conclusão 100% da Trilha Skills Boost</strong></p>
+      <p class="subtitle">Arquitetura NLU (Intents, Entities, Slot Filling), Projeto Oficial <strong>DialogFlow.md (Pizzaria IA &amp; IA-Style)</strong>, Servidor Flask na Nuvem e <strong>Conclusão 100% da Trilha Skills Boost</strong></p>
     </div>
   </div>
 
@@ -503,7 +502,7 @@ h1, h2, h3, h4, p, li, .subtitle {
       <span class="module-tag">Módulo 01 • Interfaces Conversacionais (NLU)</span>
       <h2>Google Dialogflow ES:<br>O Cérebro do Chatbot</h2>
       <hr>
-      <p>Compreendendo Intenções (Intents), Entidades (Entities), Contextos e Fulfillment via Webhook.</p>
+      <p>Compreendendo Intenções (Intents), Entidades (Entities), Contextos e Fulfillment no Projeto <code>DialogFlow.md</code>.</p>
     </div>
   </div>
 
@@ -512,50 +511,50 @@ h1, h2, h3, h4, p, li, .subtitle {
     <h2 class="slide-title">O que Acontece por Trás do Chat? (Arquitetura NLU)</h2>
     <div class="content-area">
       <div class="paradigm-card highlight" style="width: 100%; margin-bottom: 14px;">
-        <div class="paradigm-label" style="color: var(--senai-red);">Fluxo Completo<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Dialogflow + Nuvem</span></div>
-        <div class="flow-box">1. Usuário Digita<br><span style="font-size: 11px; font-weight: 400;">"Quero 2 coxinhas de frango"</span></div>
+        <div class="paradigm-label" style="color: var(--senai-red);">Fluxo Completo<br><span style="font-size: 12px; color: var(--senai-dark-gray);">Projeto DialogFlow.md</span></div>
+        <div class="flow-box">1. Usuário Digita<br><span style="font-size: 11px; font-weight: 400;">"Me vê uma grande de calabresa no PIX"</span></div>
         <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-        <div class="flow-box blue">2. Intent + Entities<br><span style="font-size: 11px; font-weight: 400;"><code>pedido-coxinha</code> (qtde=2)</span></div>
+        <div class="flow-box blue">2. Intent + Entities<br><span style="font-size: 11px; font-weight: 400;"><code>pedido.pizza</code> (@Sabor, @Tamanho)</span></div>
         <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
         <div class="flow-box red">3. Webhook POST<br><span style="font-size: 11px; font-weight: 400;">Envia JSON ao PythonAnywhere</span></div>
         <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-        <div class="flow-box dark">4. Resposta Flask<br><span style="font-size: 11px; font-weight: 400;">Retorna Card de Confirmação</span></div>
+        <div class="flow-box dark">4. Resposta Flask<br><span style="font-size: 11px; font-weight: 400;">Retorna Rich Card de Confirmação</span></div>
       </div>
 
       <div class="tiled-content">
         <div class="tile" style="padding: 14px;">
           <h3 style="font-size: 16px; color: var(--senai-red);"><i class="fa-solid fa-bullseye"></i> Intents (Intenções)</h3>
-          <p style="font-size: 13.5px;">O <strong>verbo / objetivo</strong> do usuário (ex: <code>pedido-coxinha</code>, <code>pedido.pizza</code>). Usa <em>Training Phrases</em> para generalizar frases nunca vistas por similaridade vetorial.</p>
+          <p style="font-size: 13.5px;">O <strong>verbo / objetivo</strong> do usuário (ex: <code>pedido.pizza</code>, <code>agendamento.servico</code>). Usa <em>Training Phrases</em> para generalizar frases reais por similaridade vetorial.</p>
         </div>
         <div class="tile" style="padding: 14px;">
           <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-tags"></i> Entities (Entidades)</h3>
-          <p style="font-size: 13.5px;">Os <strong>substantivos / variáveis</strong> extraídos da frase: Customizadas (<code>@produto</code>, <code>@Sabor</code>) ou de Sistema (<code>@sys.number</code>, <code>@sys.address</code>).</p>
+          <p style="font-size: 13.5px;">Os <strong>substantivos / variáveis</strong>: Customizadas (<code>@Sabor</code>, <code>@Tamanho</code>, <code>@FormaPagamento</code>) ou de Sistema (<code>@sys.address</code>, <code>@sys.date-time</code>).</p>
         </div>
         <div class="tile" style="padding: 14px;">
           <h3 style="font-size: 16px; color: var(--colab-orange);"><i class="fa-solid fa-list-check"></i> Slot Filling</h3>
-          <p style="font-size: 13.5px;">Quando marcamos um parâmetro como <strong>Required</strong>, o bot faz perguntas automáticas (<em>Prompts</em>) caso o cliente esqueça algum dado.</p>
+          <p style="font-size: 13.5px;">Se o cliente diz apenas <em>"Quero pizza"</em>, parâmetros marcados como <strong>Required</strong> disparam perguntas automáticas (<em>Prompts</em>) até completar o pedido.</p>
         </div>
         <div class="tile" style="padding: 14px;">
           <h3 style="font-size: 16px; color: var(--code-green);"><i class="fa-solid fa-memory"></i> Contextos</h3>
-          <p style="font-size: 13.5px;">A memória de curto prazo da conversa (<em>Lifespan</em> de interações), permitindo confirmar um pedido sem perder os dados anteriores.</p>
+          <p style="font-size: 13.5px;">A memória de curto prazo (<em>Lifespan</em> de interações), permitindo que respostas como <em>"Sim"</em> confirmem o <code>pedido-em-andamento</code>.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 4: LAB 5.1 - PASSO A PASSO NO DIALOGFLOW (CANTINA SENAI & PIZZARIA) -->
+  <!-- SLIDE 4: LAB 5.1 - PROJETO DIALOGFLOW.MD (PIZZARIA_IA_BOT) -->
   <div class="slide-container">
-    <h2 class="slide-title">Lab 5.1: Configurando o Agente no Google Dialogflow ES</h2>
+    <h2 class="slide-title">Lab 5.1: Configurando o Agente do Projeto <code>DialogFlow.md</code></h2>
     <div class="content-area">
       <div class="two-column" style="gap: 20px; align-items: stretch;">
         <div style="flex: 1.05; background: #fff; border: 1px solid var(--border-color); border-top: 5px solid var(--google-blue); padding: 16px 18px; border-radius: 6px;">
-          <h3 style="font-size: 17px;"><i class="fa-solid fa-utensils" style="color: var(--google-blue);"></i> Parte A: Cantina SENAI (Para o Webhook)</h3>
+          <h3 style="font-size: 17px;"><i class="fa-solid fa-pizza-slice" style="color: var(--google-blue);"></i> Pizzaria IA-Bot (Delivery Inteligente)</h3>
           <ul class="bullet-list-simple" style="margin-top: 8px;">
-            <li><strong>1. Criar Agente:</strong> Acesse <code>dialogflow.cloud.google.com</code> $\to$ <strong>Create Agent</strong> $\to$ Nome: <code>SENAIBOT</code> | Idioma: <code>Portuguese (pt-br)</code>.</li>
-            <li><strong>2. Criar Entity (<code>@produto</code>):</strong> Vá em <em>Entities $\to$ Create Entity</em>, nomeie como <code>produto</code> e adicione os valores <code>coxinha de frango</code> e <code>coxinha de costela</code> (com sinônimos).</li>
-            <li><strong>3. Criar Intent (<code>pedido-coxinha</code>):</strong> Adicione frases de treino como <em>"Quero 2 coxinhas de frango"</em> e <em>"Vou querer 5 de costela"</em>.</li>
-            <li><strong>4. Action and Parameters:</strong> Marque <code>qtde</code> (<code>@sys.number</code>) e <code>produto</code> (<code>@produto</code>) como <strong>REQUIRED</strong>.</li>
-            <li><strong>5. Ativar Webhook:</strong> No rodapé da Intent, em <em>Fulfillment</em>, marque <strong>Enable webhook call for this intent</strong> e clique em <strong>Save</strong>!</li>
+            <li><strong>1. Criar Agente:</strong> Acesse <code>dialogflow.cloud.google.com</code> $\to$ <strong>Create Agent</strong> $\to$ Nome: <code>Pizzaria_IA_Bot</code> | Idioma: <code>Portuguese (pt-br)</code>.</li>
+            <li><strong>2. Entidades do Negócio:</strong> Cadastre <code>@Sabor</code> (Calabresa, Mussarela, Margherita), <code>@Tamanho</code> (Broto, Média, Grande) e <code>@FormaPagamento</code> (PIX, Cartão, Dinheiro).</li>
+            <li><strong>3. Criar Intent (<code>pedido.pizza</code>):</strong> Adicione frases como <em>"Tô com fome, me vê uma grande de calabresa"</em> e <em>"Quero mussarela média no PIX"</em>.</li>
+            <li><strong>4. Action and Parameters:</strong> Marque os 4 parâmetros como <strong>REQUIRED</strong> com perguntas socráticas.</li>
+            <li><strong>5. Ativar Webhook:</strong> Em <em>Fulfillment</em>, marque <strong>Enable webhook call for this intent</strong> e clique em <strong>Save</strong>!</li>
           </ul>
         </div>
 
@@ -574,49 +573,84 @@ h1, h2, h3, h4, p, li, .subtitle {
               <tbody>
                 <tr>
                   <td>✅</td>
-                  <td><code>qtde</code></td>
-                  <td><code>@sys.number</code></td>
-                  <td><code>$qtde</code></td>
-                  <td>"Quantas unidades você deseja?"</td>
+                  <td><code>sabor</code></td>
+                  <td><code>@Sabor</code></td>
+                  <td><code>$sabor</code></td>
+                  <td>"Qual sabor de pizza você deseja hoje?"</td>
                 </tr>
                 <tr>
                   <td>✅</td>
-                  <td><code>produto</code></td>
-                  <td><code>@produto</code></td>
-                  <td><code>$produto</code></td>
-                  <td>"Qual sabor? (Frango ou Costela)"</td>
+                  <td><code>tamanho</code></td>
+                  <td><code>@Tamanho</code></td>
+                  <td><code>$tamanho</code></td>
+                  <td>"Qual será o tamanho? (Broto, Média ou Grande)"</td>
                 </tr>
                 <tr>
-                  <td>✅ (Opcional)</td>
+                  <td>✅</td>
+                  <td><code>pagamento</code></td>
+                  <td><code>@FormaPagamento</code></td>
+                  <td><code>$pagamento</code></td>
+                  <td>"Qual a forma de pagamento? (PIX, Cartão ou Dinheiro)"</td>
+                </tr>
+                <tr>
+                  <td>✅</td>
                   <td><code>endereco</code></td>
                   <td><code>@sys.address</code></td>
                   <td><code>$endereco</code></td>
-                  <td>"Qual o local de entrega?"</td>
+                  <td>"Para qual endereço completo devemos enviar sua pizza?"</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div class="callout-box info" style="margin-top: 0; padding: 10px 14px;">
-            <p style="font-size: 13.2px;"><strong><i class="fa-solid fa-comment-medical"></i> Publicação Moderna (Dialogflow Messenger):</strong><br>
-            No menu lateral esquerdo, clique em <strong>Integrations $\to$ Dialogflow Messenger $\to$ Enable</strong>. Ele gera a tag HTML <code>&lt;df-messenger&gt;</code> com o seu <code>agent-id</code> exclusivo para embutirmos no servidor PythonAnywhere!</p>
+            <p style="font-size: 13.2px;"><strong><i class="fa-solid fa-book-bookmark"></i> Roteiro Detalhado no Repositório:</strong><br>
+            Consulte o guia oficial <a href="DialogFlow.md" target="_blank" style="color: var(--google-blue); font-weight: 700;">DialogFlow.md</a> com lista completa de sinônimos, exemplos e testes!</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 5: DIVISOR MÓDULO 2 (DEPLOY PYTHONANYWHERE) -->
+  <!-- SLIDE 5: LAB 5.1 (CONTINUAÇÃO) - CONTEXTO, TESTES & AGENDAMENTO IA-STYLE -->
+  <div class="slide-container">
+    <h2 class="slide-title">Lab 5.1: Contexto de Memória, Testes de Estresse &amp; IA-Style</h2>
+    <div class="content-area">
+      <div class="two-column" style="gap: 20px; align-items: stretch;">
+        <div style="flex: 1; background: #fff; border: 1px solid var(--border-color); border-top: 5px solid var(--code-green); padding: 16px 18px; border-radius: 6px;">
+          <h3 style="font-size: 16.5px; color: var(--code-green);"><i class="fa-solid fa-vial-circle-check"></i> Testes de Estresse (Try it now)</h3>
+          <ul class="bullet-list-simple" style="margin-top: 8px;">
+            <li><strong>Teste 1 — Slot Filling (Passo a Passo):</strong> Digite apenas <em>"Tô com fome"</em>. Veja a IA insistir no sabor, tamanho, pagamento e endereço um a um!</li>
+            <li><strong>Teste 2 — One-Shot ("Tudo de uma vez"):</strong> Digite: <em>"Quero uma pizza grande de calabresa no PIX para entregar na Rua Vergueiro 500"</em>. Veja a IA extrair tudo de imediato!</li>
+            <li><strong>Output Context:</strong> Adicione <code>pedido-em-andamento</code> (lifespan 5) para manter o estado da conversa ativo.</li>
+            <li><strong>Resposta Dinâmica:</strong> <em>"Ótima escolha! 🍕 Já anotei sua pizza de $sabor ($tamanho) para $endereco via $pagamento!"</em></li>
+          </ul>
+        </div>
+
+        <div style="flex: 1; background: #fff; border: 1px solid var(--border-color); border-top: 5px solid var(--colab-orange); padding: 16px 18px; border-radius: 6px;">
+          <h3 style="font-size: 16.5px; color: var(--colab-orange);"><i class="fa-solid fa-scissors"></i> Opção B: Agendamento "IA-Style"</h3>
+          <p style="font-size: 13.5px; margin-bottom: 8px;">Variação para prestação de serviços (Barbearia / Salão) de <code>DialogFlow.md</code>:</p>
+          <ul class="bullet-list-simple">
+            <li><strong>Entidades:</strong> <code>@Servico</code> (Corte, Barba), <code>@Profissional</code> (Ricardo, Marcos), <code>@Periodo</code> (Manhã, Tarde).</li>
+            <li><strong>Intent:</strong> <code>agendamento.servico</code> com parâmetros <code>servico</code>, <code>barbeiro</code>, <code>data_hora</code> (<code>@sys.date-time</code>) e <code>contato</code>.</li>
+            <li><strong>Desafios Extras:</strong> Entidade opcional <code>@Bebida</code>, Fallback Intent educada e Intent de FAQ <code>horario_funcionamento</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: DIVISOR MÓDULO 2 (DEPLOY PYTHONANYWHERE) -->
   <div class="slide-container">
     <div class="section-title-layout">
       <span class="module-tag">Módulo 02 • Laboratório 5.2 (Cloud Deployment)</span>
       <h2>Backend Flask na Nuvem:<br>PythonAnywhere + Webhook</h2>
       <hr>
-      <p>Hospedando uma API Flask pública com HTTPS para processar as intenções do Dialogflow em tempo real.</p>
+      <p>Hospedando uma API Flask pública com HTTPS para processar os pedidos da Pizzaria IA em tempo real.</p>
     </div>
   </div>
 
-  <!-- SLIDE 6: LAB 5.2 - PASSOS 1 E 2: CONFIGURAÇÃO DO PYTHONANYWHERE -->
+  <!-- SLIDE 7: LAB 5.2 - PASSOS 1 E 2: CONFIGURAÇÃO DO PYTHONANYWHERE -->
   <div class="slide-container">
     <h2 class="slide-title">Lab 5.2: Passos 1 e 2 — Criando o Servidor no PythonAnywhere</h2>
     <div class="content-area">
@@ -656,34 +690,34 @@ path = <span class="string">'/home/SEU_USUARIO/mysite'</span>
     </div>
   </div>
 
-  <!-- SLIDE 7: LAB 5.2 - BLOCO A DO FLASK_APP.PY (ROTA GET / E DF-MESSENGER) -->
+  <!-- SLIDE 8: LAB 5.2 - BLOCO 1 DO FLASK_APP.PY (ROTA GET / E DF-MESSENGER DA PIZZARIA) -->
   <div class="slide-container">
-    <h2 class="slide-title">Lab 5.2: Código <code>flask_app.py</code> — Bloco 1 (Página Web + Chat)</h2>
+    <h2 class="slide-title">Lab 5.2: Código <code>flask_app.py</code> — Bloco 1 (Página Web da Pizzaria)</h2>
     <div class="content-area">
-      <p style="align-self: flex-start; margin-bottom: 8px;">Abra <code>/home/SEU_USUARIO/mysite/flask_app.py</code> no editor do PythonAnywhere. O <strong>Bloco 1</strong> cria a rota principal <code>GET /</code> que exibe o site da Cantina com o balão do <code>&lt;df-messenger&gt;</code>:</p>
+      <p style="align-self: flex-start; margin-bottom: 8px;">Abra <code>/home/SEU_USUARIO/mysite/flask_app.py</code> no editor do PythonAnywhere. O <strong>Bloco 1</strong> cria a rota principal <code>GET /</code> que exibe o portal da Pizzaria Inteligente conectado ao <code>&lt;df-messenger&gt;</code>:</p>
       <div class="two-column" style="gap: 18px; align-items: stretch;">
         <div style="flex: 1.3;">
-          <div class="code-block" style="font-size: 11.4px; line-height: 1.3;">
+          <div class="code-block" style="font-size: 11.2px; line-height: 1.28;">
 <span class="keyword">from</span> flask <span class="keyword">import</span> Flask, url_for, make_response, request, jsonify
 
 app = Flask(__name__)
-pedidos = [] <span class="comment"># Lista global em memória para armazenar os pedidos</span>
+pedidos = [] <span class="comment"># Lista global em memória para persistir os pedidos da pizzaria</span>
 
 @app.route(<span class="string">'/'</span>, methods=[<span class="string">"GET"</span>])
 <span class="keyword">def</span> <span class="func">website</span>():
-    <span class="comment"># IMPORTANTE: Substitua o agent-id pelo ID do seu agente Dialogflow!</span>
+    <span class="comment"># Substitua o agent-id pelo ID do seu agente Pizzaria_IA_Bot!</span>
     <span class="keyword">return</span> <span class="string">"""
     &lt;html&gt;
     &lt;head&gt;
         &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
     &lt;/head&gt;
     &lt;body&gt;
-        &lt;h2&gt;Cantina Inteligente SENAI-SP&lt;/h2&gt;
-        &lt;h4&gt;Atendimento Automatizado via Google Dialogflow + Flask&lt;/h4&gt;
+        &lt;h2&gt;🍕 Pizzaria Inteligente IA-Pizza&lt;/h2&gt;
+        &lt;h4&gt;Projeto Oficial DialogFlow.md • SENAI-SP&lt;/h4&gt;
         &lt;script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"&gt;&lt;/script&gt;
         &lt;df-messenger
             intent="WELCOME"
-            chat-title="SENAIBOT"
+            chat-title="Pizzaria IA-Pizza"
             agent-id="COLE-AQUI-O-SEU-AGENT-ID"
             language-code="pt-br"
             chat-icon='%s'&gt;
@@ -696,74 +730,75 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
         <div style="flex: 0.9; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
           <div class="callout-box info" style="margin-top: 0;">
             <h3 style="font-size: 16px; color: var(--google-blue);"><i class="fa-solid fa-code"></i> Como funciona a Rota <code>/</code>?</h3>
-            <p style="font-size: 13.5px;">1. Quando o cliente acessa <code>https://seuusuario.pythonanywhere.com/</code> pelo navegador, o Flask executa <code>website()</code>.<br><br>
-            2. A tag <code>&lt;df-messenger&gt;</code> carrega o widget flutuante oficial do Google Cloud conectado ao seu <code>agent-id</code>.<br><br>
-            3. O <code>url_for('static', ...)</code> injeta dinamicamente o ícone <code>robot.png</code> no botão do chat!</p>
+            <p style="font-size: 13.5px;">1. Ao acessar <code>https://seuusuario.pythonanywhere.com/</code>, o Flask responde com o portal web.<br><br>
+            2. A tag <code>&lt;df-messenger&gt;</code> renderiza o balão flutuante oficial do Google Cloud conectado ao seu <code>agent-id</code>.<br><br>
+            3. O <code>url_for('static', ...)</code> insere o ícone <code>robot.png</code> diretamente no botão de abertura!</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 8: LAB 5.2 - BLOCO B DO FLASK_APP.PY (ROTA POST /WEBHOOK E RICH CARDS) -->
+  <!-- SLIDE 9: LAB 5.2 - BLOCO 2 DO FLASK_APP.PY (ROTA POST /WEBHOOK E RICH CARDS) -->
   <div class="slide-container">
     <h2 class="slide-title">Lab 5.2: Código <code>flask_app.py</code> — Bloco 2 (Rota <code>/webhook</code>)</h2>
     <div class="content-area">
       <div class="two-column" style="gap: 18px; align-items: stretch;">
         <div style="flex: 1.3;">
-          <div class="code-block" style="font-size: 10.8px; line-height: 1.28;">
+          <div class="code-block" style="font-size: 10.6px; line-height: 1.25;">
 @app.route(<span class="string">'/webhook'</span>, methods=[<span class="string">"POST"</span>])
 <span class="keyword">def</span> <span class="func">processarIntent</span>():
-    payload = request.get_json()
-    intent = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'intent'</span>, {})
+    payload = request.get_json(silent=True, force=True) <span class="keyword">or</span> {}
+    intent_name = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'intent'</span>, {}).get(<span class="string">'displayName'</span>, <span class="string">''</span>)
+    source = payload.get(<span class="string">"originalDetectIntentRequest"</span>, {}).get(<span class="string">"source"</span>)
+    resposta = {<span class="string">"fulfillmentMessages"</span>: []}
     
-    <span class="keyword">if</span> intent.get(<span class="string">'displayName'</span>) == <span class="string">'pedido-coxinha'</span>:
-        source = payload.get(<span class="string">"originalDetectIntentRequest"</span>, {}).get(<span class="string">"source"</span>)
-        resposta = {<span class="string">"fulfillmentMessages"</span>: []}
-        
-        parametro = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'parameters'</span>, {})
-        qtde = parametro.get(<span class="string">"qtde"</span>)
-        prod = parametro.get(<span class="string">"produto"</span>)
+    <span class="keyword">if</span> intent_name == <span class="string">'pedido.pizza'</span>:
+        params = payload.get(<span class="string">'queryResult'</span>, {}).get(<span class="string">'parameters'</span>, {})
+        sabor = params.get(<span class="string">"sabor"</span>, <span class="string">"Calabresa"</span>)
+        tamanho = params.get(<span class="string">"tamanho"</span>, <span class="string">"Grande"</span>)
+        pag = params.get(<span class="string">"pagamento"</span>, <span class="string">"PIX"</span>)
+        end = params.get(<span class="string">"endereco"</span>, <span class="string">"Retirada"</span>)
 
-        pedidos.append({<span class="string">"produto"</span>: prod, <span class="string">"qtde"</span>: qtde})
-        msg = f<span class="string">"Ok, seu pedido de {qtde:.0f} {prod} foi registrado no servidor!"</span>
-        <span class="keyword">return</span> enviarCards(msg, source, resposta)
+        pedidos.append({<span class="string">"sabor"</span>: sabor, <span class="string">"tamanho"</span>: tamanho, <span class="string">"pagamento"</span>: pag, <span class="string">"endereco"</span>: end})
+        msg = f<span class="string">"Pizza de {sabor} ({tamanho}) anotada! Entrega em {end} ({pag})."</span>
+        <span class="keyword">return</span> enviarCards(<span class="string">"🍕 Pedido Registrado!"</span>, msg, source, resposta)
     
-    <span class="keyword">return</span> make_response(jsonify({<span class="string">"fulfillmentText"</span>: <span class="string">"Intent não reconhecida pelo Webhook."</span>}))
+    <span class="keyword">return</span> make_response(jsonify({<span class="string">"fulfillmentText"</span>: <span class="string">"Intent não reconhecida."</span>}))
 
-<span class="keyword">def</span> <span class="func">enviarCards</span>(msg, source, resposta):
-    <span class="keyword">if</span> source == <span class="string">"DIALOGFLOW_CONSOLE"</span> <span class="keyword">or</span> source == <span class="string">"telegram"</span>:
-        resposta[<span class="string">'fulfillmentMessages'</span>].append({
-            <span class="string">"card"</span>: {<span class="string">"title"</span>: <span class="string">"Pedido Confirmado"</span>, <span class="string">"subtitle"</span>: msg}
-        })
+<span class="keyword">def</span> <span class="func">enviarCards</span>(titulo, msg, source, resposta):
+    <span class="keyword">if</span> source == <span class="string">"DIALOGFLOW_CONSOLE"</span>:
+        resposta[<span class="string">'fulfillmentMessages'</span>].append({<span class="string">"card"</span>: {<span class="string">"title"</span>: titulo, <span class="string">"subtitle"</span>: msg}})
     <span class="keyword">else</span>:
         resposta[<span class="string">"fulfillmentMessages"</span>].append({
-            <span class="string">"payload"</span>: {<span class="string">"richContent"</span>: [[{<span class="string">"type"</span>: <span class="string">"info"</span>, <span class="string">"title"</span>: <span class="string">"Confirmação de Pedido"</span>, <span class="string">"subtitle"</span>: msg}]]}
+            <span class="string">"payload"</span>: {<span class="string">"richContent"</span>: [[{<span class="string">"type"</span>: <span class="string">"info"</span>, <span class="string">"title"</span>: titulo, <span class="string">"subtitle"</span>: msg}]]}
         })
     <span class="keyword">return</span> make_response(jsonify(resposta))</div>
         </div>
 
         <div style="flex: 0.95; display: flex; flex-direction: column; gap: 8px;">
-          <div class="console-output" style="font-size: 11px;">
+          <div class="console-output" style="font-size: 10.8px;">
             <span class="out-title"><i class="fa-solid fa-exchange-alt"></i> JSON Enviado pelo Dialogflow $\to$ /webhook</span>
 {
   "queryResult": {
-    "queryText": "Quero 3 coxinhas de frango",
+    "queryText": "Quero pizza grande de calabresa no PIX para Av Paulista 1000",
     "parameters": {
-      "qtde": 3.0,
-      "produto": "coxinha de frango"
+      "sabor": "Calabresa",
+      "tamanho": "Grande",
+      "pagamento": "PIX",
+      "endereco": "Av Paulista 1000"
     },
-    "intent": { "displayName": "pedido-coxinha" }
+    "intent": { "displayName": "pedido.pizza" }
   }
 }</div>
-          <div class="console-output" style="font-size: 11px; border-left-color: var(--colab-orange);">
+          <div class="console-output" style="font-size: 10.8px; border-left-color: var(--colab-orange);">
             <span class="out-title" style="color: var(--colab-orange);"><i class="fa-solid fa-reply"></i> JSON Retornado pelo Flask $\to$ Dialogflow</span>
 {
   "fulfillmentMessages": [{
     "payload": { "richContent": [[{
       "type": "info",
-      "title": "Confirmação de Pedido",
-      "subtitle": "Ok, seu pedido de 3 coxinha de frango foi registrado no servidor!"
+      "title": "🍕 Pedido Registrado!",
+      "subtitle": "Pizza de Calabresa (Grande) anotada! Entrega em Av Paulista 1000 (PIX)."
     }]]}
   }]
 }</div>
@@ -772,7 +807,7 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
     </div>
   </div>
 
-  <!-- SLIDE 9: LAB 5.2 - PASSO 4: VINCULANDO O FULFILLMENT E TESTANDO -->
+  <!-- SLIDE 10: LAB 5.2 - PASSO 4: VINCULANDO O FULFILLMENT E TESTANDO -->
   <div class="slide-container">
     <h2 class="slide-title">Lab 5.2: Passo 4 — Ativando o Webhook e Depurando Erros</h2>
     <div class="content-area">
@@ -789,28 +824,28 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
         </div>
 
         <div style="border-top-color: var(--colab-orange);">
-          <h3><i class="fa-solid fa-stethoscope" style="color: var(--colab-orange);"></i> Troubleshooting &amp; Expansão IoT (Wokwi)</h3>
+          <h3><i class="fa-solid fa-stethoscope" style="color: var(--colab-orange);"></i> Troubleshooting &amp; Nome de Intents</h3>
           <ul class="bullet-list-simple" style="margin-top: 10px;">
-            <li><strong>Erro 500 ou "Webhook call failed":</strong> Na aba <strong>Web</strong> do PythonAnywhere, role até <strong>Log files $\to$ error.log</strong> e leia as últimas linhas (verifique indentação ou nome da variável no WSGI).</li>
-            <li><strong>Nome Exato da Intent:</strong> O nome no Dialogflow (<code>pedido-coxinha</code>) deve ser idêntico à string no <code>if intent.get('displayName')</code> do Python!</li>
-            <li><strong>Expansão IoT (Bônus Wokwi):</strong> Adicionando uma rota <code>GET /get_blinks</code> no mesmo Flask, um microcontrolador <strong>Raspberry Pi Pico W / ESP32</strong> no simulador Wokwi consegue ler os comandos do seu Chatbot e acionar LEDs/relés físicos!</li>
+            <li><strong>Erro 500 ou "Webhook call failed":</strong> Na aba <strong>Web</strong> do PythonAnywhere, role até <strong>Log files $\to$ error.log</strong> e leia as últimas linhas (verifique indentação ou módulos importados).</li>
+            <li><strong>Nome Exato da Intent:</strong> O nome no Dialogflow (<code>pedido.pizza</code>) deve ser idêntico à string no <code>if intent_name == 'pedido.pizza'</code> do Python!</li>
+            <li><strong>Ativação por Intent:</strong> Lembre-se de rolar até o rodapé da Intent no Dialogflow e marcar <strong>Enable webhook call for this intent</strong>!</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 10: DIVISOR MÓDULO 3 (PROJETO FINAL SIMI) -->
+  <!-- SLIDE 11: DIVISOR MÓDULO 3 (PROJETO FINAL SIMI) -->
   <div class="slide-container">
     <div class="section-title-layout">
       <span class="module-tag">Módulo 03 • Projeto Integrador em Duplas</span>
       <h2>Projeto Final SIMI:<br>TechVision Smart Store</h2>
       <hr>
-      <p>Sistema Integrado de Monitoramento e Interação Inteligente (Visão Computacional + Dialogflow + Nuvem).</p>
+      <p>Sistema Integrado de Monitoramento e Interação Inteligente (Visão Computacional + Chatbot NLU + Nuvem).</p>
     </div>
   </div>
 
-  <!-- SLIDE 11: PROTOCOLO DE ENTREGA DO PROJETO FINAL SIMI -->
+  <!-- SLIDE 12: PROTOCOLO DE ENTREGA DO PROJETO FINAL SIMI -->
   <div class="slide-container">
     <h2 class="slide-title">Protocolo de Entrega: Projeto Final SIMI (Em Duplas)</h2>
     <div class="content-area">
@@ -819,8 +854,8 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
           <h3 style="font-size: 17px; color: var(--senai-red);"><i class="fa-solid fa-clipboard-check"></i> Links e Evidências Obrigatórias</h3>
           <ul class="bullet-list-simple" style="margin-top: 8px;">
             <li><strong>Link 1 (Google Colab — Visão):</strong> Notebook da Aula 04 detectando objetos/placas ou emoções com <code>YOLOv8</code> / <code>DeepFace</code>.</li>
-            <li><strong>Link 2 (Dialogflow ES — Agente):</strong> Agente configurado com Entidades, Intenções, Slot Filling e Dialogflow Messenger ativo.</li>
-            <li><strong>Link 3 (PythonAnywhere — Cloud):</strong> URL pública ativa (<code>https://dupla.pythonanywhere.com/webhook</code>).</li>
+            <li><strong>Link 2 (Dialogflow ES — Agente):</strong> Agente configurado com Entidades, Intenções, Slot Filling e Dialogflow Messenger ativo conforme <code>DialogFlow.md</code>.</li>
+            <li><strong>Link 3 (PythonAnywhere — Cloud):</strong> URL pública ativa (<code>https://dupla.pythonanywhere.com/webhook</code>) com código Flask respondendo.</li>
             <li><strong>4 Prints no Relatório:</strong> (1) Detecção no Colab; (2) Código Flask no PythonAnywhere; (3) Aba Fulfillment ativa; (4) Chat respondendo na Web.</li>
           </ul>
         </div>
@@ -864,7 +899,7 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
     </div>
   </div>
 
-  <!-- SLIDE 12: CONCLUSÃO 100% DA TRILHA GOOGLE CLOUD SKILLS BOOST -->
+  <!-- SLIDE 13: CONCLUSÃO 100% DA TRILHA GOOGLE CLOUD SKILLS BOOST -->
   <div class="slide-container">
     <h2 class="slide-title">Trilha Google Cloud Skills Boost: Atividade 04 (100%!)</h2>
     <div class="content-area">
@@ -902,7 +937,7 @@ pedidos = [] <span class="comment"># Lista global em memória para armazenar os 
   <button id="prev-btn" onclick="prevSlide()" disabled>
     <i class="fa-solid fa-arrow-left"></i> Anterior
   </button>
-  <span class="slide-counter" id="slide-counter">01 / 12</span>
+  <span class="slide-counter" id="slide-counter">01 / 13</span>
   <button id="next-btn" onclick="nextSlide()">
     Próximo <i class="fa-solid fa-arrow-right"></i>
   </button>

@@ -90,7 +90,7 @@ flowchart TD
     end
 
     subgraph D5 ["📅 Dia 05 — Chatbots, Deploy Cloud & Certificação"]
-        E1["Google Dialogflow ES: Intents, Entities & Fulfillment"] --> E2["Construção de Agentes: Cantina SENAIBOT"]
+        E1["Google Dialogflow ES: Intents, Entities & Fulfillment"] --> E2["Construção de Agentes: Projeto DialogFlow.md (IA-Pizza)"]
         E2 --> E3["Deploy Webhook Flask no PythonAnywhere (Cloud)"]
         E3 --> E4["Projeto Integrador & 100% dos Badges Conquistados"]
     end
@@ -219,7 +219,7 @@ Durante o curso, os estudantes realizam a trilha oficial:
   * Configuração de microframework web **Flask** para atendimento a webhooks JSON.
   * Hospedagem e publicação de serviços na nuvem com **PythonAnywhere** (WSGI, Force HTTPS e rotas seguras).
 * **Laboratórios Práticos:**
-  * 🤖 **Lab 5.1 (Dialogflow ES):** [Agente Conversacional Cantina SENAIBOT](./Aula_05/lab_dialogflow_agente_cantina.md) (Intents, Entities e Slot Filling).
+  * 🤖 **Lab 5.1 (Projeto DialogFlow.md):** [Agente Delivery IA-Pizza & Agendamento IA-Style](./Aula_05/DialogFlow.md) (Intents, Entities, Slot Filling e Contextos).
   * ☁️ **Lab 5.2 (Cloud Deployment):** [Deploy de Webhook Flask no PythonAnywhere](./Aula_05/lab_webhook_flask_pythonanywhere.md) (Fulfillment e Rich Cards).
   * 🛍️ **Projeto Integrador SIMI:** Apresentação da solução integrada *TechVision Smart Store*.
   * 🏅 **Trilha Google Cloud:** Finalização da 4ª atividade oficial (**100% da Trilha e 4 Badges alcançados**).

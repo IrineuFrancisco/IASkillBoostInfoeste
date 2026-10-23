@@ -67,7 +67,7 @@ flowchart LR
 - **Apresentação de Slides:** [slide_aula_05.html](./Aula_05/slide_aula_05.html)
 - **Material Didático Completo:** [material_aula_05.md](./Aula_05/material_aula_05.md)
 - **Laboratórios e Roteiros:**
-  1. **Lab 5.1 (Dialogflow ES):** [lab_dialogflow_agente_cantina.md](./Aula_05/lab_dialogflow_agente_cantina.md) — Construção do Agente Conversacional Cantina SENAIBOT com Slot Filling.
+  1. **Lab 5.1 (Projeto DialogFlow.md):** [DialogFlow.md](./Aula_05/DialogFlow.md) — Construção do Agente de Delivery Pizzaria IA (`Pizzaria_IA_Bot`) com Intents, Entities, Slot Filling e Contextos (ou Variação Agendamento IA-Style).
   2. **Lab 5.2 (Cloud Deployment):** [lab_webhook_flask_pythonanywhere.md](./Aula_05/lab_webhook_flask_pythonanywhere.md) — Deploy de servidor web Flask público no PythonAnywhere com webhook e Rich Cards.
-  3. **Projeto Integrador SIMI:** Apresentação da solução *TechVision Smart Store*.
+  3. **Projeto Integrador SIMI:** Apresentação da solução integrada *TechVision Smart Store*.
 - **Google Cloud Skills Boost — Atividade 04:** Conclusão da Trilha Oficial (**100% Concluído e 4 Badges Oficiais**).
